@@ -1,0 +1,132 @@
+---
+- name: create nginx directory
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  file:
+    path: "{{ docker_user_registered.home }}/nginx/conf.d"
+    state: directory
+    mode: 0755
+  tags:
+    - nginx
+
+- name: add nginx config
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  template:
+    src: nginx.conf.j2
+    dest: "{{ docker_user_registered.home }}/nginx/nginx.conf"
+    mode: 0644
+  tags:
+    - nginx
+
+- name: add nginx default website config
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  template:
+    src: default.conf.j2
+    dest: "{{ docker_user_registered.home }}/nginx/conf.d/default.conf"
+    mode: 0644
+  tags:
+    - nginx
+
+- name: create webserver root directory
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  file:
+    path: "{{ docker_user_registered.home }}/nginx/www/{{ ansible_hostname }}"
+    state: directory
+    mode: 0755
+  tags:
+    - nginx
+
+- name: create user log directory
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  file:
+    path: "{{ docker_user_registered.home }}/nginx/log"
+    state: directory
+    mode: "0700"
+
+- name: verify running container
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  docker_container_info:
+    name: nginx
+  register: nginx_container_running
+
+- name: nginx container
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  docker_container:
+    name: nginx
+    image: konstruktoid/nginx
+    state: started
+    restart: 'yes'
+    ports:
+      - "8080:80"
+    cap_drop: all
+    capabilities:
+      - chown
+      - dac_override
+      - net_bind_service
+      - setgid
+      - setuid
+    volumes:
+      - "{{ docker_user_registered.home }}/nginx/:/etc/nginx/:ro"
+      - "{{ docker_user_registered.home }}/nginx/www/{{ ansible_hostname }}:/var/www/{{ ansible_hostname }}:ro"
+      - "{{ docker_user_registered.home }}/nginx/log:/var/log/nginx"
+    pull: 'yes'
+    restart_policy: on-failure
+    restart_retries: 3
+    hostname: "{{ ansible_nodename }}"
+    container_default_behavior: compatibility
+  when: not nginx_container_running.exists
+  tags:
+    - docker_container
+    - nginx
+
+- name: wait for nginx container
+  wait_for:
+    port: "8080"
+
+- name: get nginx container information
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  docker_container_info:
+    name: nginx
+  register: nginx_info
+
+- name: add skeleton index.html
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  template:
+    src: index.html.j2
+    dest: "{{ docker_user_registered.home }}/nginx/www/{{ ansible_hostname }}/index.html"
+    mode: 0644
+  tags:
+    - nginx
+
+- name: write docker help instructions
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/NGINX.README"
+    mode: "0644"
+    create: 'yes'
+    block: |
+      The NGINX Docker container is managed by the {{ docker_user }} user.
+
+      To control the container, run the following commands
+        sudo -i -u {{ docker_user }}
+
+      Ensure the following environment variables are set
+        XDG_RUNTIME_DIR="/run/user/{{ docker_user_registered.uid }}"
+        PATH="{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        DOCKER_HOST="unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+
+      Run any Docker commands as usual
+        docker ps
+        docker logs nginx
+
+      Logs are available in the {{ docker_user_registered.home }}/nginx_log directory.
+
+      See https://docs.docker.com/engine/security/rootless/ for more information
+...

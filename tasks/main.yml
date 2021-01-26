@@ -1,0 +1,27 @@
+---
+- name: pre-installation checks
+  include: pre.yml
+
+- name: install required packages
+  include: pre_package.yml
+
+- name: manage docker user
+  include: manage_user.yml
+
+- name: install docker python dependencies
+  include: docker_python.yml
+
+- name: manage rootless docker
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
+    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+  include: docker_rootless.yml
+
+- name: start nginx container
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
+    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+  include: nginx_container.yml
+...

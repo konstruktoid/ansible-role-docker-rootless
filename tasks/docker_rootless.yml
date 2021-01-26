@@ -1,0 +1,90 @@
+---
+- name: create "{{ docker_user }}" docker bin dir
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  file:
+    path: "{{ docker_user_registered.home }}/bin"
+    state: directory
+    mode: "0700"
+
+- name: create "{{ docker_user }}" systemd config dir
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  file:
+    path: "{{ docker_user_registered.home }}/.config/systemd/user"
+    state: directory
+    mode: "0700"
+
+- name: download docker-{{ docker_release }}.tgz
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  get_url:
+    url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
+    dest: "{{ docker_user_registered.home }}/docker-{{ docker_release }}.tgz"
+    checksum: "sha256:{{ docker_release_shasum }}"
+
+- name: download docker-rootless-extras-{{ docker_release }}.tgz
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  get_url:
+    url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
+    dest: "{{ docker_user_registered.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
+    checksum: "sha256:{{ docker_release_rootless_shasum }}"
+
+- name: extract docker-{{ docker_release }}.tgz into {{ docker_user_registered.home }}/bin
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  unarchive:
+    src: "{{ docker_user_registered.home }}/docker-{{ docker_release }}.tgz"
+    dest: "{{ docker_user_registered.home }}/bin"
+    extra_opts:
+      - --strip-components=1
+    remote_src: 'yes'
+
+- name: extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_registered.home }}/bin
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  unarchive:
+    src: "{{ docker_user_registered.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
+    dest: "{{ docker_user_registered.home }}/bin"
+    extra_opts:
+      - --strip-components=1
+    remote_src: 'yes'
+
+- name: add docker systemd service
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  template:
+    src: docker.service.j2
+    dest: "{{ docker_user_registered.home }}/.config/systemd/user/docker.service"
+    backup: 'yes'
+    mode: 0600
+
+- name: enable and start rootless docker
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  systemd:
+    name: docker.service
+    enabled: 'yes'
+    state: started
+    scope: user
+    daemon_reload: 'yes'
+
+- name: write docker help instructions
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/DOCKER.README"
+    mode: "0644"
+    create: 'yes'
+    block: |
+      The docker.service is managed by {{ docker_user }}
+      To control the docker.service, run the following commands
+        sudo -i -u {{ docker_user }}
+        systemctl --user (start|stop|restart|status) docker.service
+
+      Ensure the following environment variables are set
+        XDG_RUNTIME_DIR="/run/user/{{ docker_user_registered.uid }}"
+        PATH="{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        DOCKER_HOST="unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+
+      See https://docs.docker.com/engine/security/rootless/ for more information
+...

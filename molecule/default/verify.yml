@@ -1,0 +1,59 @@
+---
+- name: Verify
+  hosts: all
+  any_errors_fatal: true
+
+  tasks:
+    - name: include default vars
+      include_vars:
+        dir: ../../defaults/
+        extensions:
+          - 'yml'
+
+    - name: stat Docker socket
+      become: 'yes'
+      stat:
+        path: /var/run/docker.sock
+      register: docker_socket
+
+    - name: verify that the Docker socket does not exist
+      fail:
+        msg: "failing since the Docker socket does exist"
+      when: docker_socket.stat.exists
+
+    - name: verify user creation
+      shell: id "{{ docker_user }}"
+      register: id_docker_user
+      changed_when: id_docker_user.rc != 0
+      failed_when: id_docker_user.rc != 0
+
+    - name: verify user subuid
+      shell: grep "^{{ docker_user }}:" /etc/subuid
+      register: subuid_docker_user
+      changed_when: subuid_docker_user.rc != 0
+      failed_when: subuid_docker_user.rc != 0
+
+    - name: verify user subgid
+      shell: grep "^{{ docker_user }}:" /etc/subgid
+      register: subgid_docker_user
+      changed_when: subgid_docker_user.rc != 0
+      failed_when: subgid_docker_user.rc != 0
+
+    - name: verify "{{ docker_user }}" dockerd
+      shell: ps -fe | grep 'dockerd$' | awk '{print $1}'
+      register: ps_dockerd
+      failed_when: ps_dockerd.stdout != docker_user
+
+    - name: verify that port 8080 is open
+      wait_for:
+        port: 8080
+        timeout: 1
+        state: started
+
+    - name: verify that the website is up
+      uri:
+        url: http://127.0.0.1:8080
+        return_content: 'yes'
+      register: published
+      failed_when: "'nginx - a rootless Docker container' not in published.content"
+...

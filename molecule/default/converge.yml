@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include docker_rootless"
+      include_role:
+        name: "ansible-docker-rootless"

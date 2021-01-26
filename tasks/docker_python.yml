@@ -1,0 +1,28 @@
+---
+- name: install python3-pip
+  become: 'yes'
+  apt:
+    name: python3-pip
+    state: present
+    install_recommends: 'no'
+  tags:
+    - python
+
+- name: install python3-setuptools
+  become: 'yes'
+  apt:
+    name: python3-setuptools
+    state: present
+    install_recommends: 'no'
+  tags:
+    - python
+
+- name: install python3 docker
+  become: 'yes'
+  pip:
+    name: docker
+    state: present
+  tags:
+    - docker
+    - python
+...

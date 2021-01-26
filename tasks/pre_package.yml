@@ -1,0 +1,22 @@
+---
+- name: apt update
+  become: 'yes'
+  apt:
+    update_cache: 'yes'
+    cache_valid_time: 1800
+  tags:
+    - apt
+
+- name: install required packages
+  become: 'yes'
+  apt:
+    name: ['acl', 'uidmap']
+    state: present
+    install_recommends: 'no'
+  tags:
+    - acl
+    - apt
+    - packages
+    - gidmap
+    - uidmap
+...
