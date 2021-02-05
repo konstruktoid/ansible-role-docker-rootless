@@ -55,7 +55,7 @@
   become: 'yes'
   become_user: "{{ docker_user }}"
   template:
-    src: docker.service.j2
+    src: docker_rootless.service.j2
     dest: "{{ docker_user_registered.home }}/.config/systemd/user/docker.service"
     backup: 'yes'
     mode: 0600

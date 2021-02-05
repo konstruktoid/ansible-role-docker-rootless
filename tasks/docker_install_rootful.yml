@@ -1,0 +1,49 @@
+---
+- name: apt-transport-https installation
+  become: 'yes'
+  apt:
+    name: apt-transport-https
+    state: present
+    update_cache: 'yes'
+    cache_valid_time: 3600
+  tags:
+    - apt
+    - docker
+
+- name: import docker gpg key
+  become: 'yes'
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+    - docker
+
+- name: apt docker.list
+  become: 'yes'
+  template:
+    src: docker.repo.j2
+    dest: /etc/apt/sources.list.d/docker.list
+    backup: 'yes'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - apt
+    - docker
+
+- name: apt update
+  become: 'yes'
+  apt:
+    update_cache: 'yes'
+  tags:
+    - apt
+
+- name: install docker
+  become: 'yes'
+  apt:
+    name: ['docker-ce', 'docker-ce-rootless-extras']
+    state: present
+  tags:
+    - apt
+    - docker
+...

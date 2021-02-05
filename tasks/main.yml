@@ -11,12 +11,29 @@
 - name: install docker python dependencies
   include: docker_python.yml
 
-- name: manage rootless docker
+- name: install rootful docker
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
+    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+  include: docker_install_rootful.yml
+  when: docker_rootful
+
+- name: configure rootful docker service
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
+    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+  include: docker_service_rootful.yml
+  when: docker_rootful
+
+- name: rootless docker
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
     PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
   include: docker_rootless.yml
+  when: not docker_rootful
 
 - name: start nginx container
   environment:

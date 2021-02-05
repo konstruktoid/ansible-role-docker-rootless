@@ -1,6 +1,8 @@
 <html>
 <h1>nginx - a rootless Docker container</h1>
 <pre>
+Rootful Docker daemon: {{ docker_rootful }}
+
 Image: {{ nginx_info.container.Config.Image }}
 
 Binds: {{ nginx_info.container.HostConfig.Binds }}

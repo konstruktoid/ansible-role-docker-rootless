@@ -1,0 +1,55 @@
+---
+- name: sysctl
+  become: 'yes'
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: 'yes'
+    state: present
+    reload: 'yes'
+  tags:
+    - sysctl
+
+- name: docker systemd service
+  become: 'yes'
+  template:
+    src: docker_rootful.service.j2
+    dest: /etc/systemd/system/docker.service
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - docker
+
+- name: disable rootful docker daemon
+  become: 'yes'
+  systemd:
+    name: docker
+    state: stopped
+    enabled: 'no'
+  tags:
+    - docker
+
+- name: stat {{ docker_user_registered.uid }}/docker.sock
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  stat:
+    path: "/run/user/{{ docker_user_registered.uid }}/docker.sock"
+  register: docker_rootless_sock
+
+- name: install rootless docker
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  command: dockerd-rootless-setuptool.sh install
+  when: not docker_rootless_sock.stat.exists
+
+- name: enable and start rootless docker
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  systemd:
+    name: docker.service
+    enabled: 'yes'
+    state: started
+    scope: user
+    daemon_reload: 'yes'
+...

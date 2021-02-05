@@ -21,7 +21,7 @@
 - name: fail if docker rootful is available
   fail:
     msg: "quitting since docker rootful is available"
-  when: docker_socket.stat.exists
+  when: not docker_rootful and docker_socket.stat.exists
   tags:
     - docker
     - rootful
