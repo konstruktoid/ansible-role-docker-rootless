@@ -4,11 +4,6 @@ An [Ansible](https://www.ansible.com/) example to install a rootless
 [Docker](https://www.docker.com/) server and start a [NGINX](https://www.nginx.com/)
 container.
 
-Note that this example is using the standalone static binaries as described in
-[Run the Docker daemon as a non-root user (Rootless mode)](https://docs.docker.com/engine/security/rootless/)
-and may be deprecated in a near future. See [https://github.com/docker/roadmap/issues/188](https://github.com/docker/roadmap/issues/188)
-for more information.
-
 ```shell
 Do not use any of this without first testing in a non-operational environment.
 ```
@@ -31,24 +26,36 @@ available to the container.
 The user running the daemon can of course run multiple containers,
 or we can create multiple users running multiple instances of the Docker daemon.
 
-## The Variables: user name and Docker release
+## The Variables: rootfull, user name and Docker release
 
 Since the point with this repository is to get a rootless Docker server and a
 basic web container up and running, we'll be ignoring most of the configuration
 options and only focusing on the most relevant parts: the user that will run
-the service and how to get the Docker binaries.
+the service and how to get the Docker binaries if you don't want to install a
+rootful daemon.
 
-In `./defaults/main.yml` we define the name of the Docker user that will be
-created with the `docker_user` variable.
+In `./defaults/main.yml` we first choose if we want to install Docker using
+`.deb` packages, also known as the "rootful" installation since it requires
+`root` permissions and installs the upstream Docker daemon or download the
+static binaries and do a manual install.
+
+If we set `docker_rootful: false` we will download the static binaries and do
+a manual install, not requiring any `root` permissions.
+
+We then define the name of the Docker user that will be created with the
+`docker_user` variable. This user will download and install the binaries if
+`docker_rootful: false` or else the user will be the one running the container.
 
 The `docker_url` and `docker_release` variables defines where we find the
-relevant binaries and which version we should use.
+relevant binaries and which version we should use when doing a manual
+installation.
 
 `docker_release_shasum` and `docker_release_rootless_shasum` are used to verify
 the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 module.
 
 ```yaml
+docker_rootful: false
 docker_user: nginxu
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_release: "20.10.2"
@@ -104,7 +111,7 @@ without being logged in. ([systemd-run](https://www.freedesktop.org/software/sys
   when: not docker_user_lingering.stat.exists
 ```
 
-### Docker installation
+### User directories
 
 Since we are installing the Docker daemon in a directory owned by
 `{{ docker_user }}`, in this example the user home directory, we also
@@ -140,8 +147,11 @@ with the correct ownership and locations.
     mode: "0700"
 ```
 
+### Manual Docker installation
+
 After creating the necessary directories we, download the packages defined by
-`url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"` and `url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"`
+`url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"` and
+`url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"`
 and verify them using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 module.
 
@@ -216,6 +226,66 @@ ExecStart="{{ docker_user_registered.home }}/bin/dockerd-rootless.sh"
 The `docker.service` is enabled and started using the [systemd](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html)
 module. In addition to using `become: 'yes'` and
 `become_user: "{{ docker_user }}"`, we need to set `scope: user`.
+
+```yaml
+- name: enable and start rootless docker
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  systemd:
+    name: docker.service
+    enabled: 'yes'
+    state: started
+    scope: user
+    daemon_reload: 'yes'
+```
+
+### Package Docker installation
+
+If we're installing using `apt`, we'll only need to install
+the `docker-ce` and `docker-ce-rootless-extras` packages.
+
+````yaml
+- name: install docker
+  become: 'yes'
+  apt:
+    name: ['docker-ce', 'docker-ce-rootless-extras']
+    state: present
+```
+
+After installation, we'll disable the rootful Docker daemon
+since our priority is reducing any attack surface and the usage
+of `root` privileges.
+
+```yaml
+- name: disable rootful docker daemon
+  become: 'yes'
+  systemd:
+    name: docker
+    state: stopped
+    enabled: 'no'
+  tags:
+    - docker
+```
+
+We then install the rootless Docker daemon as the `{{ docker_user }}` unless
+`/run/user/{{ docker_user_registered.uid }}/docker.sock` exists.
+
+```yaml
+- name: stat {{ docker_user_registered.uid }}/docker.sock
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  stat:
+    path: "/run/user/{{ docker_user_registered.uid }}/docker.sock"
+  register: docker_rootless_sock
+
+- name: install rootless docker
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  command: dockerd-rootless-setuptool.sh install
+  when: not docker_rootless_sock.stat.exists
+```
+
+After the installation we enable and start the daemon.
 
 ```yaml
 - name: enable and start rootless docker
