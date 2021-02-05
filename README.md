@@ -244,7 +244,7 @@ module. In addition to using `become: 'yes'` and
 If we're installing using `apt`, we'll only need to install
 the `docker-ce` and `docker-ce-rootless-extras` packages.
 
-````yaml
+```yaml
 - name: install docker
   become: 'yes'
   apt:
