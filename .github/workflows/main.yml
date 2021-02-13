@@ -1,0 +1,15 @@
+on: [push, pull_request]
+name: YAML lint
+jobs:
+  konstruktoidYAMLLint:
+    name: Konstruktoid YAML lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Konstruktoid YAML lint
+        uses: ./action-lint
+      - name: Create Issue
+        if: failure()
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
