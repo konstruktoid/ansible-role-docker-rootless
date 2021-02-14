@@ -22,26 +22,31 @@
       when: not docker_rootful and docker_socket.stat.exists
 
     - name: verify user creation
-      shell: id "{{ docker_user }}"
+      command: id "{{ docker_user }}"
       register: id_docker_user
       changed_when: id_docker_user.rc != 0
       failed_when: id_docker_user.rc != 0
 
     - name: verify user subuid
-      shell: grep "^{{ docker_user }}:" /etc/subuid
+      command: grep "^{{ docker_user }}:" /etc/subuid
       register: subuid_docker_user
       changed_when: subuid_docker_user.rc != 0
       failed_when: subuid_docker_user.rc != 0
 
     - name: verify user subgid
-      shell: grep "^{{ docker_user }}:" /etc/subgid
+      command: grep "^{{ docker_user }}:" /etc/subgid
       register: subgid_docker_user
       changed_when: subgid_docker_user.rc != 0
       failed_when: subgid_docker_user.rc != 0
 
     - name: verify "{{ docker_user }}" dockerd
-      shell: ps -fe | grep 'dockerd$' | awk '{print $1}'
+      shell: >
+        set -o pipefail &&
+        ps -fe | grep 'dockerd$' | awk '{print $1}'
+      args:
+        executable: /bin/bash
       register: ps_dockerd
+      changed_when: ps_dockerd.stdout != docker_user
       failed_when: ps_dockerd.stdout != docker_user
 
     - name: verify that port 8080 is open
