@@ -1,16 +1,4 @@
 ---
-- name: apt-transport-https installation
-  become: 'yes'
-  apt:
-    name: apt-transport-https
-    state: present
-    update_cache: 'yes'
-    cache_valid_time: 3600
-  when: ansible_os_family == "Debian"
-  tags:
-    - apt
-    - docker
-
 - name: import docker gpg key
   become: 'yes'
   apt_key:

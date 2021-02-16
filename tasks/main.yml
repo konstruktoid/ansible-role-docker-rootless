@@ -5,9 +5,6 @@
 - name: manage docker user
   include: manage_user.yml
 
-- name: install docker python dependencies
-  include: docker_python.yml
-
 - name: install rootful docker
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
