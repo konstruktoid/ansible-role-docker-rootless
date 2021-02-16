@@ -48,35 +48,4 @@
       register: ps_dockerd
       changed_when: ps_dockerd.stdout != docker_user
       failed_when: ps_dockerd.stdout != docker_user
-
-    - name: verify that port 8080 is open
-      wait_for:
-        port: 8080
-        timeout: 1
-        state: started
-
-    - name: verify that the website is up
-      uri:
-        url: http://127.0.0.1:8080
-        return_content: 'yes'
-      register: published
-      failed_when: "'nginx - a rootless Docker container' not in published.content"
-
-    - name: debug state
-      debug:
-        var: docker_rootful
-
-    - name: verify if docker rootful daemon
-      uri:
-        url: http://127.0.0.1:8080
-        return_content: 'yes'
-      failed_when: "'Rootful Docker daemon: True' not in published.content"
-      when: docker_rootful
-
-    - name: verify if docker rootless daemon
-      uri:
-        url: http://127.0.0.1:8080
-        return_content: 'yes'
-      failed_when: "'Rootful Docker daemon: False' not in published.content"
-      when: not docker_rootful
 ...
