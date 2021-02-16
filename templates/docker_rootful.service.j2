@@ -9,11 +9,7 @@ Requires=docker.socket
 
 [Service]
 Type=notify
-{% if kernel >= "4" %}
 ExecStart=/usr/bin/dockerd {{ docker_rootful_opts }}
-{% else %}
-ExecStart=/usr/bin/dockerd {{ docker_rootful_opts_old_kernel }}
-{% endif %}
 ExecReload=/bin/kill -s HUP $MAINPID
 TimeoutSec=0
 RestartSec=2
