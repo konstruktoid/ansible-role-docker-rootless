@@ -14,6 +14,18 @@ provisioner:
       callback_whitelist: profile_tasks
   log: true
 platforms:
+  - name: buster
+    box: bento/debian-10
+    instance_raw_config_args:
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
+  - name: centos
+    box: bento/centos-8
+    config_options:
+      vm.boot_timeout: 600
+    instance_raw_config_args:
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
   - name: focal
     box: bento/ubuntu-20.04
     config_options:
@@ -21,16 +33,12 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
-    interfaces:
-      - network_name: forwarded_port
-        guest: 8080
-        host: 8080
 verifier:
   name: ansible
 lint: |
   set -e
-  ansible-lint .
-  yamllint -d "{extends: default, rules: {line-length: {level: warning}}}" .
+  ansible-lint --exclude .git --exclude .github --exclude tests/
+  yamllint -d "{extends: default, ignore: .git*, rules: {line-length: {level: warning}}}" .
 scenario:
   name: default
   create_sequence:
