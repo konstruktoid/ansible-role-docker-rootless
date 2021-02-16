@@ -4,15 +4,17 @@
   apt:
     update_cache: 'yes'
     cache_valid_time: 1800
+  when: ansible_os_family == "Debian"
   tags:
     - apt
 
 - name: install required packages
   become: 'yes'
   apt:
-    name: ['acl', 'uidmap']
+    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'uidmap']
     state: present
     install_recommends: 'no'
+  when: ansible_os_family == "Debian"
   tags:
     - acl
     - apt

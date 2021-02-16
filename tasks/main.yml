@@ -1,7 +1,4 @@
 ---
-- name: pre-installation checks
-  include: pre.yml
-
 - name: install required packages
   include: pre_package.yml
 
@@ -34,11 +31,4 @@
     DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
   include: docker_rootless.yml
   when: not docker_rootful
-
-- name: start nginx container
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
-    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
-  include: nginx_container.yml
 ...

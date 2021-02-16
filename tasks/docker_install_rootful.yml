@@ -6,6 +6,7 @@
     state: present
     update_cache: 'yes'
     cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
   tags:
     - apt
     - docker
@@ -15,6 +16,7 @@
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  when: ansible_os_family == "Debian"
   tags:
     - docker
 
@@ -27,6 +29,7 @@
     mode: 0644
     owner: root
     group: root
+  when: ansible_os_family == "Debian"
   tags:
     - apt
     - docker
@@ -35,15 +38,17 @@
   become: 'yes'
   apt:
     update_cache: 'yes'
+  when: ansible_os_family == "Debian"
   tags:
     - apt
 
 - name: install docker
   become: 'yes'
-  apt:
+  package:
     name: ['docker-ce', 'docker-ce-rootless-extras']
     state: present
   tags:
     - apt
+    - dnf
     - docker
 ...
