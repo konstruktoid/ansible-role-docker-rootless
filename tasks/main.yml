@@ -1,31 +1,49 @@
 ---
-- name: install required packages
-  include: pre_package.yml
+- name: install required packages and configure sysctl
+  include: pre.yml
 
 - name: manage docker user
   include: manage_user.yml
 
 - name: install rootful docker
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
-    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   include: docker_install_rootful.yml
   when: docker_rootful
 
 - name: configure rootful docker service
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
-    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   include: docker_service_rootful.yml
   when: docker_rootful
 
 - name: rootless docker
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_registered.uid }}"
-    PATH: "{{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
-  include: docker_rootless.yml
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+  include: docker_install_rootless.yml
   when: not docker_rootful
+
+- name: write docker help instructions
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/DOCKER.README"
+    mode: "0644"
+    create: 'yes'
+    block: |
+      The docker.service is managed by {{ docker_user }}
+      To control the docker.service, run the following commands
+        sudo -i -u {{ docker_user }}
+        systemctl --user (start|stop|restart|status) docker.service
+
+      Ensure the following environment variables are set
+        XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
+        PATH="{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+
+      See https://docs.docker.com/engine/security/rootless/ for more information
 ...
