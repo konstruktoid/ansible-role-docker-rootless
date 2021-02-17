@@ -1,15 +1,4 @@
 ---
-- name: sysctl
-  become: 'yes'
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
-    sysctl_set: 'yes'
-    state: present
-    reload: 'yes'
-  tags:
-    - sysctl
-
 - name: docker systemd service
   become: 'yes'
   template:
@@ -30,11 +19,11 @@
   tags:
     - docker
 
-- name: stat {{ docker_user_registered.uid }}/docker.sock
+- name: stat {{ docker_user_info.uid }}/docker.sock
   become: 'yes'
   become_user: "{{ docker_user }}"
   stat:
-    path: "/run/user/{{ docker_user_registered.uid }}/docker.sock"
+    path: "/run/user/{{ docker_user_info.uid }}/docker.sock"
   register: docker_rootless_sock
 
 - name: install rootless docker
@@ -43,7 +32,7 @@
   command: dockerd-rootless-setuptool.sh install
   when: not docker_rootless_sock.stat.exists
 
-- name: enable and start rootless docker
+- name: enable and start docker (rootful installation)
   become: 'yes'
   become_user: "{{ docker_user }}"
   systemd:
