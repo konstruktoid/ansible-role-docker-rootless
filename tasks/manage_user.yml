@@ -5,7 +5,7 @@
     name: "{{ docker_user }}"
     state: present
     shell: /bin/bash
-  register: docker_user_registered
+  register: docker_user_info
   tags:
     - user
 
@@ -29,7 +29,7 @@
   become: 'yes'
   become_user: "{{ docker_user }}"
   file:
-    path: "{{ docker_user_registered.home }}/.ansible/tmp"
+    path: "{{ docker_user_info.home }}/.ansible/tmp"
     state: directory
     mode: "0700"
 ...
