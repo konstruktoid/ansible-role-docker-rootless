@@ -62,8 +62,8 @@ plugin.
 ### User creation and systemd lingering
 
 Using the [user](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html)
-module the roles creates the `{{ docker_user }}`, and also the `docker_user_registered`
-variable. `docker_user_registered` will be used as a easy way to get the
+module the roles creates the `{{ docker_user }}`, and also the `docker_user_info`
+variable. `docker_user_info` will be used as a easy way to get the
 `{{ docker_user }}` environment settings.
 
 > Enabling lingering means that user@.service is started automatically during
@@ -78,7 +78,7 @@ Since you are installing the Docker daemon in a directory owned by
 need to create the required Ansible, Docker and systemd directories.
 
 Note that you use `become_user: "{{ docker_user }}"` and the
-`{{ docker_user_registered.home }}` variable to create the directories
+`{{ docker_user_info.home }}` variable to create the directories
 with the correct ownership and locations.
 
 ### Manual Docker installation
@@ -90,20 +90,20 @@ and verify them using the [get_url](https://docs.ansible.com/ansible/latest/coll
 module.
 
 Extracting the downloaded packages are done by the [unarchive](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html)
-module, with the `{{ docker_user_registered.home }}/bin` directory as a destination.
+module, with the `{{ docker_user_info.home }}/bin` directory as a destination.
 
 The rootless Docker systemd service file requires some modifications before the
-daemon can be managed. We use the previously created `docker_user_registered`
+daemon can be managed. We use the previously created `docker_user_info`
 variable to set the correct environment values and `ExecStart` setting in the
 `docker.service` template before rendering the template in the
-`{{ docker_user_registered.home }}/.config/systemd/user/`
+`{{ docker_user_info.home }}/.config/systemd/user/`
 directory.
 
 ```sh
-Environment="DOCKER_HOST=unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
-Environment="PATH={{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_registered.uid }}"
-ExecStart="{{ docker_user_registered.home }}/bin/dockerd-rootless.sh"
+Environment="DOCKER_HOST=unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+Environment="PATH={{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_info.uid }}"
+ExecStart="{{ docker_user_info.home }}/bin/dockerd-rootless.sh"
 ```
 
 The `docker.service` is enabled and started using the [systemd](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html)
@@ -120,7 +120,7 @@ since our priority is reducing any attack surface and the usage
 of `root` privileges.
 
 We then install the rootless Docker daemon as the `{{ docker_user }}` unless
-`/run/user/{{ docker_user_registered.uid }}/docker.sock` exists.
+`/run/user/{{ docker_user_info.uid }}/docker.sock` exists.
 
 After the installation you enable and start the user daemon.
 
