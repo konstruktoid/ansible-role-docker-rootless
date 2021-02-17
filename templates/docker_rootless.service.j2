@@ -3,10 +3,10 @@ Description=Docker Application Container Engine (Rootless)
 Documentation=https://docs.docker.com/engine/security/rootless/
 
 [Service]
-Environment="DOCKER_HOST=unix:///run/user/{{ docker_user_registered.uid }}/docker.sock"
-Environment="PATH={{ docker_user_registered.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_registered.uid }}"
-ExecStart="{{ docker_user_registered.home }}/bin/dockerd-rootless.sh"
+Environment="DOCKER_HOST=unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+Environment="PATH={{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_info.uid }}"
+ExecStart="{{ docker_user_info.home }}/bin/dockerd-rootless.sh"
 ExecReload=/bin/kill -s HUP $MAINPID
 TimeoutSec=0
 RestartSec=2
