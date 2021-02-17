@@ -10,17 +10,6 @@
         extensions:
           - 'yml'
 
-    - name: stat Docker socket
-      become: 'yes'
-      stat:
-        path: /var/run/docker.sock
-      register: docker_socket
-
-    - name: verify that the Docker socket does not exist
-      fail:
-        msg: "failing since the Docker socket does exist"
-      when: not docker_rootful and docker_socket.stat.exists
-
     - name: verify user creation
       command: id "{{ docker_user }}"
       register: id_docker_user
@@ -46,6 +35,6 @@
       args:
         executable: /bin/bash
       register: ps_dockerd
-      changed_when: ps_dockerd.stdout != docker_user
-      failed_when: ps_dockerd.stdout != docker_user
+      changed_when: docker_user[:7] not in ps_dockerd.stdout
+      failed_when: docker_user[:7] not in ps_dockerd.stdout
 ...
