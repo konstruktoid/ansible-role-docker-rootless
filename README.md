@@ -66,10 +66,9 @@ module the roles creates the `{{ docker_user }}`, and also the `docker_user_info
 variable. `docker_user_info` will be used as a easy way to get the
 `{{ docker_user }}` environment settings.
 
-> Enabling lingering means that user@.service is started automatically during
+> Enabling lingering means that `user@.service` is started automatically during
 boot, even if the user is not logged in, and that the service is not terminated
-when the user logs out. Enabling lingering allows the user to run processes
-without being logged in. ([systemd-run](https://www.freedesktop.org/software/systemd/man/systemd-run.html))
+when the user logs out. ([systemd-run](https://www.freedesktop.org/software/systemd/man/systemd-run.html))
 
 ### User directories
 
