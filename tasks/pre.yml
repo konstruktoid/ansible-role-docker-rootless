@@ -66,6 +66,7 @@
     - sysctl
 
 - name: load the overlay2 module
+  become: 'yes'
   modprobe:
     name: overlay
     state: present
