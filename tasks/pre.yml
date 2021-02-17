@@ -41,4 +41,34 @@
   tags:
     - docker
     - python
+
+- name: sysctl net.ipv4.ip_forward
+  become: 'yes'
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: 'yes'
+    state: present
+    reload: 'yes'
+  tags:
+    - sysctl
+
+- name: sysctl kernel.unprivileged_userns_clone
+  become: 'yes'
+  sysctl:
+    name: kernel.unprivileged_userns_clone
+    value: "1"
+    sysctl_set: 'yes'
+    state: present
+    reload: 'yes'
+  when: ansible_distribution == "Debian"
+  tags:
+    - sysctl
+
+- name: load the overlay2 module
+  modprobe:
+    name: overlay
+    state: present
+    params: 'permit_mounts_in_userns=1'
+  when: ansible_distribution == "Debian"
 ...
