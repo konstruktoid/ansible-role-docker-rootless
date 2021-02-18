@@ -33,6 +33,16 @@
     - packages
     - firewalld
 
+- name: install slirp4netns
+  become: 'yes'
+  package:
+    name: "slirp4netns"
+    state: present
+  tags:
+    - apt
+    - dnf
+    - docker
+
 - name: install python3 docker
   become: 'yes'
   pip:
