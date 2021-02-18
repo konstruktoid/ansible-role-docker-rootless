@@ -1,5 +1,7 @@
 ---
-- hosts: localhost
-  remote_user: root
+- hosts: all
+  any_errors_fatal: true
   tasks:
-    - include: ../tasks/main.yml
+    - include_role:
+        name: konstruktoid.docker_rootless
+...
