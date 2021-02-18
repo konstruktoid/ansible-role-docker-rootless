@@ -16,10 +16,21 @@
     name: docker
     state: stopped
     enabled: 'no'
+  when: not docker_rootful_enabled
   tags:
     - docker
 
-- name: stat {{ docker_user_info.uid }}/docker.sock
+- name: enable rootful docker daemon
+  become: 'yes'
+  systemd:
+    name: docker
+    state: started
+    enabled: 'yes'
+  when: docker_rootful_enabled
+  tags:
+    - docker
+
+- name: stat /run/user/{{ docker_user_info.uid }}/docker.sock
   become: 'yes'
   become_user: "{{ docker_user }}"
   stat:
