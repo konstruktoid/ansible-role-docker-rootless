@@ -10,31 +10,82 @@
         extensions:
           - 'yml'
 
-    - name: verify user creation
-      command: id "{{ docker_user }}"
-      register: id_docker_user
-      changed_when: id_docker_user.rc != 0
-      failed_when: id_docker_user.rc != 0
+    - name: register "{{ docker_user }}" info
+      become: 'yes'
+      user:
+        name: "{{ docker_user }}"
+      check_mode: 'yes'
+      register: docker_user_info
+      tags:
+        - user
 
-    - name: verify user subuid
-      command: grep "^{{ docker_user }}:" /etc/subuid
-      register: subuid_docker_user
-      changed_when: subuid_docker_user.rc != 0
-      failed_when: subuid_docker_user.rc != 0
+    - name: verification block
+      environment:
+        XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+      block:
+        - name: verify user creation
+          command: id "{{ docker_user }}"
+          register: id_docker_user
+          changed_when: id_docker_user.rc != 0
+          failed_when: id_docker_user.rc != 0
 
-    - name: verify user subgid
-      command: grep "^{{ docker_user }}:" /etc/subgid
-      register: subgid_docker_user
-      changed_when: subgid_docker_user.rc != 0
-      failed_when: subgid_docker_user.rc != 0
+        - name: verify user subuid
+          command: grep "^{{ docker_user }}:" /etc/subuid
+          register: subuid_docker_user
+          changed_when: subuid_docker_user.rc != 0
+          failed_when: subuid_docker_user.rc != 0
 
-    - name: verify "{{ docker_user }}" dockerd
-      shell: >
-        set -o pipefail &&
-        ps -fe | grep 'dockerd$' | awk '{print $1}'
-      args:
-        executable: /bin/bash
-      register: ps_dockerd
-      changed_when: docker_user[:7] not in ps_dockerd.stdout
-      failed_when: docker_user[:7] not in ps_dockerd.stdout
+        - name: verify user subgid
+          command: grep "^{{ docker_user }}:" /etc/subgid
+          register: subgid_docker_user
+          changed_when: subgid_docker_user.rc != 0
+          failed_when: subgid_docker_user.rc != 0
+
+        - name: verify "{{ docker_user }}" dockerd
+          shell: >
+            set -o pipefail &&
+            ps -fe | grep 'dockerd$' | awk '{print $1}'
+          args:
+            executable: /bin/bash
+          register: ps_dockerd
+          changed_when: docker_user[:7] not in ps_dockerd.stdout
+          failed_when: docker_user[:7] not in ps_dockerd.stdout
+
+        - name: nginx container
+          become: 'yes'
+          become_user: "{{ docker_user }}"
+          docker_container:
+            name: nginx
+            image: konstruktoid/nginx
+            state: started
+            cap_drop: all
+            capabilities:
+              - chown
+              - dac_override
+              - net_bind_service
+              - setgid
+              - setuid
+            pull: 'yes'
+            hostname: "{{ ansible_nodename }}"
+            container_default_behavior: compatibility
+          tags:
+            - docker_container
+            - nginx
+
+        - name: verify running container
+          become: 'yes'
+          become_user: "{{ docker_user }}"
+          docker_container_info:
+            name: nginx
+          register: nginx_container_running
+          changed_when: not nginx_container_running
+          failed_when: not nginx_container_running
+
+        - name: assert container settings
+          assert:
+            that:
+              - docker_user_info.uid|string in nginx_container_running.container.NetworkSettings.SandboxKey
+              - docker_user_info.home in nginx_container_running.container.HostnamePath
 ...

@@ -15,12 +15,11 @@ provisioner:
   log: true
   inventory:
     host_vars:
-      busterroot:
-        docker_rootful: true
       centosroot:
         docker_rootful: true
       focalroot:
         docker_rootful: true
+        docker_rootful_enabled: true
 platforms:
   - name: buster
     box: bento/debian-10
@@ -38,11 +37,6 @@ platforms:
     box: bento/ubuntu-20.04
     config_options:
       vm.boot_timeout: 600
-    instance_raw_config_args:
-      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
-    memory: 1024
-  - name: busterroot
-    box: bento/debian-10
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
