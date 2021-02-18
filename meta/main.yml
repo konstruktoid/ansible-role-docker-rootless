@@ -2,14 +2,23 @@
 galaxy_info:
   author: Thomas Sjögren
   role_name: docker_rootless
-  description: Rootless Docker test
+  description: Docker daemon installation, with rootless support
   license: apache
   min_ansible_version: 2.9
   platforms:
+    - name: Debian
+      versions:
+        - buster
+    - name: EL
+      versions:
+        - 8
     - name: Ubuntu
       versions:
         - focal
   galaxy_tags:
+    - centos
+    - debian
     - docker
-    - systemd
+    - rootless
+    - security
     - ubuntu
