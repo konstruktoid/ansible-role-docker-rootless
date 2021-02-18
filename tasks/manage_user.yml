@@ -9,6 +9,14 @@
   tags:
     - user
 
+- name: adding user "{{ docker_user }}" to systemd-journal group
+  become: 'yes'
+  user:
+    name: "{{ docker_user }}"
+    groups: systemd-journal
+    append: 'yes'
+  when: ansible_distribution == "Debian"
+
 - name: ensure "{{ docker_user }}" is lingering
   stat:
     path: "/var/lib/systemd/linger/{{ docker_user }}"
