@@ -5,44 +5,42 @@
 - name: manage docker user
   include: manage_user.yml
 
-- name: install rootful docker
+- name: rootful docker
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
-  include: docker_install_rootful.yml
-  when: docker_rootful
+  block:
+    - name: install rootful docker
+      include: docker_install_rootful.yml
 
-- name: configure rootful docker service
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
-  include: docker_service_rootful.yml
-  when: docker_rootful
+    - name: configure rootful docker service
+      include: docker_service_rootful.yml
+  when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
-- name: rootless docker
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+- name: debian information
+  debug:
+    msg: "slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10"
+  when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+
+- name: install and configure rootless docker
   include: docker_install_rootless.yml
   when: not docker_rootful
 
 - name: write docker help instructions
   blockinfile:
-    path: "{{ ansible_env.HOME }}/DOCKER.README"
+    path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
     mode: "0644"
     create: 'yes'
     block: |
       The docker.service is managed by {{ docker_user }}
       To control the docker.service, run the following commands
-        sudo -i -u {{ docker_user }}
+        sudo XDG_RUNTIME_DIR=/run/user/$(id -u {{ docker_user }}) -i -u {{ docker_user }}
         systemctl --user (start|stop|restart|status) docker.service
 
       Ensure the following environment variables are set
         XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
-        PATH="{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        PATH="{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
         DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
 
       See https://docs.docker.com/engine/security/rootless/ for more information
