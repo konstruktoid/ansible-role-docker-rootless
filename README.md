@@ -1,7 +1,7 @@
 # Docker rootless Ansible role
 
-An [Ansible](https://www.ansible.com/) role to configure a rootless
-[Docker](https://www.docker.com/) server.
+An [Ansible](https://www.ansible.com/) role to configure install and configure
+a [Docker](https://www.docker.com/) daemon running as a non-root user.
 
 ```shell
 Do not use any of this without first testing in a non-operational environment.
@@ -46,13 +46,18 @@ docker_user: dockeruser
 Before using this role you first have to decide if you want to install Docker
 using the packages available to the distribution, also known as the "rootful"
 installation since it requires `root` permissions and installs the upstream
-Docker daemon or download the static binaries and do a manual install.
+Docker daemon or if you want to download the static binaries and do a manual
+install.
 
 If you set `docker_rootful: false` you will download the static binaries and do
 a manual install, not requiring any `root` permissions.
 
-If `docker_rootful: true` then `docker_rootful_enabled` will decide if the
+If `docker_rootful: true`, then `docker_rootful_enabled` will decide if the
 daemon should be enabled as a service or not.
+
+Using `docker_rootful: true` and `docker_rootful_enabled: true`, will result in
+a standard Docker installation, with an additional Docker daemon, running as a
+non-root user.
 
 > Note that Debian 10 or earlier requires `docker_rootful: false` due to missing
 dependencies.
