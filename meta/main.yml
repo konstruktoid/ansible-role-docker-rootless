@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: Thomas Sjögren
+  author: konstruktoid
   role_name: docker_rootless
   description: Docker daemon installation, with rootless support
   license: apache
