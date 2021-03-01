@@ -2,10 +2,9 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
-BindsTo=containerd.service
 After=network-online.target firewalld.service containerd.service
 Wants=network-online.target
-Requires=docker.socket
+Requires=docker.socket containerd.service
 
 [Service]
 Type=notify
@@ -22,6 +21,7 @@ LimitCORE=infinity
 TasksMax=infinity
 Delegate=yes
 KillMode=process
+OOMScoreAdjust=-500
 
 [Install]
 WantedBy=multi-user.target
