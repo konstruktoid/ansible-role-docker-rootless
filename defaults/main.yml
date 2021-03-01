@@ -1,9 +1,9 @@
 ---
 # https://github.com/docker/roadmap/issues/188
-# https://download.docker.com/linux/static/stable/x86_64/{docker-20.10.2.tgz,docker-rootless-extras-20.10.2.tgz}
-docker_release: "20.10.2"
-docker_release_rootless_shasum: "4ebdad1d4743ccca68d183fccdb978aa8b62e7b24743fff36099bd29e46380e0"
-docker_release_shasum: "97017e32a8ecbdd1826bb3c7b1424303ee0dea3f900d33591b1df5e394ed4eed"
+# https://download.docker.com/linux/static/stable/x86_64/{docker-20.10.4.tgz,docker-rootless-extras-20.10.4.tgz}
+docker_release: "20.10.4"
+docker_release_rootless_shasum: "70f02dff152d62c201bd8597aa5f309e76c98eb03d8d38d250cceb5154fa1410"
+docker_release_shasum: "6ec28b6a251e093f5cf32569c4bfce4821eda02923b33c060694e6ca2c851daa"
 docker_rootful: false
 docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false -s overlay2 --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
