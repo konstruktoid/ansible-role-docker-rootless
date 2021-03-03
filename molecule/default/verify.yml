@@ -4,6 +4,17 @@
   any_errors_fatal: true
 
   tasks:
+    - name: reboot host
+      become: 'yes'
+      reboot:
+
+    - name: wait for the host and reconnect
+      wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        delay: 10
+        timeout: 120
+
     - name: include default vars
       include_vars:
         dir: ../../defaults/
@@ -46,7 +57,7 @@
         - name: verify "{{ docker_user }}" dockerd
           shell: >
             set -o pipefail &&
-            ps -fe | grep 'dockerd$' | awk '{print $1}'
+            ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
           args:
             executable: /bin/bash
           register: ps_dockerd
