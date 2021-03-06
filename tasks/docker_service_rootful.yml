@@ -9,6 +9,7 @@
     group: root
   tags:
     - docker
+    - systemd
 
 - name: disable rootful docker daemon
   become: 'yes'
@@ -19,6 +20,7 @@
   when: not docker_rootful_enabled
   tags:
     - docker
+    - systemd
 
 - name: enable rootful docker daemon
   become: 'yes'
@@ -29,6 +31,7 @@
   when: docker_rootful_enabled
   tags:
     - docker
+    - systemd
 
 - name: stat /run/user/{{ docker_user_info.uid }}/docker.sock
   become: 'yes'
@@ -36,6 +39,8 @@
   stat:
     path: "/run/user/{{ docker_user_info.uid }}/docker.sock"
   register: docker_rootless_sock
+  tags:
+    - docker
 
 - name: install rootless docker
   become: 'yes'
@@ -52,4 +57,7 @@
     state: started
     scope: user
     daemon_reload: 'yes'
+  tags:
+    - docker
+    - systemd
 ...

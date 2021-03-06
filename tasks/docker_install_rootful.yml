@@ -6,6 +6,7 @@
     state: present
   when: ansible_os_family == "Debian"
   tags:
+    - apt
     - docker
 
 - name: apt docker.list
@@ -39,6 +40,8 @@
   become: 'yes'
   command: "yum-config-manager --add-repo=https://download.docker.com/linux/{{ ansible_distribution|lower }}/docker-ce.repo"
   when: ansible_os_family == "RedHat" and not docker_ce_repo.stat.exists
+  tags:
+    - dnf
 
 - name: install docker
   become: 'yes'

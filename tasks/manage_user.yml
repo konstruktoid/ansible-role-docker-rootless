@@ -16,6 +16,8 @@
     groups: systemd-journal
     append: 'yes'
   when: ansible_distribution == "Debian"
+  tags:
+    - user
 
 - name: ensure "{{ docker_user }}" is lingering
   stat:
@@ -40,4 +42,6 @@
     path: "{{ docker_user_info.home }}/.ansible/tmp"
     state: directory
     mode: "0700"
+  tags:
+    - user
 ...

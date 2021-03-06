@@ -6,6 +6,8 @@
     path: "{{ docker_user_info.home }}/bin"
     state: directory
     mode: "0700"
+  tags:
+    - docker
 
 - name: create "{{ docker_user }}" systemd config dir
   become: 'yes'
@@ -14,6 +16,8 @@
     path: "{{ docker_user_info.home }}/.config/systemd/user"
     state: directory
     mode: "0700"
+  tags:
+    - docker
 
 - name: download docker-{{ docker_release }}.tgz
   become: 'yes'
@@ -22,6 +26,8 @@
     url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_shasum }}"
+  tags:
+    - docker
 
 - name: download docker-rootless-extras-{{ docker_release }}.tgz
   become: 'yes'
@@ -30,6 +36,8 @@
     url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_rootless_shasum }}"
+  tags:
+    - docker
 
 - name: extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: 'yes'
@@ -40,6 +48,8 @@
     extra_opts:
       - --strip-components=1
     remote_src: 'yes'
+  tags:
+    - docker
 
 - name: extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: 'yes'
@@ -50,6 +60,8 @@
     extra_opts:
       - --strip-components=1
     remote_src: 'yes'
+  tags:
+    - docker
 
 - name: add docker systemd service
   become: 'yes'
@@ -59,6 +71,9 @@
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: 'yes'
     mode: 0600
+  tags:
+    - docker
+    - systemd
 
 - name: enable and start docker (rootless installation)
   become: 'yes'
@@ -69,4 +84,7 @@
     state: started
     scope: user
     daemon_reload: 'yes'
+  tags:
+    - docker
+    - systemd
 ...

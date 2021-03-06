@@ -29,10 +29,8 @@
     install_recommends: 'no'
   when: ansible_distribution == "Debian" and (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.10","<="))
   tags:
-    - acl
     - apt
     - packages
-    - gidmap
 
 - name: python3-rpm installation
   become: 'yes'
@@ -44,7 +42,6 @@
     - dnf
     - yum
     - packages
-    - firewalld
 
 - name: install slirp4netns
   become: 'yes'
@@ -54,7 +51,7 @@
   tags:
     - apt
     - dnf
-    - docker
+    - packages
 
 - name: install python3 docker
   become: 'yes'
@@ -95,4 +92,6 @@
     state: present
     params: 'permit_mounts_in_userns=1'
   when: ansible_distribution == "Debian"
+  tags:
+    - modprobe
 ...
