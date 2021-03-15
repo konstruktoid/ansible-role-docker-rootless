@@ -33,9 +33,9 @@ None.
 ## Role Variables with defaults
 
 ```yaml
-docker_release: "20.10.4"
-docker_release_rootless_shasum: "70f02dff152d62c201bd8597aa5f309e76c98eb03d8d38d250cceb5154fa1410"
-docker_release_shasum: "6ec28b6a251e093f5cf32569c4bfce4821eda02923b33c060694e6ca2c851daa"
+docker_release: "20.10.5"
+docker_release_rootless_shasum: "c7265d1c376dcfc182714235fc3e8ea5e2f3f540af94450fa0469cac97b3dd55"
+docker_release_shasum: "3f18edc66e1faae607d428349e77f9800bdea554528521f0f6c49fc3f1de6abf"
 docker_rootful: false
 docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false -s overlay2 --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
