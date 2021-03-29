@@ -8,7 +8,7 @@ Environment="PATH={{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin
 Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_info.uid }}"
 
 {% if ansible_distribution == "Debian" and ansible_kernel >= "4.18" and ansible_kernel <= "5.10" %}
-ExecStart=/home/dockeruser/bin/dockerd-rootless.sh -s fuse-overlayfs
+ExecStart={{ docker_user_info.home }}/bin/dockerd-rootless.sh -s fuse-overlayfs
 {% else %}
 ExecStart={{ docker_user_info.home }}/bin/dockerd-rootless.sh
 {% endif %}
