@@ -71,6 +71,10 @@ You define the name of the Docker user that will be created with the
 `docker_rootful: false` or else the user will be the one running the
 rootless installation script and starting a isolated daemon.
 
+> Note that the sole purpose of the `docker_user` is to run the Docker
+daemon and related containers, and not for system administration or used as a
+regular user.
+
 `docker_release_shasum` and `docker_release_rootless_shasum` are used to verify
 the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 module.
