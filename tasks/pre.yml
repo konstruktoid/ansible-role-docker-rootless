@@ -27,7 +27,9 @@
     name: fuse-overlayfs
     state: present
     install_recommends: 'no'
-  when: ansible_distribution == "Debian" and (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.10","<="))
+  when: >
+    ansible_distribution == "Debian" and
+    (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.10","<="))
   tags:
     - apt
     - packages

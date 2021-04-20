@@ -27,7 +27,52 @@
   include: docker_install_rootless.yml
   when: not docker_rootful
 
-- name: write docker help instructions
+- name: user sudo alias
+  vars:
+    sudo_alias: >
+      alias docker='sudo XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
+      DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+      {{ docker_user_info.home }}/bin/docker'
+
+  block:
+    - name: stat {{ ansible_env.HOME }}/.bashrc
+      stat:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+      register: user_bashrc
+
+    - name: check if .bash_aliases is used
+      command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+      register: check_aliases
+      changed_when: check_aliases.rc >= 2
+      failed_when: check_aliases.rc >= 2
+      when: user_bashrc.stat.exists
+
+    - name: check if .bash_aliases is used
+      command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+      register: check_aliases
+      changed_when: check_aliases.rc >= 2
+      failed_when: check_aliases.rc >= 2
+      when: user_bashrc.stat.exists
+
+    - name: add rootless docker alias to {{ ansible_env.HOME }}/.bash_aliases
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bash_aliases"
+        line: "{{ sudo_alias }}"
+        regexp: '^alias docker='
+        state: present
+        create: 'yes'
+        mode: '0640'
+      when: check_aliases.rc == 0 and user_bashrc.stat.exists
+
+    - name: add rootless docker alias to {{ ansible_env.HOME }}/.bashrc
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: "{{ sudo_alias }}"
+        regexp: '^alias docker='
+      when: user_bashrc.stat.exists and check_aliases.rc != 0
+  when: add_alias
+
+- name: write Docker instruction file
   blockinfile:
     path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
     mode: "0644"
@@ -44,4 +89,5 @@
         DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
 
       See https://docs.docker.com/engine/security/rootless/ for more information
+  when: not add_alias
 ...
