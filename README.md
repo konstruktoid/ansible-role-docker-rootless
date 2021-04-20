@@ -33,12 +33,13 @@ None.
 ## Role Variables with defaults
 
 ```yaml
-docker_release: "20.10.5"
-docker_release_rootless_shasum: "c7265d1c376dcfc182714235fc3e8ea5e2f3f540af94450fa0469cac97b3dd55"
-docker_release_shasum: "3f18edc66e1faae607d428349e77f9800bdea554528521f0f6c49fc3f1de6abf"
+add_alias: true
+docker_release: "20.10.6"
+docker_release_rootless_shasum: "ac4d55e87efa1eec306a91f655d8ae00339be5f631b8b41c10d5c588a3cf0473"
+docker_release_shasum: "e3b6c3b11518281a51fb0eee73138482b83041e908f01adf8abd3a24b34ea21e"
 docker_rootful: false
 docker_rootful_enabled: false
-docker_rootful_opts: "--live-restore --icc=false -s overlay2 --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
+docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
 ```
@@ -82,15 +83,19 @@ module.
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode.
 
-This role also creates `ROOTLESS_DOCKER.README` in the Ansible user home
-directory that includes basic instructions on how to administer the daemon
-manually.
+If `add_alias: true`, then a `docker` alias will be added to either `.bashrc`
+or `.bash_aliases` otherwise a file named `ROOTLESS_DOCKER.README` is created
+in the Ansible user home with basic instructions on how to administer
+the daemon manually.
 
 ## Container management
 
 Running containers is not that much different from when a rootful Docker daemon
 is used, but you still need to become the unprivileged user and adapt any paths
 to the user working directores.
+
+If `add_alias: true` is used then the `docker` command should be available as
+usual for the Ansible user, use `alias` to see the see keyword configuration.
 
 ```yaml
 - name: register "{{ docker_user }}" info
