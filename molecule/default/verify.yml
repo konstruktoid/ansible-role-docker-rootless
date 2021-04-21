@@ -30,7 +30,7 @@
       tags:
         - user
 
-    - name: verification block
+    - name: verification block requiring environment variables
       environment:
         XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
