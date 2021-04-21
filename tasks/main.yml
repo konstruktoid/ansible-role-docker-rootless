@@ -47,13 +47,6 @@
       failed_when: check_aliases.rc >= 2
       when: user_bashrc.stat.exists
 
-    - name: check if .bash_aliases is used
-      command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
-      register: check_aliases
-      changed_when: check_aliases.rc >= 2
-      failed_when: check_aliases.rc >= 2
-      when: user_bashrc.stat.exists
-
     - name: add rootless docker alias to {{ ansible_env.HOME }}/.bash_aliases
       lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
