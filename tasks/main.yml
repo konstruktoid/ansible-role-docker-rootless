@@ -63,7 +63,12 @@
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
       when: user_bashrc.stat.exists and check_aliases.rc != 0
-  when: add_alias
+
+    - name: remove Docker instruction file if using alias
+      file:
+        path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
+        state: absent
+  when: add_alias|bool
 
 - name: write Docker instruction file
   blockinfile:
@@ -82,5 +87,5 @@
         DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
 
       See https://docs.docker.com/engine/security/rootless/ for more information
-  when: not add_alias
+  when: not add_alias|bool
 ...
