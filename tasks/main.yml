@@ -55,20 +55,20 @@
         state: present
         create: 'yes'
         mode: '0640'
-      when: check_aliases.rc == 0 and user_bashrc.stat.exists
+      when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
     - name: add rootless docker alias to {{ ansible_env.HOME }}/.bashrc
       lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
-      when: user_bashrc.stat.exists and check_aliases.rc != 0
+      when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
 
     - name: remove Docker instruction file if using alias
       file:
         path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
         state: absent
-  when: add_alias|bool
+  when: add_alias|bool and not docker_rootful
 
 - name: write Docker instruction file
   blockinfile:
@@ -78,7 +78,7 @@
     block: |
       The docker.service is managed by {{ docker_user }}
       To control the docker.service, run the following commands
-        sudo XDG_RUNTIME_DIR=/run/user/$(id -u {{ docker_user }}) -i -u {{ docker_user }}
+        sudo XDG_RUNTIME_DIR="/run/user/$(id -u {{ docker_user }})" DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock" -i -u {{ docker_user }}
         systemctl --user (start|stop|restart|status) docker.service
 
       Ensure the following environment variables are set
@@ -87,5 +87,5 @@
         DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
 
       See https://docs.docker.com/engine/security/rootless/ for more information
-  when: not add_alias|bool
+  when: not add_alias|bool or docker_rootful
 ...
