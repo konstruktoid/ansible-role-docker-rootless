@@ -15,6 +15,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - focal
+        - hirsute
   galaxy_tags:
     - centos
     - debian
