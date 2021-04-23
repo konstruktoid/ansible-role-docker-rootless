@@ -84,9 +84,9 @@ module.
 running in rootful mode.
 
 If `add_alias: true`, then a `docker` alias will be added to either `.bashrc`
-or `.bash_aliases` otherwise a file named `ROOTLESS_DOCKER.README` is created
-in the Ansible user home with basic instructions on how to administer
-the daemon manually.
+or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
+created in the Ansible user home directory that works as a substitute to the
+`docker` command.
 
 ## Container management
 
