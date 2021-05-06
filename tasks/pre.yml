@@ -11,7 +11,7 @@
 - name: install required packages
   become: 'yes'
   apt:
-    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'python3-pexpect', 'python3-pip', 'uidmap', 'systemd-container']
+    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'python3-pexpect', 'python3-pip', 'uidmap', 'systemd-container']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
