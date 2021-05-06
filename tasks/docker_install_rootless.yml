@@ -78,6 +78,7 @@
 - name: enable and start docker (rootless installation)
   become: 'yes'
   become_user: "{{ docker_user }}"
+  become_method: machinectl
   systemd:
     name: docker.service
     enabled: 'yes'
