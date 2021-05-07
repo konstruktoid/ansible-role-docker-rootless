@@ -17,6 +17,8 @@ provisioner:
     host_vars:
       buster:
         add_alias: false
+      bullseyeroot:
+        docker_rootful: true
       centosroot:
         docker_rootful: true
       focalroot:
@@ -27,6 +29,16 @@ platforms:
     box: bento/debian-10
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
+  - name: bullseye
+    box: debian/bullseye64
+    instance_raw_config_args:
+      - 'vbguest.auto_update = false'
+    memory: 1024
+  - name: bullseyeroot
+    box: debian/bullseye64
+    instance_raw_config_args:
+      - 'vbguest.auto_update = false'
     memory: 1024
   - name: centos
     box: bento/centos-8
