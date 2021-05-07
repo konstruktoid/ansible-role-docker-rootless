@@ -1,4 +1,9 @@
 ---
+- name: update facts
+  setup: ~
+  tags:
+    - fact
+
 - name: import docker gpg key
   become: 'yes'
   apt_key:
