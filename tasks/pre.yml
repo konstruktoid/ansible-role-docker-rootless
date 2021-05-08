@@ -31,7 +31,7 @@
     install_recommends: 'no'
   when: >
     ansible_distribution == "Debian" and
-    (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.10","<="))
+    (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.11","<="))
   tags:
     - apt
     - packages
