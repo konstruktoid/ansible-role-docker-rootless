@@ -75,5 +75,5 @@
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: 0700
-  when: not add_alias|bool or docker_rootful
+  when: docker_rootful or not add_alias|bool
 ...
