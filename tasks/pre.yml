@@ -89,7 +89,7 @@
   tags:
     - sysctl
 
-- name: load the overlay2 module
+- name: load the overlay module
   become: 'yes'
   modprobe:
     name: overlay
