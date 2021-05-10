@@ -15,15 +15,40 @@ provisioner:
   log: true
   inventory:
     host_vars:
-      bullseyeroot:
-        docker_rootful: true
+      bullseye:
+        add_alias: true
+        docker_rootful: false
+        docker_user: bullseyeuser
       buster:
         add_alias: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: busteruser
+      centos:
+        add_alias: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: dockeruser
       centosroot:
-        docker_rootful: true
-      focalroot:
+        add_alias: false
         docker_rootful: true
         docker_rootful_enabled: true
+        docker_user: dockeruser
+      focal:
+        add_alias: true
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+      focalroot:
+        add_alias: false
+        docker_rootful: true
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+      hirsute:
+        add_alias: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: hirsuteuser
 platforms:
   - name: bullseye
     box: debian/bullseye64
@@ -59,11 +84,6 @@ platforms:
       - "customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]"
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
-    memory: 1024
-  - name: bullseyeroot
-    box: debian/bullseye64
-    instance_raw_config_args:
-      - 'vbguest.auto_update = false'
     memory: 1024
   - name: centosroot
     box: bento/centos-8

@@ -4,57 +4,34 @@
   any_errors_fatal: true
 
   tasks:
-    - name: reboot host
-      become: 'yes'
-      reboot:
-
-    - name: wait for the host and reconnect
-      wait_for:
-        port: 22
-        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
-        delay: 10
-        timeout: 120
-
-    - name: include default vars
-      include_vars:
-        dir: ../../defaults/
-        extensions:
-          - 'yml'
-
-    - name: register "{{ docker_user }}" info
+    - name: register docker_user info
       become: 'yes'
       user:
         name: "{{ docker_user }}"
       check_mode: 'yes'
       register: docker_user_info
-      tags:
-        - user
 
-    - name: verification block requiring environment variables
-      environment:
-        XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+    - name: docker_user verification block
       block:
-        - name: verify user creation
+        - name: verify docker_user creation
           command: id "{{ docker_user }}"
           register: id_docker_user
           changed_when: id_docker_user.rc != 0
           failed_when: id_docker_user.rc != 0
 
-        - name: verify user subuid
+        - name: verify docker_user subuid
           command: grep "^{{ docker_user }}:" /etc/subuid
           register: subuid_docker_user
           changed_when: subuid_docker_user.rc != 0
           failed_when: subuid_docker_user.rc != 0
 
-        - name: verify user subgid
+        - name: verify docker_user subgid
           command: grep "^{{ docker_user }}:" /etc/subgid
           register: subgid_docker_user
           changed_when: subgid_docker_user.rc != 0
           failed_when: subgid_docker_user.rc != 0
 
-        - name: verify "{{ docker_user }}" dockerd
+        - name: verify docker_user dockerd
           shell: >
             set -o pipefail &&
             ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
@@ -64,10 +41,27 @@
           changed_when: docker_user[:7] not in ps_dockerd.stdout
           failed_when: docker_user[:7] not in ps_dockerd.stdout
 
+    - name: container verification block
+      environment:
+        XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+      block:
+        - name: reboot host
+          become: 'yes'
+          reboot:
+
+        - name: wait for the host and reconnect
+          wait_for:
+            port: 22
+            host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+            delay: 10
+            timeout: 120
+
         - name: start rootful nginx container
           become: 'yes'
           docker_container:
-            name: nginx
+            name: nginxroot
             image: konstruktoid/nginx
             state: started
             ports:
@@ -82,10 +76,23 @@
             pull: 'yes'
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
-          tags:
-            - docker_container
-            - nginx
+          when: docker_rootful|bool and docker_rootful_enabled|bool
+
+        - name: verify running rootful container
+          become: 'yes'
+          docker_container_info:
+            name: nginxroot
+          register: nginxroot_container_running
+          changed_when: not nginxroot_container_running
+          failed_when: not nginxroot_container_running
+          when: docker_rootful|bool and docker_rootful_enabled|bool
+
+        - name: assert rootful container settings
+          assert:
+            that:
+              - docker_user_info.uid|string in nginxroot_container_running.container.NetworkSettings.SandboxKey
+              - docker_user_info.home in nginxroot_container_running.container.HostnamePath
+          when: docker_rootful|bool and docker_rootful_enabled|bool
 
         - name: start rootless nginx container
           become: 'yes'
@@ -104,9 +111,6 @@
             pull: 'yes'
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          tags:
-            - docker_container
-            - nginx
 
         - name: verify running rootless container
           become: 'yes'
@@ -143,9 +147,6 @@
             pull: 'yes'
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          tags:
-            - docker_container
-            - nginx
 
         - name: verify restarted rootless container
           become: 'yes'
@@ -168,7 +169,7 @@
             return_content: 'yes'
           register: published
           failed_when: "'nginx' not in published.content"
-          when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+          when: docker_rootful|bool and docker_rootful_enabled|bool
 
         - name: verify rootless website
           uri:
@@ -176,5 +177,5 @@
             return_content: 'yes'
           register: published
           failed_when: "'nginx' not in published.content"
-          when: not docker_rootful
+      when: not (ansible_distribution == "Debian" and ansible_distribution_major_version >= '11')
 ...
