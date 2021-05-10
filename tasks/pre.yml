@@ -11,7 +11,9 @@
 - name: install required packages
   become: 'yes'
   apt:
-    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'python3-pexpect', 'python3-pip', 'uidmap']
+    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
+           'lsb-release', 'python3-pexpect', 'python3-pip', 'uidmap',
+           'libpam-systemd']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
@@ -29,7 +31,7 @@
     install_recommends: 'no'
   when: >
     ansible_distribution == "Debian" and
-    (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.10","<="))
+    (ansible_kernel is version("4.18",">=") and ansible_kernel is version("5.11","<="))
   tags:
     - apt
     - packages
@@ -99,7 +101,7 @@
   tags:
     - sysctl
 
-- name: load the overlay2 module
+- name: load the overlay module
   become: 'yes'
   modprobe:
     name: overlay

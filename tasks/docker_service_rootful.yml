@@ -45,6 +45,9 @@
 - name: install rootless docker
   become: 'yes'
   become_user: "{{ docker_user }}"
+  environment:
+    PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
   command: dockerd-rootless-setuptool.sh install
   when: not docker_rootless_sock.stat.exists
 

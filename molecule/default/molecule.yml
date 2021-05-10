@@ -15,30 +15,50 @@ provisioner:
   log: true
   inventory:
     host_vars:
+      bullseye:
+        add_alias: true
+        docker_rootful: false
+        docker_user: bullseyeuser
       buster:
         add_alias: false
-      bullseyeroot:
-        docker_rootful: true
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: busteruser
+      centos:
+        add_alias: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: dockeruser
       centosroot:
-        docker_rootful: true
-      focalroot:
+        add_alias: false
         docker_rootful: true
         docker_rootful_enabled: true
+        docker_user: dockeruser
+      focal:
+        add_alias: true
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+      focalroot:
+        add_alias: false
+        docker_rootful: true
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+      hirsute:
+        add_alias: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: hirsuteuser
 platforms:
-  - name: buster
-    box: bento/debian-10
-    instance_raw_config_args:
-      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
-    memory: 1024
   - name: bullseye
     box: debian/bullseye64
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
-  - name: bullseyeroot
-    box: debian/bullseye64
+  - name: buster
+    box: bento/debian-10
     instance_raw_config_args:
-      - 'vbguest.auto_update = false'
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
   - name: centos
     box: bento/centos-8
@@ -54,6 +74,17 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
+  - name: hirsute
+    box: ubuntu/hirsute64
+    config_options:
+      vm.boot_timeout: 600
+      synced_folder: false
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--uart1', '0x3F8', '4']"
+      - "customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]"
+    instance_raw_config_args:
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
   - name: centosroot
     box: bento/centos-8
     config_options:
@@ -65,17 +96,6 @@ platforms:
     box: bento/ubuntu-20.04
     config_options:
       vm.boot_timeout: 600
-    instance_raw_config_args:
-      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
-    memory: 1024
-  - name: hirsute
-    box: ubuntu/hirsute64
-    config_options:
-      vm.boot_timeout: 600
-      synced_folder: false
-    provider_raw_config_args:
-      - "customize ['modifyvm', :id, '--uart1', '0x3F8', '4']"
-      - "customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]"
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
