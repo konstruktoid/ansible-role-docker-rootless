@@ -42,6 +42,7 @@ docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
+docker_allow_privileged_ports: false
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -87,6 +88,10 @@ If `add_alias: true`, then a `docker` alias will be added to either `.bashrc`
 or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
 created in the Ansible user home directory that works as a substitute to the
 `docker` command.
+
+The `docker_allow_privileged_ports` variable configures if exposing
+[privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
+is allowed.
 
 ## Container management
 
