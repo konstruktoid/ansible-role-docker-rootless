@@ -10,4 +10,5 @@ docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
+docker_allow_privileged_ports: false
 ...
