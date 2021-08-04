@@ -8,12 +8,12 @@
   tags:
     - apt
 
-- name: install required packages
+- name: install Debian family packages
   become: 'yes'
   apt:
     name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
-           'lsb-release', 'python3-pexpect', 'python3-pip', 'uidmap',
-           'libpam-systemd']
+           'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
+           'uidmap', 'libpam-systemd']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
