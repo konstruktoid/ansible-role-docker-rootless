@@ -43,6 +43,7 @@ docker_rootful_opts: >
   --live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
+docker_user_bashrc: false
 docker_allow_privileged_ports: false
 docker_allow_ping: false
 ```
@@ -90,6 +91,9 @@ If `docker_add_alias: true`, then a `docker` alias will be added to either `.bas
 or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
 created in the Ansible user home directory that works as a substitute to the
 `docker` command.
+
+If `docker_user_bashrc: true`, a .bashrc with completion for the docker command
+will be place inside the `docker_user` home.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)

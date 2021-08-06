@@ -1,0 +1,5 @@
+export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
+export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+export PATH="~/bin:$PATH"
+
+source /etc/profile.d/bash_completion.sh
