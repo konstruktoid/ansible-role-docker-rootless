@@ -1,7 +1,7 @@
 ---
 # https://github.com/docker/roadmap/issues/188
 # https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-20.10.8.tgz
-add_alias: true
+docker_add_alias: true
 docker_release: "20.10.8"
 docker_release_shasum: "7ea11ecb100fdc085dbfd9ab1ff380e7f99733c890ed815510a5952e5d6dd7e0"
 docker_release_rootless_shasum: "3d6ea2a389f47b173161a6a7e788cee14fee5d0ce7f4d16477f63ed4e5ab04ef"

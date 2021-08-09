@@ -41,6 +41,43 @@
           changed_when: docker_user[:7] not in ps_dockerd.stdout
           failed_when: docker_user[:7] not in ps_dockerd.stdout
 
+        - name: verify docker_rootless.sh
+          stat:
+            path: "{{ ansible_env.HOME }}/docker_rootless.sh"
+          register: docker_rootless_sh
+          changed_when: not docker_rootless_sh.stat.exists
+          failed_when: not docker_rootless_sh.stat.exists
+          when: docker_rootful or not docker_add_alias|bool
+
+    - name: docker alias verification
+      block:
+        - name: stat {{ ansible_env.HOME }}/.bashrc
+          stat:
+            path: "{{ ansible_env.HOME }}/.bashrc"
+          register: user_bashrc
+
+        - name: check if .bash_aliases is used
+          command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+          register: check_aliases
+          changed_when: check_aliases.rc >= 2
+          failed_when: check_aliases.rc >= 2
+          when: user_bashrc.stat.exists
+
+        - name: verify rootless docker .bash_aliases alias
+          command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bash_aliases"
+          register: verify_bash_aliases
+          changed_when: verify_bash_aliases.rc != 0
+          failed_when: verify_bash_aliases.rc != 0
+          when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
+
+        - name: verify rootless docker .bashrc alias
+          command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bashrc"
+          register: verify_bashrc_alias
+          changed_when: verify_bashrc_alias.rc != 0
+          failed_when: verify_bashrc_alias.rc != 0
+          when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
+      when: docker_add_alias|bool and not docker_rootful
+
     - name: container verification block
       environment:
         XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"

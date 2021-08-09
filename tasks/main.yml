@@ -68,12 +68,12 @@
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
       when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
-  when: add_alias|bool and not docker_rootful
+  when: docker_add_alias|bool and not docker_rootful
 
 - name: create {{ ansible_env.HOME }}/docker_rootless.sh
   template:
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: 0700
-  when: docker_rootful or not add_alias|bool
+  when: docker_rootful or not docker_add_alias|bool
 ...

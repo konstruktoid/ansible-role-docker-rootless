@@ -16,42 +16,42 @@ provisioner:
   inventory:
     host_vars:
       bullseye:
-        add_alias: true
+        docker_add_alias: true
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_user: bullseyeuser
       buster:
-        add_alias: false
+        docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: busteruser
       centos:
-        add_alias: false
+        docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
       centosroot:
-        add_alias: false
+        docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: true
         docker_rootful_enabled: true
         docker_user: dockeruser
       focal:
-        add_alias: true
+        docker_add_alias: true
         docker_allow_privileged_ports: true
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
       focalroot:
-        add_alias: false
+        docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: true
         docker_rootful_enabled: false
         docker_user: dockeruser
       hirsute:
-        add_alias: false
+        docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false

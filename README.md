@@ -33,7 +33,7 @@ None.
 ## Role Variables with defaults
 
 ```yaml
-add_alias: true
+docker_add_alias: true
 docker_release: "20.10.8"
 docker_release_shasum: "7ea11ecb100fdc085dbfd9ab1ff380e7f99733c890ed815510a5952e5d6dd7e0"
 docker_release_rootless_shasum: "3d6ea2a389f47b173161a6a7e788cee14fee5d0ce7f4d16477f63ed4e5ab04ef"
@@ -84,7 +84,7 @@ module.
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode.
 
-If `add_alias: true`, then a `docker` alias will be added to either `.bashrc`
+If `docker_add_alias: true`, then a `docker` alias will be added to either `.bashrc`
 or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
 created in the Ansible user home directory that works as a substitute to the
 `docker` command.
@@ -99,8 +99,9 @@ Running containers is not that much different from when a rootful Docker daemon
 is used, but you still need to become the unprivileged user and adapt any paths
 to the user working directores.
 
-If `add_alias: true` is used then the `docker` command should be available as
-usual for the Ansible user, use `alias` to see the see keyword configuration.
+If `docker_add_alias: true` is used then the `docker` command should be
+available as usual for the Ansible user, use `alias` to see the see keyword
+configuration.
 
 ```yaml
 - name: register "{{ docker_user }}" info
