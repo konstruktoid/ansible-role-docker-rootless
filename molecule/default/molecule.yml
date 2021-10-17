@@ -20,13 +20,13 @@ provisioner:
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_user: bullseyeuser
-      centos:
+      almalinux:
         docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
-      centosroot:
+      almalinuxroot:
         docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: true
@@ -58,8 +58,8 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
-  - name: centos
-    box: bento/centos-8
+  - name: almalinux
+    box: almalinux/8
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
@@ -83,8 +83,8 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
-  - name: centosroot
-    box: bento/centos-8
+  - name: almalinuxroot
+    box: almalinux/8
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
