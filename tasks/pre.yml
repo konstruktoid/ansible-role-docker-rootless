@@ -13,7 +13,7 @@
   apt:
     name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
            'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
-           'uidmap', 'libpam-systemd']
+           'uidmap', 'libpam-systemd', 'dbus-user-session']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
@@ -86,7 +86,8 @@
     sysctl_set: 'yes'
     state: present
     reload: 'yes'
-  when: ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" and
+        ansible_distribution_version is version('11', '<' )
   tags:
     - sysctl
 
