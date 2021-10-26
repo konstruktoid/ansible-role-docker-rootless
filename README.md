@@ -61,7 +61,7 @@ Using `docker_rootful: true` and `docker_rootful_enabled: true`, will result in
 a standard Docker installation, with an additional Docker daemon, running as a
 non-root user.
 
-> Note that Debian 10 or earlier requires `docker_rootful: false` due to missing
+> Note that Debian 10 and earlier requires `docker_rootful: false` due to missing
 dependencies.
 
 The `docker_url` and `docker_release` variables defines where you find the
