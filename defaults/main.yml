@@ -2,9 +2,9 @@
 # https://github.com/docker/roadmap/issues/188
 # https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-20.10.10.tgz
 docker_add_alias: true
-docker_release: "20.10.10"
-docker_release_shasum: "1719446f99cd56e87d0c67019996af4ea859f11891bfd89de2252d6c916ccaaa"
-docker_release_rootless_shasum: "683448bf77e625d198feaec3b28cec2d07e51f310e1172149bdd0558a97c21cf"
+docker_release: "20.10.11"
+docker_release_shasum: "dd6ff72df1edfd61ae55feaa4aadb88634161f0aa06dbaaf291d1be594099ff3"
+docker_release_rootless_shasum: "595f3bcd61aaa01ece8f967e4f6c5cd1fe05c3de9736bf595b0a7c99ba7b9eaf"
 docker_rootful: false
 docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
