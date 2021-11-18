@@ -42,6 +42,14 @@
   tags:
     - docker
 
+- name: load the ip_tables module
+  become: 'yes'
+  modprobe:
+    name: ip_tables
+    state: present
+  tags:
+    - modprobe
+
 - name: install rootless docker
   become: 'yes'
   become_user: "{{ docker_user }}"
