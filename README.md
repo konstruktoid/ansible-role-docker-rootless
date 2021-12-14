@@ -34,9 +34,9 @@ None.
 
 ```yaml
 docker_add_alias: true
-docker_release: "20.10.10"
-docker_release_shasum: "1719446f99cd56e87d0c67019996af4ea859f11891bfd89de2252d6c916ccaaa"
-docker_release_rootless_shasum: "683448bf77e625d198feaec3b28cec2d07e51f310e1172149bdd0558a97c21cf"
+docker_release: "20.10.12"
+docker_release_shasum: "ee9b5be14e54bf92f48c82c2e6a83fbdd1c5329e8f247525a9ed2fe90d9f89a5"
+docker_release_rootless_shasum: "24b793b79d2cf56e8a63be21829433e079c8d14d18d0b739df2e95738f7f841b"
 docker_rootful: false
 docker_rootful_enabled: false
 docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
