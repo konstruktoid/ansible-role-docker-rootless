@@ -44,12 +44,12 @@ provisioner:
         docker_rootful: true
         docker_rootful_enabled: false
         docker_user: dockeruser
-      hirsute:
+      impish:
         docker_add_alias: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
-        docker_user: hirsuteuser
+        docker_user: impishuser
 platforms:
   - name: bullseye
     box: debian/bullseye64
@@ -72,8 +72,8 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
-  - name: hirsute
-    box: ubuntu/hirsute64
+  - name: impish
+    box: ubuntu/impish64
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
