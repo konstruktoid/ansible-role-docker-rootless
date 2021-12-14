@@ -12,6 +12,13 @@ Vagrant.configure("2") do |config|
     focal.vm.boot_timeout = 600
    end
 
+  config.vm.define "impish" do |impish|
+    impish.vm.box = "ubuntu/impish64"
+    impish.ssh.insert_key = true
+    impish.vm.hostname = "impish"
+    impish.vm.boot_timeout = 600
+   end
+
   config.vm.define "alma" do |alma|
     alma.vm.box = "almalinux/8"
     alma.ssh.insert_key = true
