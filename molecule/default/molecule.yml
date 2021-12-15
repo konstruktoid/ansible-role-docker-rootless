@@ -63,7 +63,7 @@ platforms:
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
-      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+      - 'vbguest.auto_update = false'
     memory: 1024
   - name: focal
     box: bento/ubuntu-20.04
@@ -88,7 +88,7 @@ platforms:
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
-      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+      - 'vbguest.auto_update = false'
     memory: 1024
   - name: focalroot
     box: bento/ubuntu-20.04
