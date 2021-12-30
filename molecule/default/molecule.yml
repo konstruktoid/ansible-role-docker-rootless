@@ -1,6 +1,9 @@
 ---
 dependency:
-  enabled: false
+  name: galaxy
+  enabled: true
+  options:
+    requirements-file: collections.yml
 driver:
   name: vagrant
   provider:
