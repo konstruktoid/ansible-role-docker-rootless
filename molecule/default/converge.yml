@@ -3,5 +3,5 @@
   hosts: all
   tasks:
     - name: "Include docker_rootless"
-      include_role:
+      ansible.builtin.include_role:
         name: "ansible-docker-rootless"

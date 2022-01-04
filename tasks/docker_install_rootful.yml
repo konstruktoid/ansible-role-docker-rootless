@@ -1,12 +1,12 @@
 ---
 - name: update facts
-  setup: ~
+  ansible.builtin.setup: ~
   tags:
     - fact
 
 - name: import docker gpg key
   become: 'yes'
-  apt_key:
+  ansible.builtin.apt_key:
     url: "https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg"
     state: present
   when: ansible_os_family == "Debian"
@@ -16,7 +16,7 @@
 
 - name: apt docker.list
   become: 'yes'
-  template:
+  ansible.builtin.template:
     src: docker.repo.j2
     dest: /etc/apt/sources.list.d/docker.list
     backup: 'yes'
@@ -30,27 +30,27 @@
 
 - name: apt update
   become: 'yes'
-  apt:
+  ansible.builtin.apt:
     update_cache: 'yes'
   when: ansible_os_family == "Debian"
   tags:
     - apt
 
 - name: stat docker-ce.repo file
-  stat:
+  ansible.builtin.stat:
     path: "/etc/yum.repos.d/docker-ce.repo"
   register: docker_ce_repo
 
 - name: docker yum repo
   become: 'yes'
-  command: "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
+  ansible.builtin.command: "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
   when: ansible_os_family == "RedHat" and not docker_ce_repo.stat.exists
   tags:
     - dnf
 
 - name: install docker
   become: 'yes'
-  package:
+  ansible.builtin.package:
     name: ['docker-ce', 'docker-ce-rootless-extras']
     state: present
   tags:

@@ -1,7 +1,7 @@
 ---
 - name: apt update
   become: 'yes'
-  apt:
+  ansible.builtin.apt:
     update_cache: 'yes'
     cache_valid_time: 1800
   when: ansible_os_family == "Debian"
@@ -10,7 +10,7 @@
 
 - name: install Debian family packages
   become: 'yes'
-  apt:
+  ansible.builtin.apt:
     name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
            'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
            'uidmap', 'libpam-systemd', 'dbus-user-session']
@@ -25,7 +25,7 @@
 
 - name: install fuse-overlayfs
   become: 'yes'
-  apt:
+  ansible.builtin.apt:
     name: fuse-overlayfs
     state: present
     install_recommends: 'no'
@@ -39,7 +39,7 @@
 
 - name: python3-rpm installation
   become: 'yes'
-  dnf:
+  ansible.builtin.dnf:
     name: "python3-rpm"
     state: present
   when: ansible_distribution == "RedHat"
@@ -50,7 +50,7 @@
 
 - name: install slirp4netns
   become: 'yes'
-  package:
+  ansible.builtin.package:
     name: "slirp4netns"
     state: present
   tags:
@@ -60,7 +60,7 @@
 
 - name: install python3 docker
   become: 'yes'
-  pip:
+  ansible.builtin.pip:
     name: docker
     state: present
   tags:

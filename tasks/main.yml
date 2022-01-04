@@ -6,7 +6,7 @@
   include: manage_user.yml
 
 - name: remove obselete Docker instruction file
-  file:
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
     state: absent
 
@@ -24,7 +24,7 @@
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: debian information
-  fail:
+  ansible.builtin.fail:
     msg: "slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10"
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
@@ -41,19 +41,19 @@
 
   block:
     - name: stat {{ ansible_env.HOME }}/.bashrc
-      stat:
+      ansible.builtin.stat:
         path: "{{ ansible_env.HOME }}/.bashrc"
       register: user_bashrc
 
     - name: check if .bash_aliases is used
-      command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+      ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
       register: check_aliases
       changed_when: check_aliases.rc >= 2
       failed_when: check_aliases.rc >= 2
       when: user_bashrc.stat.exists
 
     - name: add rootless docker alias to {{ ansible_env.HOME }}/.bash_aliases
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
@@ -63,7 +63,7 @@
       when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
     - name: add rootless docker alias to {{ ansible_env.HOME }}/.bashrc
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
@@ -71,7 +71,7 @@
   when: docker_add_alias|bool and not docker_rootful
 
 - name: create {{ ansible_env.HOME }}/docker_rootless.sh
-  template:
+  ansible.builtin.template:
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: 0700

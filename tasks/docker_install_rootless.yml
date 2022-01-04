@@ -2,7 +2,7 @@
 - name: create "{{ docker_user }}" docker bin dir
   become: 'yes'
   become_user: "{{ docker_user }}"
-  file:
+  ansible.builtin.file:
     path: "{{ docker_user_info.home }}/bin"
     state: directory
     mode: "0700"
@@ -12,7 +12,7 @@
 - name: create "{{ docker_user }}" systemd config dir
   become: 'yes'
   become_user: "{{ docker_user }}"
-  file:
+  ansible.builtin.file:
     path: "{{ docker_user_info.home }}/.config/systemd/user"
     state: directory
     mode: "0700"
@@ -22,7 +22,7 @@
 - name: download docker-{{ docker_release }}.tgz
   become: 'yes'
   become_user: "{{ docker_user }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_shasum }}"
@@ -32,7 +32,7 @@
 - name: download docker-rootless-extras-{{ docker_release }}.tgz
   become: 'yes'
   become_user: "{{ docker_user }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_rootless_shasum }}"
@@ -42,7 +42,7 @@
 - name: extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: 'yes'
   become_user: "{{ docker_user }}"
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/bin"
     extra_opts:
@@ -55,7 +55,7 @@
 - name: extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: 'yes'
   become_user: "{{ docker_user }}"
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/bin"
     extra_opts:
@@ -67,7 +67,7 @@
 - name: add docker systemd service
   become: 'yes'
   become_user: "{{ docker_user }}"
-  template:
+  ansible.builtin.template:
     src: docker_rootless.service.j2
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: 'yes'
@@ -79,7 +79,7 @@
 - name: enable and start docker (rootless installation)
   become: 'yes'
   become_user: "{{ docker_user }}"
-  systemd:
+  ansible.builtin.systemd:
     name: docker.service
     enabled: 'yes'
     state: started
