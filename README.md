@@ -122,7 +122,7 @@ configuration.
     - name: nginx container
       become: 'yes'
       become_user: "{{ docker_user }}"
-      docker_container:
+      community.docker.docker_container:
         name: nginx
         image: konstruktoid/nginx
         state: started
