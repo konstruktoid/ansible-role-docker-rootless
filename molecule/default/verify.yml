@@ -97,7 +97,7 @@
 
         - name: start rootful nginx container
           become: 'yes'
-          docker_container:
+          community.docker.docker_container:
             name: nginxroot
             image: konstruktoid/nginx
             state: started
@@ -117,7 +117,7 @@
 
         - name: verify running rootful container
           become: 'yes'
-          docker_container_info:
+          community.docker.docker_container_info:
             name: nginxroot
           register: nginxroot_container_running
           changed_when: not nginxroot_container_running
@@ -134,7 +134,7 @@
         - name: start rootless nginx container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container:
+          community.docker.docker_container:
             name: nginx
             image: konstruktoid/nginx
             state: started
@@ -152,7 +152,7 @@
         - name: verify running rootless container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container_info:
+          community.docker.docker_container_info:
             name: nginx
           register: nginx_container_running
           changed_when: not nginx_container_running
@@ -167,7 +167,7 @@
         - name: restart rootless nginx container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container:
+          community.docker.docker_container:
             name: nginx
             image: konstruktoid/nginx
             state: started
@@ -188,7 +188,7 @@
         - name: verify restarted rootless container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container_info:
+          community.docker.docker_container_info:
             name: nginx
           register: nginx_container_restarted
           changed_when: not nginx_container_restarted
@@ -203,7 +203,7 @@
         - name: verify rootless port 80 nginx container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container:
+          community.docker.docker_container:
             name: nginxport
             image: konstruktoid/nginx
             state: started
@@ -225,7 +225,7 @@
         - name: verify rootless port 80 container
           become: 'yes'
           become_user: "{{ docker_user }}"
-          docker_container_info:
+          community.docker.docker_container_info:
             name: nginxport
           register: nginxport_container_restarted
           changed_when: not nginxport_container_restarted
