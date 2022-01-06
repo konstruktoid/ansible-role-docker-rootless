@@ -44,7 +44,7 @@
 
 - name: load the ip_tables module
   become: 'yes'
-  modprobe:
+  community.general.modprobe:
     name: ip_tables
     state: present
   tags:

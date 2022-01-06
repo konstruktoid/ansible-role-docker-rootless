@@ -69,7 +69,7 @@
 
 - name: sysctl net.ipv4.ip_forward
   become: 'yes'
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     sysctl_set: 'yes'
@@ -80,7 +80,7 @@
 
 - name: sysctl kernel.unprivileged_userns_clone
   become: 'yes'
-  sysctl:
+  ansible.posix.sysctl:
     name: kernel.unprivileged_userns_clone
     value: "1"
     sysctl_set: 'yes'
@@ -93,7 +93,7 @@
 
 - name: sysctl net.ipv4.ip_unprivileged_port_start=0
   become: 'yes'
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_unprivileged_port_start
     value: "0"
     sysctl_set: 'yes'
@@ -105,7 +105,7 @@
 
 - name: load the overlay module
   become: 'yes'
-  modprobe:
+  community.general.modprobe:
     name: overlay
     state: present
     params: 'permit_mounts_in_userns=1'

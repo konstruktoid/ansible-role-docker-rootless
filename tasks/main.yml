@@ -1,9 +1,9 @@
 ---
 - name: install required packages and configure sysctl
-  include: pre.yml
+  ansible.builtin.include_tasks: pre.yml
 
 - name: manage docker user
-  include: manage_user.yml
+  ansible.builtin.include_tasks: manage_user.yml
 
 - name: remove obselete Docker instruction file
   ansible.builtin.file:
@@ -17,10 +17,10 @@
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
     - name: install rootful docker
-      include: docker_install_rootful.yml
+      ansible.builtin.include_tasks: docker_install_rootful.yml
 
     - name: configure rootful docker service
-      include: docker_service_rootful.yml
+      ansible.builtin.include_tasks: docker_service_rootful.yml
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: debian information
@@ -29,7 +29,7 @@
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: install and configure rootless docker
-  include: docker_install_rootless.yml
+  ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
 - name: user sudo alias
