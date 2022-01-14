@@ -43,6 +43,7 @@ docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
 docker_allow_privileged_ports: false
+docker_allow_ping: false
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -92,6 +93,12 @@ created in the Ansible user home directory that works as a substitute to the
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
 is allowed.
+
+The `docker_allow_ping` variable configures if unprivileged users can open [ICMP
+echo
+sockets](https://docs.docker.com/engine/security/rootless/#routing-ping-packets).
+On some distributions, this is not allowed, and thereby containers cannot ping
+to the outside.
 
 ## Container management
 
