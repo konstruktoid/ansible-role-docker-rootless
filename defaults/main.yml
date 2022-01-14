@@ -12,4 +12,5 @@ docker_rootful_opts: >
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
 docker_allow_privileged_ports: false
+docker_allow_ping: false
 ...

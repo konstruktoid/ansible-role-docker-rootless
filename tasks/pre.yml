@@ -103,6 +103,18 @@
   tags:
     - sysctl
 
+- name: sysctl net.ipv4.ping_group_range=0 2147483647
+  become: 'yes'
+  ansible.posix.sysctl:
+    name: net.ipv4.ping_group_range
+    value: "0 2147483647"
+    sysctl_set: 'yes'
+    state: present
+    reload: 'yes'
+  when: docker_allow_ping
+  tags:
+    - sysctl
+
 - name: load the overlay module
   become: 'yes'
   community.general.modprobe:
