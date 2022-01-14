@@ -49,6 +49,13 @@
           failed_when: not docker_rootless_sh.stat.exists
           when: docker_rootful or not docker_add_alias|bool
 
+        - name: verify ping functionality
+          ansible.builtin.command: ping -W1 -c1 1.1.1.1
+          register: ping_allowed
+          changed_when: false
+          failed_when: ping_allowed.rc != 0
+          when: docker_allow_ping|bool
+
     - name: docker alias verification
       block:
         - name: stat {{ ansible_env.HOME }}/.bashrc
@@ -94,6 +101,16 @@
             host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
             delay: 10
             timeout: 120
+
+        - name: test alpine ping container
+          ansible.builtin.shell: >
+            set -o pipefail &&
+            "{{ ansible_env.HOME }}"/docker_rootless.sh run -ti konstruktoid/alpine ping -W1 -c1 1.1.1.1
+          args:
+            executable: /bin/bash
+          register: alpine_ping
+          changed_when: alpine_ping.stdout.find(' 0% packet loss') != -1
+          failed_when: alpine_ping.stdout.find('  0% packet loss') != -1
 
         - name: start rootful nginx container
           become: 'yes'

@@ -18,35 +18,41 @@ provisioner:
     host_vars:
       bullseye:
         docker_add_alias: true
+        docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_user: bullseyeuser
       almalinux:
         docker_add_alias: false
+        docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
       almalinuxroot:
         docker_add_alias: false
+        docker_allow_ping: false
         docker_allow_privileged_ports: false
         docker_rootful: true
         docker_rootful_enabled: true
         docker_user: dockeruser
       focal:
         docker_add_alias: true
+        docker_allow_ping: false
         docker_allow_privileged_ports: true
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
       focalroot:
         docker_add_alias: false
+        docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: true
         docker_rootful_enabled: false
         docker_user: dockeruser
       impish:
         docker_add_alias: false
+        docker_allow_ping: false
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
