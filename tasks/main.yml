@@ -32,6 +32,13 @@
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
+- name: set DOCKER_HOST variable globally
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: "DOCKER_HOST='unix:///run/user/{{ docker_user_info.uid}}/docker.sock'"
+    create: yes
+    mode: "0644"
+
 - name: user sudo alias
   vars:
     sudo_alias: >
