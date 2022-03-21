@@ -6,17 +6,10 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "focal" do |focal|
-    focal.vm.box = "bento/ubuntu-20.04"
+    focal.vm.box = "ubuntu/focal64"
     focal.ssh.insert_key = true
     focal.vm.hostname = "focal"
     focal.vm.boot_timeout = 600
-   end
-
-  config.vm.define "impish" do |impish|
-    impish.vm.box = "ubuntu/impish64"
-    impish.ssh.insert_key = true
-    impish.vm.hostname = "impish"
-    impish.vm.boot_timeout = 600
    end
 
   config.vm.define "alma" do |alma|
