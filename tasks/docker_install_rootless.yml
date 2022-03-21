@@ -26,6 +26,8 @@
     url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_shasum }}"
+    owner: "{{ docker_user }}"
+    mode: "0644"
   tags:
     - docker
 
@@ -36,6 +38,8 @@
     url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
     dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
     checksum: "sha256:{{ docker_release_rootless_shasum }}"
+    owner: "{{ docker_user }}"
+    mode: "0644"
   tags:
     - docker
 
