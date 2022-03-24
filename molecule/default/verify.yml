@@ -111,6 +111,7 @@
           register: alpine_ping
           changed_when: alpine_ping.stdout.find(' 0% packet loss') != -1
           failed_when: alpine_ping.stdout.find('  0% packet loss') != -1
+          when: docker_allow_ping|bool and (docker_rootful or not docker_add_alias|bool)
 
         - name: start rootful nginx container
           become: 'yes'
