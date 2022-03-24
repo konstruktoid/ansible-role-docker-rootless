@@ -34,12 +34,13 @@ None.
 
 ```yaml
 docker_add_alias: true
-docker_release: "20.10.12"
-docker_release_shasum: "ee9b5be14e54bf92f48c82c2e6a83fbdd1c5329e8f247525a9ed2fe90d9f89a5"
-docker_release_rootless_shasum: "24b793b79d2cf56e8a63be21829433e079c8d14d18d0b739df2e95738f7f841b"
+docker_release: "20.10.14"
+docker_release_shasum: "7ca4aeeed86619909ae584ce3405da3766d495f98904ffbd9d859add26b83af5"
+docker_release_rootless_shasum: "d47be8ef7c10748f3815304ce3deca3939655a5c5fcabeef97a76d579b8165f4"
 docker_rootful: false
 docker_rootful_enabled: false
-docker_rootful_opts: "--live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://"
+docker_rootful_opts: >
+  --live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
 docker_user: dockeruser
 docker_allow_privileged_ports: false
