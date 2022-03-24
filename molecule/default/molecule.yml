@@ -24,8 +24,8 @@ provisioner:
         docker_user: bullseyeuser
       almalinux:
         docker_add_alias: false
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
+        docker_allow_ping: false
+        docker_allow_privileged_ports: true
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
