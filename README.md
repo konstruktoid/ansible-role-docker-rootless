@@ -46,6 +46,7 @@ docker_user: dockeruser
 docker_user_bashrc: false
 docker_allow_privileged_ports: false
 docker_allow_ping: false
+docker_compose: false
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -92,8 +93,10 @@ or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
 created in the Ansible user home directory that works as a substitute to the
 `docker` command.
 
-If `docker_user_bashrc: true`, a .bashrc with completion for the docker command
-will be place inside the `docker_user` home.
+If `docker_compose: true`, then `docker-compose` will be installed via pip.
+
+If `docker_user_bashrc: true`, a .bashrc with completion for the docker(-compose)
+command will be place inside the `docker_user` home.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)

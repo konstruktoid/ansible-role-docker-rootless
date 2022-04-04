@@ -32,6 +32,14 @@
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
+- name: Ensure that docker-compose python pip package is installed
+  ansible.builtin.pip:
+    name: docker-compose
+    executable: pip3
+  become: true
+  become_user: "{{ docker_user }}"
+  when: docker_compose
+
 - name: user sudo alias
   vars:
     sudo_alias: >
@@ -77,22 +85,7 @@
     mode: 0700
   when: docker_rootful or not docker_add_alias|bool
 
-- name: install docker bash completion
-  get_url:
-    url: "https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker"
-    dest: "/etc/bash_completion.d/docker"
-    checksum: "sha256:{{ docker_bash_completion_shasum }}"
-    owner: root
-    group: root
-    mode: 0644
-  when: docker_user_bashrc
-
-- name: docker_user bashrc config
-  template:
-    src: docker_user_bashrc.j2
-    dest: "{{ docker_user_info.home }}/.bashrc"
-    owner: "{{ docker_user }}"
-    group: "{{ docker_user }}"
-    mode: 0644
+- name: deploy bash completion
+  ansible.builtin.include_tasks: bashrc.yml
   when: docker_user_bashrc
 ...

@@ -1,0 +1,44 @@
+---
+
+- name: extend docker_user bashrc config
+  ansible.builtin.blockinfile:
+    path: "{{ docker_user_info.home }}/.bashrc"
+    block: |
+      export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
+      export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+      export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
+
+- name: create user bash completion dir
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.bash_completion.d"
+    state: directory
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+    mode: 0750
+
+- name: source user bash completion dir
+  ansible.builtin.copy:
+    src: bash_completion
+    dest: "{{ docker_user_info.home }}/.bash_completion"
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+    mode: 0750
+
+- name: install docker bash completion
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker"
+    dest: "{{ docker_user_info.home }}/.bash_completion.d/"
+    checksum: "sha256:{{ docker_bash_completion_shasum }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install docker-compose bash completion
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose"
+    dest: "{{ docker_user_info.home }}/.bash_completion.d/"
+    checksum: "sha256:{{ docker_compose_bash_completion_shasum }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: docker_compose
