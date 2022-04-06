@@ -87,9 +87,9 @@ module.
 running in rootful mode.
 
 If `docker_add_alias: true`, then a `docker` alias will be added to either `.bashrc`
-or `.bash_aliases`, otherwise a shell script named `docker_rootless.sh` is
-created in the Ansible user home directory that works as a substitute to the
-`docker` command.
+or `.bash_aliases` of the Ansible user. If `false`, a shell script named `docker_rootless.sh` is
+created in the Ansible user home directory. This works as a substitute to the
+`docker` command so that the Ansible user can execute the rootless Docker installation from the `docker_user`.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
@@ -107,8 +107,8 @@ Running containers is not that much different from when a rootful Docker daemon
 is used, but you still need to become the unprivileged user and adapt any paths
 to the user working directores.
 
-If `docker_add_alias: true` is used then the `docker` command should be
-available as usual for the Ansible user, use `alias` to see the see keyword
+If `docker_add_alias: true` is used, the `docker` command will be
+available as usual for the Ansible user, too. Type `alias` in the shell to see the keyword
 configuration.
 
 ```yaml
