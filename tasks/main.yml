@@ -32,6 +32,14 @@
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
+- name: Ensure that docker-compose python pip package is installed
+  ansible.builtin.pip:
+    name: docker-compose
+    executable: pip3
+  become: true
+  become_user: "{{ docker_user }}"
+  when: docker_compose
+
 - name: user sudo alias
   vars:
     sudo_alias: >
@@ -76,4 +84,8 @@
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: 0700
   when: docker_rootful or not docker_add_alias|bool
+
+- name: deploy bash completion
+  ansible.builtin.include_tasks: bashrc.yml
+  when: docker_user_bashrc
 ...
