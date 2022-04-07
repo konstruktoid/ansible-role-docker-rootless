@@ -1,6 +1,24 @@
 ---
+- name: stat {{ docker_user_info.home }}/.bashrc
+  become: 'yes'
+  ansible.builtin.stat:
+    path: "{{ docker_user_info.home }}/.bashrc"
+  register: docker_user_bashrc
+
+- name: create {{ docker_user_info.home }}/.bashrc
+  become: 'yes'
+  become_user: "{{ docker_user }}"
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.bashrc"
+    state: file
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+    mode: 0644
+  when: not docker_user_bashrc.stat.exists
 
 - name: extend docker_user bashrc config
+  become: 'yes'
+  become_user: "{{ docker_user }}"
   ansible.builtin.blockinfile:
     path: "{{ docker_user_info.home }}/.bashrc"
     block: |
@@ -9,6 +27,8 @@
       export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
 
 - name: create user bash completion dir
+  become: 'yes'
+  become_user: "{{ docker_user }}"
   ansible.builtin.file:
     path: "{{ docker_user_info.home }}/.bash_completion.d"
     state: directory
@@ -17,6 +37,8 @@
     mode: 0750
 
 - name: source user bash completion dir
+  become: 'yes'
+  become_user: "{{ docker_user }}"
   ansible.builtin.copy:
     src: bash_completion
     dest: "{{ docker_user_info.home }}/.bash_completion"
@@ -25,20 +47,20 @@
     mode: 0750
 
 - name: install docker bash completion
+  become: 'yes'
+  become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
     url: "https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker"
     dest: "{{ docker_user_info.home }}/.bash_completion.d/"
     checksum: "sha256:{{ docker_bash_completion_shasum }}"
-    owner: root
-    group: root
     mode: 0644
 
 - name: install docker-compose bash completion
+  become: 'yes'
+  become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
     url: "https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose"
     dest: "{{ docker_user_info.home }}/.bash_completion.d/"
     checksum: "sha256:{{ docker_compose_bash_completion_shasum }}"
-    owner: root
-    group: root
     mode: 0644
   when: docker_compose
