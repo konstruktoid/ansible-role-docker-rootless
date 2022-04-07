@@ -32,13 +32,13 @@
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
-- name: Ensure that docker-compose python pip package is installed
+- name: ensure that docker-compose python pip package is installed
   ansible.builtin.pip:
     name: docker-compose
     executable: pip3
   become: true
   become_user: "{{ docker_user }}"
-  when: docker_compose
+  when: docker_compose and ansible_os_family == "Debian"
 
 - name: user sudo alias
   vars:
