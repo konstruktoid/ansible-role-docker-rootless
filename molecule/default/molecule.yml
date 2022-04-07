@@ -22,6 +22,8 @@ provisioner:
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_user: bullseyeuser
+        docker_user_bashrc: false
+        docker_compose: false
       almalinux:
         docker_add_alias: false
         docker_allow_ping: false
@@ -29,6 +31,8 @@ provisioner:
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
+        docker_user_bashrc: true
+        docker_compose: true
       almalinuxroot:
         docker_add_alias: false
         docker_allow_ping: false
@@ -36,6 +40,8 @@ provisioner:
         docker_rootful: true
         docker_rootful_enabled: true
         docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
       focal:
         docker_add_alias: true
         docker_allow_ping: false
@@ -43,6 +49,8 @@ provisioner:
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
       focalroot:
         docker_add_alias: false
         docker_allow_ping: true
@@ -50,6 +58,8 @@ provisioner:
         docker_rootful: true
         docker_rootful_enabled: false
         docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
       jammy:
         docker_add_alias: false
         docker_allow_ping: false
@@ -57,6 +67,8 @@ provisioner:
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: jammyuser
+        docker_user_bashrc: true
+        docker_compose: true
 platforms:
   - name: bullseye
     box: debian/bullseye64
