@@ -34,9 +34,9 @@ None.
 
 ```yaml
 docker_add_alias: true
-docker_release: "20.10.15"
-docker_release_shasum: "9ccfc39305ae1d8882d18c9c431544fca82913d6df717409ac2244ac58c4f070"
-docker_release_rootless_shasum: "c3ce8baa27ed6040d618a97d39ff66ef2c45cb357d901806fe0994a9705f7238"
+docker_release: "20.10.16"
+docker_release_shasum: "b43ac6c4d2f0b64e445c6564860e4fccd6331f4a61815a60642c7748b53c59ff"
+docker_release_rootless_shasum: "9a087f00ab62127691b56892d3b9895df6727b6966e81732472f12174ce64daa"
 docker_bash_completion_shasum: "cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0"
 docker_compose_bash_completion_shasum: "9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de"
 docker_rootful: false
