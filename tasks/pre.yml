@@ -1,6 +1,6 @@
 ---
 - name: apt update
-  become: 'yes'
+  become: true
   ansible.builtin.apt:
     update_cache: 'yes'
     cache_valid_time: 1800
@@ -9,7 +9,7 @@
     - apt
 
 - name: install Debian family packages
-  become: 'yes'
+  become: true
   ansible.builtin.apt:
     name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
            'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
@@ -24,7 +24,7 @@
     - gidmap
 
 - name: install fuse-overlayfs
-  become: 'yes'
+  become: true
   ansible.builtin.apt:
     name: fuse-overlayfs
     state: present
@@ -38,7 +38,7 @@
     - packages
 
 - name: python3-rpm installation
-  become: 'yes'
+  become: true
   ansible.builtin.dnf:
     name: "python3-rpm"
     state: present
@@ -49,7 +49,7 @@
     - packages
 
 - name: install slirp4netns
-  become: 'yes'
+  become: true
   ansible.builtin.package:
     name: "slirp4netns"
     state: present
@@ -59,7 +59,7 @@
     - packages
 
 - name: install python3 docker
-  become: 'yes'
+  become: true
   ansible.builtin.pip:
     name: docker
     state: present
@@ -68,7 +68,7 @@
     - python
 
 - name: sysctl net.ipv4.ip_forward
-  become: 'yes'
+  become: true
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
@@ -79,7 +79,7 @@
     - sysctl
 
 - name: sysctl kernel.unprivileged_userns_clone
-  become: 'yes'
+  become: true
   ansible.posix.sysctl:
     name: kernel.unprivileged_userns_clone
     value: "1"
@@ -92,7 +92,7 @@
     - sysctl
 
 - name: sysctl net.ipv4.ip_unprivileged_port_start=0
-  become: 'yes'
+  become: true
   ansible.posix.sysctl:
     name: net.ipv4.ip_unprivileged_port_start
     value: "0"
@@ -104,7 +104,7 @@
     - sysctl
 
 - name: sysctl net.ipv4.ping_group_range=0 2147483647
-  become: 'yes'
+  become: true
   ansible.posix.sysctl:
     name: net.ipv4.ping_group_range
     value: "0 2147483647"
@@ -116,7 +116,7 @@
     - sysctl
 
 - name: load the overlay module
-  become: 'yes'
+  become: true
   community.general.modprobe:
     name: overlay
     state: present

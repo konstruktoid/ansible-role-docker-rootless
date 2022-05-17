@@ -1,6 +1,6 @@
 ---
 - name: create "{{ docker_user }}" docker bin dir
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
     path: "{{ docker_user_info.home }}/bin"
@@ -10,7 +10,7 @@
     - docker
 
 - name: create "{{ docker_user }}" systemd config dir
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
     path: "{{ docker_user_info.home }}/.config/systemd/user"
@@ -20,7 +20,7 @@
     - docker
 
 - name: download docker-{{ docker_release }}.tgz
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
     url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
@@ -32,7 +32,7 @@
     - docker
 
 - name: download docker-rootless-extras-{{ docker_release }}.tgz
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
     url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
@@ -44,7 +44,7 @@
     - docker
 
 - name: extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
     src: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
@@ -57,7 +57,7 @@
     - docker
 
 - name: extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
     src: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
@@ -69,7 +69,7 @@
     - docker
 
 - name: add docker systemd service
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.template:
     src: docker_rootless.service.j2
@@ -81,7 +81,7 @@
     - systemd
 
 - name: enable and start docker (rootless installation)
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:
     name: docker.service
