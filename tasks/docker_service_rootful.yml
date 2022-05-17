@@ -1,6 +1,6 @@
 ---
 - name: docker systemd service
-  become: 'yes'
+  become: true
   ansible.builtin.template:
     src: docker_rootful.service.j2
     dest: /etc/systemd/system/docker.service
@@ -12,7 +12,7 @@
     - systemd
 
 - name: disable rootful docker daemon
-  become: 'yes'
+  become: true
   ansible.builtin.systemd:
     name: docker
     state: stopped
@@ -23,7 +23,7 @@
     - systemd
 
 - name: enable rootful docker daemon
-  become: 'yes'
+  become: true
   ansible.builtin.systemd:
     name: docker
     state: started
@@ -34,7 +34,7 @@
     - systemd
 
 - name: stat /run/user/{{ docker_user_info.uid }}/docker.sock
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.stat:
     path: "/run/user/{{ docker_user_info.uid }}/docker.sock"
@@ -43,7 +43,7 @@
     - docker
 
 - name: load the ip_tables module
-  become: 'yes'
+  become: true
   community.general.modprobe:
     name: ip_tables
     state: present
@@ -51,7 +51,7 @@
     - modprobe
 
 - name: install rootless docker
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   environment:
     PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -60,7 +60,7 @@
   when: not docker_rootless_sock.stat.exists
 
 - name: enable and start docker (rootful installation)
-  become: 'yes'
+  become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:
     name: docker.service
