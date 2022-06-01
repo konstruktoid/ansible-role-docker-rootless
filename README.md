@@ -25,7 +25,8 @@ None.
 - hosts: all
   any_errors_fatal: true
   tasks:
-    - include_role:
+    - name: include the konstruktoid.docker_rootless role
+      include_role:
         name: konstruktoid.docker_rootless
 ...
 ```
