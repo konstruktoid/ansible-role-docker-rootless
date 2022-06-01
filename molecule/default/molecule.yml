@@ -71,21 +71,21 @@ provisioner:
         docker_compose: true
 platforms:
   - name: bullseye
-    box: debian/bullseye64
+    box: "debian/bullseye64"
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
   - name: almalinux
-    box: almalinux/8
+    box: "almalinux/8"
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
   - name: focal
-    box: bento/ubuntu-20.04
+    box: "bento/ubuntu-20.04"
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
@@ -103,14 +103,14 @@ platforms:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
   - name: almalinuxroot
-    box: almalinux/8
+    box: "almalinux/8"
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
   - name: focalroot
-    box: bento/ubuntu-20.04
+    box: "bento/ubuntu-20.04"
     config_options:
       vm.boot_timeout: 600
     instance_raw_config_args:
