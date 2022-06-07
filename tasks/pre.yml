@@ -23,6 +23,16 @@
     - packages
     - gidmap
 
+- name: install RedHat family packages
+  become: true
+  ansible.builtin.dnf:
+    name: ['curl', 'python3-pip']
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+    - dnf
+    - packages
+
 - name: install fuse-overlayfs
   become: true
   ansible.builtin.apt:
@@ -46,6 +56,16 @@
   tags:
     - dnf
     - yum
+    - packages
+
+- name: install python3 setuptools
+  become: true
+  ansible.builtin.package:
+    name: "python3-setuptools"
+    state: present
+  when: ansible_distribution == "AlmaLinux"
+  tags:
+    - dnf
     - packages
 
 - name: install slirp4netns
