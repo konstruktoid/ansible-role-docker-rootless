@@ -27,11 +27,19 @@
 - name: install RedHat family packages
   become: true
   ansible.builtin.dnf:
-    name: ['curl', 'iptables', 'python3-pip', 'slirp4netns']
+    name: ['curl', 'iptables', 'python3-pip']
     state: present
-  register: rhpackages
-  failed_when: rhpackages is not success and not 'No package slirp4netns' in rhpackages.failures[0]
   when: ansible_os_family == "RedHat"
+  tags:
+    - dnf
+    - packages
+
+- name: install RedHat family slirp4netns
+  become: true
+  ansible.builtin.dnf:
+    name: 'slirp4netns'
+    state: present
+  when: ansible_os_family == "RedHat" and ansible_distribution != "Amazon"
   tags:
     - dnf
     - packages
@@ -45,9 +53,8 @@
     owner: root
     group: root
     mode: '0755'
-  when: rhpackages is not success and 'No package slirp4netns' in rhpackages.failures[0]
+  when: ansible_distribution == "Amazon"
   tags:
-    - apt
     - dnf
     - packages
 
