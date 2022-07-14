@@ -11,9 +11,10 @@
 - name: install Debian family packages
   become: true
   ansible.builtin.apt:
-    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
+    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
+           'dbus-user-session', 'gnupg', 'iptables', 'libpam-systemd',
            'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
-           'uidmap', 'libpam-systemd', 'dbus-user-session']
+           'slirp4netns', 'uidmap']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
@@ -26,10 +27,27 @@
 - name: install RedHat family packages
   become: true
   ansible.builtin.dnf:
-    name: ['curl', 'python3-pip']
+    name: ['curl', 'iptables', 'python3-pip', 'slirp4netns']
     state: present
+  register: rhpackages
+  failed_when: rhpackages is not success and not 'No package slirp4netns' in rhpackages.failures[0]
   when: ansible_os_family == "RedHat"
   tags:
+    - dnf
+    - packages
+
+- name: install slirp4netns binary
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64"
+    dest: /usr/bin/slirp4netns
+    checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
+    owner: root
+    group: root
+    mode: '0755'
+  when: rhpackages is not success and 'No package slirp4netns' in rhpackages.failures[0]
+  tags:
+    - apt
     - dnf
     - packages
 
@@ -60,21 +78,11 @@
 
 - name: install python3 setuptools
   become: true
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: "python3-setuptools"
     state: present
   when: ansible_distribution == "AlmaLinux"
   tags:
-    - dnf
-    - packages
-
-- name: install slirp4netns
-  become: true
-  ansible.builtin.package:
-    name: "slirp4netns"
-    state: present
-  tags:
-    - apt
     - dnf
     - packages
 
