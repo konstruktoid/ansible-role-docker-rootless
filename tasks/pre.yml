@@ -11,9 +11,10 @@
 - name: install Debian family packages
   become: true
   ansible.builtin.apt:
-    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg',
+    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
+           'dbus-user-session', 'gnupg', 'iptables', 'libpam-systemd',
            'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
-           'uidmap', 'libpam-systemd', 'dbus-user-session']
+           'slirp4netns', 'uidmap']
     state: present
     install_recommends: 'no'
   when: ansible_os_family == "Debian"
