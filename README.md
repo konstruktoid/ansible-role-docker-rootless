@@ -7,9 +7,6 @@ a [Docker](https://www.docker.com/) daemon running as a non-root user.
 Do not use any of this without first testing in a non-operational environment.
 ```
 
-Note: If you're looking for role examples and documentation, it's available
-in the [documentation branch](https://github.com/konstruktoid/ansible-docker-rootless/tree/documentation).
-
 > Rootless mode allows running the Docker daemon and containers as a non-root
 user to mitigate potential vulnerabilities in the daemon and the container
 runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
@@ -163,6 +160,8 @@ configuration.
 If [Ansible Molecule](https://molecule.readthedocs.io/en/latest/)
 with the [molecule-vagrant](https://github.com/ansible-community/molecule-vagrant)
 plugin and related software is installed, running `molecule test` is supported.
+
+`tox -l` will list all available `tox` test environments.
 
 ## Contributing
 
