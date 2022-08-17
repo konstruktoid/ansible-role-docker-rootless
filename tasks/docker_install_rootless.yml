@@ -51,7 +51,7 @@
     dest: "{{ docker_user_info.home }}/bin"
     extra_opts:
       - --strip-components=1
-    remote_src: 'yes'
+    remote_src: true
   notify: restart rootless docker
   tags:
     - docker
@@ -64,7 +64,7 @@
     dest: "{{ docker_user_info.home }}/bin"
     extra_opts:
       - --strip-components=1
-    remote_src: 'yes'
+    remote_src: true
   tags:
     - docker
 
@@ -74,7 +74,7 @@
   ansible.builtin.template:
     src: docker_rootless.service.j2
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
-    backup: 'yes'
+    backup: true
     mode: 0600
   tags:
     - docker
@@ -85,10 +85,10 @@
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:
     name: docker.service
-    enabled: 'yes'
+    enabled: true
     state: started
     scope: user
-    daemon_reload: 'yes'
+    daemon_reload: true
   tags:
     - docker
     - systemd

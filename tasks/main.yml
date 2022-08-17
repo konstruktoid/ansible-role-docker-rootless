@@ -66,7 +66,7 @@
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
         state: present
-        create: 'yes'
+        create: true
         mode: '0640'
       when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
