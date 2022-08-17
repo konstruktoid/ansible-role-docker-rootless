@@ -18,7 +18,7 @@
       become: true
       ansible.builtin.user:
         name: "{{ docker_user }}"
-      check_mode: 'yes'
+      check_mode: true
       register: docker_user_info
 
     - name: docker_user verification block
@@ -165,7 +165,7 @@
               - net_bind_service
               - setgid
               - setuid
-            pull: 'yes'
+            pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
           when: docker_rootful|bool and docker_rootful_enabled|bool
@@ -200,7 +200,7 @@
               - net_bind_service
               - setgid
               - setuid
-            pull: 'yes'
+            pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
 
@@ -226,7 +226,7 @@
             name: nginx
             image: konstruktoid/nginx
             state: started
-            restart: 'yes'
+            restart: true
             ports:
               - "8081:80"
             cap_drop: all
@@ -236,7 +236,7 @@
               - net_bind_service
               - setgid
               - setuid
-            pull: 'yes'
+            pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
 
@@ -262,7 +262,7 @@
             name: nginxport
             image: konstruktoid/nginx
             state: started
-            restart: 'yes'
+            restart: true
             ports:
               - "80:80"
             cap_drop: all
@@ -272,7 +272,7 @@
               - net_bind_service
               - setgid
               - setuid
-            pull: 'yes'
+            pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
           when: docker_allow_privileged_ports|bool
@@ -290,7 +290,7 @@
         - name: verify rootful website
           ansible.builtin.uri:
             url: http://127.0.0.1:8080
-            return_content: 'yes'
+            return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
           when: docker_rootful|bool and docker_rootful_enabled|bool
@@ -298,14 +298,14 @@
         - name: verify rootless website
           ansible.builtin.uri:
             url: http://127.0.0.1:8081
-            return_content: 'yes'
+            return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
 
         - name: verify port 80 website
           ansible.builtin.uri:
             url: http://127.0.0.1:80
-            return_content: 'yes'
+            return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
           when: docker_allow_privileged_ports|bool

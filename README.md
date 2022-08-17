@@ -122,10 +122,10 @@ configuration.
 
 ```yaml
 - name: register "{{ docker_user }}" info
-  become: 'yes'
+  become: true
   user:
     name: "{{ docker_user }}"
-  check_mode: 'yes'
+  check_mode: true
   register: docker_user_info
   tags:
     - user
@@ -137,7 +137,7 @@ configuration.
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
     - name: nginx container
-      become: 'yes'
+      become: true
       become_user: "{{ docker_user }}"
       community.docker.docker_container:
         name: nginx
@@ -150,7 +150,7 @@ configuration.
           - net_bind_service
           - setgid
           - setuid
-        pull: 'yes'
+        pull: true
         hostname: "{{ ansible_nodename }}"
         container_default_behavior: compatibility
 ```

@@ -14,7 +14,7 @@
   ansible.builtin.user:
     name: "{{ docker_user }}"
     groups: systemd-journal
-    append: 'yes'
+    append: true
   when: ansible_distribution == "Debian"
   tags:
     - user

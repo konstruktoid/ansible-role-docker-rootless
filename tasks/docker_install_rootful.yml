@@ -19,7 +19,7 @@
   ansible.builtin.template:
     src: docker.repo.j2
     dest: /etc/apt/sources.list.d/docker.list
-    backup: 'yes'
+    backup: true
     mode: 0644
     owner: root
     group: root
@@ -31,7 +31,7 @@
 - name: apt update
   become: true
   ansible.builtin.apt:
-    update_cache: 'yes'
+    update_cache: true
   when: ansible_os_family == "Debian"
   tags:
     - apt

@@ -16,7 +16,7 @@
   ansible.builtin.systemd:
     name: docker
     state: stopped
-    enabled: 'no'
+    enabled: false
   when: not docker_rootful_enabled
   tags:
     - docker
@@ -27,7 +27,7 @@
   ansible.builtin.systemd:
     name: docker
     state: started
-    enabled: 'yes'
+    enabled: true
   when: docker_rootful_enabled
   tags:
     - docker
@@ -64,10 +64,10 @@
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:
     name: docker.service
-    enabled: 'yes'
+    enabled: true
     state: started
     scope: user
-    daemon_reload: 'yes'
+    daemon_reload: true
   tags:
     - docker
     - systemd
