@@ -1,5 +1,5 @@
 ---
-- name: apt update
+- name: Run apt update
   become: true
   ansible.builtin.apt:
     update_cache: true
@@ -8,7 +8,7 @@
   tags:
     - apt
 
-- name: install Debian family packages
+- name: Install Debian family packages
   become: true
   ansible.builtin.apt:
     name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
@@ -24,7 +24,7 @@
     - packages
     - gidmap
 
-- name: install RedHat family packages
+- name: Install RedHat family packages
   become: true
   ansible.builtin.dnf:
     name: ['curl', 'iptables', 'python3-pip']
@@ -34,7 +34,7 @@
     - dnf
     - packages
 
-- name: install RedHat family slirp4netns
+- name: Install RedHat family slirp4netns
   become: true
   ansible.builtin.dnf:
     name: 'slirp4netns'
@@ -44,7 +44,7 @@
     - dnf
     - packages
 
-- name: install slirp4netns binary
+- name: Install slirp4netns binary
   become: true
   ansible.builtin.get_url:
     url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64"
@@ -58,7 +58,7 @@
     - dnf
     - packages
 
-- name: install fuse-overlayfs
+- name: Install fuse-overlayfs
   become: true
   ansible.builtin.apt:
     name: fuse-overlayfs
@@ -66,13 +66,13 @@
     install_recommends: false
   when: >
     ansible_distribution == "Debian" and
-    (ansible_kernel is version("4.18",">=") and
-    ansible_kernel is version("5.11","<="))
+    (ansible_kernel is version("4.18", ">=") and
+    ansible_kernel is version("5.11", "<="))
   tags:
     - apt
     - packages
 
-- name: python3-rpm installation
+- name: Python3-rpm installation
   become: true
   ansible.builtin.dnf:
     name: "python3-rpm"
@@ -83,7 +83,7 @@
     - yum
     - packages
 
-- name: install python3 setuptools
+- name: Install python3 setuptools
   become: true
   ansible.builtin.dnf:
     name: "python3-setuptools"
@@ -93,7 +93,7 @@
     - dnf
     - packages
 
-- name: install python3 docker
+- name: Install python3 docker
   become: true
   ansible.builtin.pip:
     name: docker
@@ -102,7 +102,7 @@
     - docker
     - python
 
-- name: sysctl net.ipv4.ip_forward
+- name: Sysctl net.ipv4.ip_forward
   become: true
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
@@ -113,7 +113,7 @@
   tags:
     - sysctl
 
-- name: sysctl kernel.unprivileged_userns_clone
+- name: Sysctl kernel.unprivileged_userns_clone
   become: true
   ansible.posix.sysctl:
     name: kernel.unprivileged_userns_clone
@@ -122,11 +122,11 @@
     state: present
     reload: true
   when: ansible_distribution == "Debian" and
-        ansible_distribution_version is version('11', '<' )
+        ansible_distribution_version is version('11', '<')
   tags:
     - sysctl
 
-- name: sysctl net.ipv4.ip_unprivileged_port_start=0
+- name: Sysctl net.ipv4.ip_unprivileged_port_start=0
   become: true
   ansible.posix.sysctl:
     name: net.ipv4.ip_unprivileged_port_start
@@ -138,7 +138,7 @@
   tags:
     - sysctl
 
-- name: sysctl net.ipv4.ping_group_range=0 2147483647
+- name: Sysctl net.ipv4.ping_group_range=0 2147483647
   become: true
   ansible.posix.sysctl:
     name: net.ipv4.ping_group_range
@@ -150,7 +150,7 @@
   tags:
     - sysctl
 
-- name: load the overlay module
+- name: Load the overlay module
   become: true
   community.general.modprobe:
     name: overlay

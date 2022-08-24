@@ -1,5 +1,5 @@
 ---
-- name: add user "{{ docker_user }}"
+- name: Add user "{{ docker_user }}"
   become: true
   ansible.builtin.user:
     name: "{{ docker_user }}"
@@ -9,7 +9,7 @@
   tags:
     - user
 
-- name: adding user "{{ docker_user }}" to systemd-journal group
+- name: Adding user "{{ docker_user }}" to systemd-journal group
   become: true
   ansible.builtin.user:
     name: "{{ docker_user }}"
@@ -19,7 +19,7 @@
   tags:
     - user
 
-- name: ensure "{{ docker_user }}" is lingering
+- name: Ensure "{{ docker_user }}" is lingering
   ansible.builtin.stat:
     path: "/var/lib/systemd/linger/{{ docker_user }}"
   register: docker_user_lingering
@@ -27,7 +27,7 @@
     - user
     - systemd
 
-- name: enable lingering for "{{ docker_user }}"
+- name: Enable lingering for "{{ docker_user }}"
   become: true
   ansible.builtin.command: "loginctl enable-linger {{ docker_user }}"
   when: not docker_user_lingering.stat.exists
@@ -35,7 +35,7 @@
     - user
     - systemd
 
-- name: create "{{ docker_user }}" ansible tmp dir
+- name: Create "{{ docker_user }}" ansible tmp dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:

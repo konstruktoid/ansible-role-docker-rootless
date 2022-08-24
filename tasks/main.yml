@@ -1,38 +1,38 @@
 ---
-- name: install required packages and configure sysctl
+- name: Install required packages and configure sysctl
   ansible.builtin.include_tasks: pre.yml
 
-- name: manage docker user
+- name: Manage Docker user
   ansible.builtin.include_tasks: manage_user.yml
 
-- name: remove obselete Docker instruction file
+- name: Remove obselete Docker instruction file
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
     state: absent
 
-- name: rootful docker
+- name: Rootful Docker block
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
-    - name: install rootful docker
+    - name: Install rootful Docker
       ansible.builtin.include_tasks: docker_install_rootful.yml
 
-    - name: configure rootful docker service
+    - name: Configure rootful Docker service
       ansible.builtin.include_tasks: docker_service_rootful.yml
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
-- name: debian information
+- name: Debian information
   ansible.builtin.fail:
     msg: "slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10"
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
-- name: install and configure rootless docker
+- name: Install and configure rootless docker
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
 
-- name: ensure that docker-compose python pip package is installed
+- name: Ensure that docker-compose python pip package is installed
   ansible.builtin.pip:
     name: docker-compose
     executable: pip3
@@ -40,7 +40,7 @@
   become_user: "{{ docker_user }}"
   when: docker_compose and ansible_os_family == "Debian"
 
-- name: user sudo alias
+- name: Add user sudo alias
   vars:
     sudo_alias: >
       alias docker='sudo XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
@@ -48,19 +48,19 @@
       {{ docker_user_info.home }}/bin/docker'
 
   block:
-    - name: stat {{ ansible_env.HOME }}/.bashrc
+    - name: Stat {{ ansible_env.HOME }}/.bashrc
       ansible.builtin.stat:
         path: "{{ ansible_env.HOME }}/.bashrc"
       register: user_bashrc
 
-    - name: check if .bash_aliases is used
+    - name: Check if .bash_aliases is used
       ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
       register: check_aliases
       changed_when: check_aliases.rc >= 2
       failed_when: check_aliases.rc >= 2
       when: user_bashrc.stat.exists
 
-    - name: add rootless docker alias to {{ ansible_env.HOME }}/.bash_aliases
+    - name: Add rootless Docker alias to {{ ansible_env.HOME }}/.bash_aliases
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
         line: "{{ sudo_alias }}"
@@ -70,22 +70,22 @@
         mode: '0640'
       when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
-    - name: add rootless docker alias to {{ ansible_env.HOME }}/.bashrc
+    - name: Add rootless Docker alias to {{ ansible_env.HOME }}/.bashrc
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
       when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
-  when: docker_add_alias|bool and not docker_rootful
+  when: docker_add_alias | bool and not docker_rootful
 
-- name: create {{ ansible_env.HOME }}/docker_rootless.sh
+- name: Create {{ ansible_env.HOME }}/docker_rootless.sh
   ansible.builtin.template:
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: 0700
-  when: docker_rootful or not docker_add_alias|bool
+  when: docker_rootful or not docker_add_alias | bool
 
-- name: deploy bash completion
+- name: Deploy bash completion
   ansible.builtin.include_tasks: bashrc.yml
   when: docker_user_bashrc
 ...
