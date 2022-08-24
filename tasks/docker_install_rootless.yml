@@ -1,5 +1,5 @@
 ---
-- name: create "{{ docker_user }}" docker bin dir
+- name: Create "{{ docker_user }}" Docker bin dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -9,7 +9,7 @@
   tags:
     - docker
 
-- name: create "{{ docker_user }}" systemd config dir
+- name: Create "{{ docker_user }}" systemd config dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -19,7 +19,7 @@
   tags:
     - docker
 
-- name: download docker-{{ docker_release }}.tgz
+- name: Download docker-{{ docker_release }}.tgz
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
@@ -31,7 +31,7 @@
   tags:
     - docker
 
-- name: download docker-rootless-extras-{{ docker_release }}.tgz
+- name: Download docker-rootless-extras-{{ docker_release }}.tgz
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
@@ -43,7 +43,7 @@
   tags:
     - docker
 
-- name: extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
+- name: Extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
@@ -52,11 +52,12 @@
     extra_opts:
       - --strip-components=1
     remote_src: true
-  notify: restart rootless docker
+  notify:
+    - Restart rootless docker
   tags:
     - docker
 
-- name: extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
+- name: Extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
@@ -68,7 +69,7 @@
   tags:
     - docker
 
-- name: add docker systemd service
+- name: Add Docker systemd service
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.template:
@@ -80,7 +81,7 @@
     - docker
     - systemd
 
-- name: enable and start docker (rootless installation)
+- name: Enable and start Docker (rootless installation)
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:

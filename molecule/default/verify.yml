@@ -4,44 +4,44 @@
   any_errors_fatal: true
 
   tasks:
-    - name: include default vars
+    - name: Include default vars
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions:
           - 'yml'
 
-    - name: include host vars
+    - name: Include host vars
       ansible.builtin.include_vars:
         file: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/inventory/host_vars/{{ ansible_hostname }}"
 
-    - name: register docker_user info
+    - name: Register docker_user info
       become: true
       ansible.builtin.user:
         name: "{{ docker_user }}"
       check_mode: true
       register: docker_user_info
 
-    - name: docker_user verification block
+    - name: User verification block
       block:
-        - name: verify docker_user creation
+        - name: Verify docker_user creation
           ansible.builtin.command: id "{{ docker_user }}"
           register: id_docker_user
           changed_when: id_docker_user.rc != 0
           failed_when: id_docker_user.rc != 0
 
-        - name: verify docker_user subuid
+        - name: Verify docker_user subuid
           ansible.builtin.command: grep "^{{ docker_user }}:" /etc/subuid
           register: subuid_docker_user
           changed_when: subuid_docker_user.rc != 0
           failed_when: subuid_docker_user.rc != 0
 
-        - name: verify docker_user subgid
+        - name: Verify docker_user subgid
           ansible.builtin.command: grep "^{{ docker_user }}:" /etc/subgid
           register: subgid_docker_user
           changed_when: subgid_docker_user.rc != 0
           failed_when: subgid_docker_user.rc != 0
 
-        - name: verify docker_user dockerd
+        - name: Verify docker_user dockerd
           ansible.builtin.shell: >
             set -o pipefail &&
             ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
@@ -51,60 +51,60 @@
           changed_when: docker_user[:7] not in ps_dockerd.stdout
           failed_when: docker_user[:7] not in ps_dockerd.stdout
 
-        - name: verify docker_rootless.sh
+        - name: Verify docker_rootless.sh
           ansible.builtin.stat:
             path: "{{ ansible_env.HOME }}/docker_rootless.sh"
           register: docker_rootless_sh
           changed_when: not docker_rootless_sh.stat.exists
           failed_when: not docker_rootless_sh.stat.exists
-          when: docker_rootful or not docker_add_alias|bool
+          when: docker_rootful or not docker_add_alias | bool
 
-        - name: verify ping functionality
+        - name: Verify ping functionality
           ansible.builtin.command: ping -W1 -c1 1.1.1.1
           register: ping_allowed
           changed_when: false
           failed_when: ping_allowed.rc != 0
-          when: docker_allow_ping|bool
+          when: docker_allow_ping | bool
 
-    - name: docker alias verification
+    - name: Docker alias verification
       block:
-        - name: stat {{ ansible_env.HOME }}/.bashrc
+        - name: Stat {{ ansible_env.HOME }}/.bashrc
           ansible.builtin.stat:
             path: "{{ ansible_env.HOME }}/.bashrc"
           register: user_bashrc
 
-        - name: check if .bash_aliases is used
+        - name: Check if .bash_aliases is used
           ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
           register: check_aliases
           changed_when: check_aliases.rc >= 2
           failed_when: check_aliases.rc >= 2
           when: user_bashrc.stat.exists
 
-        - name: verify rootless docker .bash_aliases alias
+        - name: Verify rootless docker .bash_aliases alias
           ansible.builtin.command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bash_aliases"
           register: verify_bash_aliases
           changed_when: verify_bash_aliases.rc != 0
           failed_when: verify_bash_aliases.rc != 0
           when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
-        - name: verify rootless docker .bashrc alias
+        - name: Verify rootless docker .bashrc alias
           ansible.builtin.command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bashrc"
           register: verify_bashrc_alias
           changed_when: verify_bashrc_alias.rc != 0
           failed_when: verify_bashrc_alias.rc != 0
           when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
-      when: docker_add_alias|bool and not docker_rootful
+      when: docker_add_alias | bool and not docker_rootful
 
-    - name: docker bash completion verification
+    - name: Docker bash completion verification
       block:
-        - name: stat "{{ docker_user_info.home }}/.bash_completion"
+        - name: Stat "{{ docker_user_info.home }}/.bash_completion"
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion"
           register: bash_comp
           failed_when: not bash_comp.stat.exists
 
-        - name: stat {{ docker_user_info.home }}/.bash_completion.d/docker
+        - name: Stat {{ docker_user_info.home }}/.bash_completion.d/docker
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker"
@@ -112,9 +112,9 @@
           failed_when: not bash_comp_docker.stat.exists
       when: docker_user_bashrc
 
-    - name: docker-compose verification
+    - name: Docker-compose verification
       block:
-        - name: stat {{ docker_user_info.home }}/.bash_completion.d/docker-compose
+        - name: Stat {{ docker_user_info.home }}/.bash_completion.d/docker-compose
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker-compose"
@@ -122,24 +122,24 @@
           failed_when: not bash_comp_docker_compose.stat.exists
       when: docker_compose
 
-    - name: container verification block
+    - name: Container verification block
       environment:
         XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
         DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       block:
-        - name: reboot host
+        - name: Reboot host
           become: true
           ansible.builtin.reboot:
 
-        - name: wait for the host and reconnect
+        - name: Wait for the host and reconnect
           ansible.builtin.wait_for:
             port: 22
-            host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+            host: '{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}'
             delay: 10
             timeout: 120
 
-        - name: test alpine ping container
+        - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
             "{{ ansible_env.HOME }}"/docker_rootless.sh run -ti konstruktoid/alpine ping -W1 -c1 1.1.1.1
@@ -148,9 +148,9 @@
           register: alpine_ping
           changed_when: alpine_ping.stdout.find(' 0% packet loss') != -1
           failed_when: alpine_ping.stdout.find('  0% packet loss') != -1
-          when: docker_allow_ping|bool and (docker_rootful or not docker_add_alias|bool)
+          when: docker_allow_ping | bool and (docker_rootful or not docker_add_alias | bool)
 
-        - name: start rootful nginx container
+        - name: Start rootful nginx container
           become: true
           community.docker.docker_container:
             name: nginxroot
@@ -168,25 +168,25 @@
             pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          when: docker_rootful|bool and docker_rootful_enabled|bool
+          when: docker_rootful | bool and docker_rootful_enabled | bool
 
-        - name: verify running rootful container
+        - name: Verify running rootful container
           become: true
           community.docker.docker_container_info:
             name: nginxroot
           register: nginxroot_container_running
           changed_when: not nginxroot_container_running
           failed_when: not nginxroot_container_running
-          when: docker_rootful|bool and docker_rootful_enabled|bool
+          when: docker_rootful | bool and docker_rootful_enabled | bool
 
-        - name: assert rootful container settings
+        - name: Assert rootful container settings
           ansible.builtin.assert:
             that:
               - docker_user_info.uid|string in nginxroot_container_running.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginxroot_container_running.container.HostnamePath
-          when: docker_rootful|bool and docker_rootful_enabled|bool
+          when: docker_rootful | bool and docker_rootful_enabled | bool
 
-        - name: start rootless nginx container
+        - name: Start rootless nginx container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container:
@@ -204,7 +204,7 @@
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
 
-        - name: verify running rootless container
+        - name: Verify running rootless container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container_info:
@@ -213,13 +213,13 @@
           changed_when: not nginx_container_running
           failed_when: not nginx_container_running
 
-        - name: assert rootless container settings
+        - name: Assert rootless container settings
           ansible.builtin.assert:
             that:
               - docker_user_info.uid|string in nginx_container_running.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_running.container.HostnamePath
 
-        - name: restart rootless nginx container
+        - name: Restart rootless nginx container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container:
@@ -240,7 +240,7 @@
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
 
-        - name: verify restarted rootless container
+        - name: Verify restarted rootless container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container_info:
@@ -249,13 +249,13 @@
           changed_when: not nginx_container_restarted
           failed_when: not nginx_container_restarted
 
-        - name: assert rootless container settings
+        - name: Assert rootless container settings
           ansible.builtin.assert:
             that:
               - docker_user_info.uid|string in nginx_container_restarted.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_restarted.container.HostnamePath
 
-        - name: verify rootless port 80 nginx container
+        - name: Verify rootless port 80 nginx container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container:
@@ -275,9 +275,9 @@
             pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          when: docker_allow_privileged_ports|bool
+          when: docker_allow_privileged_ports | bool
 
-        - name: verify rootless port 80 container
+        - name: Verify rootless port 80 container
           become: true
           become_user: "{{ docker_user }}"
           community.docker.docker_container_info:
@@ -285,28 +285,28 @@
           register: nginxport_container_restarted
           changed_when: not nginxport_container_restarted
           failed_when: not nginxport_container_restarted
-          when: docker_allow_privileged_ports|bool
+          when: docker_allow_privileged_ports | bool
 
-        - name: verify rootful website
+        - name: Verify rootful website
           ansible.builtin.uri:
             url: http://127.0.0.1:8080
             return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
-          when: docker_rootful|bool and docker_rootful_enabled|bool
+          when: docker_rootful | bool and docker_rootful_enabled | bool
 
-        - name: verify rootless website
+        - name: Verify rootless website
           ansible.builtin.uri:
             url: http://127.0.0.1:8081
             return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
 
-        - name: verify port 80 website
+        - name: Verify port 80 website
           ansible.builtin.uri:
             url: http://127.0.0.1:80
             return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
-          when: docker_allow_privileged_ports|bool
+          when: docker_allow_privileged_ports | bool
 ...

@@ -1,11 +1,11 @@
 ---
-- name: stat {{ docker_user_info.home }}/.bashrc
+- name: Stat {{ docker_user_info.home }}/.bashrc
   become: true
   ansible.builtin.stat:
     path: "{{ docker_user_info.home }}/.bashrc"
   register: docker_user_bashrc
 
-- name: create {{ docker_user_info.home }}/.bashrc
+- name: Create {{ docker_user_info.home }}/.bashrc
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -16,7 +16,7 @@
     mode: 0644
   when: not docker_user_bashrc.stat.exists
 
-- name: extend docker_user bashrc config
+- name: Extend docker_user bashrc config
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.blockinfile:
@@ -26,7 +26,7 @@
       export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
 
-- name: create user bash completion dir
+- name: Create user bash completion dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -36,7 +36,7 @@
     group: "{{ docker_user }}"
     mode: 0750
 
-- name: source user bash completion dir
+- name: Source user bash completion dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.copy:
@@ -46,7 +46,7 @@
     group: "{{ docker_user }}"
     mode: 0750
 
-- name: install docker bash completion
+- name: Install docker bash completion
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
@@ -55,7 +55,7 @@
     checksum: "sha256:{{ docker_bash_completion_shasum }}"
     mode: 0644
 
-- name: install docker-compose bash completion
+- name: Install docker-compose bash completion
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:

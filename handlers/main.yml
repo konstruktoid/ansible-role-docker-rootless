@@ -1,5 +1,5 @@
 ---
-- name: restart rootless docker
+- name: Restart rootless docker
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.systemd:
