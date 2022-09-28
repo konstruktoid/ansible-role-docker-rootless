@@ -15,13 +15,13 @@
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+  when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
       ansible.builtin.include_tasks: docker_install_rootful.yml
 
     - name: Configure rootful Docker service
       ansible.builtin.include_tasks: docker_service_rootful.yml
-  when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: Debian information
   ansible.builtin.fail:
@@ -46,7 +46,7 @@
       alias docker='sudo XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
       DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       {{ docker_user_info.home }}/bin/docker'
-
+  when: docker_add_alias | bool and not docker_rootful
   block:
     - name: Stat {{ ansible_env.HOME }}/.bashrc
       ansible.builtin.stat:
@@ -76,7 +76,6 @@
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
       when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
-  when: docker_add_alias | bool and not docker_rootful
 
 - name: Create {{ ansible_env.HOME }}/docker_rootless.sh
   ansible.builtin.template:
