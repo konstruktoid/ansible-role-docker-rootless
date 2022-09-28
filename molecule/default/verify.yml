@@ -67,6 +67,7 @@
           when: docker_allow_ping | bool
 
     - name: Docker alias verification
+      when: docker_add_alias | bool and not docker_rootful
       block:
         - name: Stat {{ ansible_env.HOME }}/.bashrc
           ansible.builtin.stat:
@@ -93,11 +94,11 @@
           changed_when: verify_bashrc_alias.rc != 0
           failed_when: verify_bashrc_alias.rc != 0
           when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
-      when: docker_add_alias | bool and not docker_rootful
 
     - name: Docker bash completion verification
+      when: docker_user_bashrc
       block:
-        - name: Stat "{{ docker_user_info.home }}/.bash_completion"
+        - name: Stat {{ docker_user_info.home }}/.bash_completion
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion"
@@ -110,9 +111,9 @@
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker"
           register: bash_comp_docker
           failed_when: not bash_comp_docker.stat.exists
-      when: docker_user_bashrc
 
     - name: Docker-compose verification
+      when: docker_compose
       block:
         - name: Stat {{ docker_user_info.home }}/.bash_completion.d/docker-compose
           become: true
@@ -120,7 +121,6 @@
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker-compose"
           register: bash_comp_docker_compose
           failed_when: not bash_comp_docker_compose.stat.exists
-      when: docker_compose
 
     - name: Container verification block
       environment:
