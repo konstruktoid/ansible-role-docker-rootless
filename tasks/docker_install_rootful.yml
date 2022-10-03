@@ -43,7 +43,8 @@
 
 - name: Add Docker yum repo
   become: true
-  ansible.builtin.command: "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
+  ansible.builtin.command:
+    cmd: "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
   when: ansible_os_family == "RedHat" and not docker_ce_repo.stat.exists
   tags:
     - dnf

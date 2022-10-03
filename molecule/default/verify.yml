@@ -24,27 +24,31 @@
     - name: User verification block
       block:
         - name: Verify docker_user creation
-          ansible.builtin.command: id "{{ docker_user }}"
+          ansible.builtin.command:
+            cmd: id "{{ docker_user }}"
           register: id_docker_user
           changed_when: id_docker_user.rc != 0
           failed_when: id_docker_user.rc != 0
 
         - name: Verify docker_user subuid
-          ansible.builtin.command: grep "^{{ docker_user }}:" /etc/subuid
+          ansible.builtin.command:
+            cmd: grep "^{{ docker_user }}:" /etc/subuid
           register: subuid_docker_user
           changed_when: subuid_docker_user.rc != 0
           failed_when: subuid_docker_user.rc != 0
 
         - name: Verify docker_user subgid
-          ansible.builtin.command: grep "^{{ docker_user }}:" /etc/subgid
+          ansible.builtin.command:
+            cmd: grep "^{{ docker_user }}:" /etc/subgid
           register: subgid_docker_user
           changed_when: subgid_docker_user.rc != 0
           failed_when: subgid_docker_user.rc != 0
 
         - name: Verify docker_user dockerd
-          ansible.builtin.shell: >
-            set -o pipefail &&
-            ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
+          ansible.builtin.shell:
+            cmd: |
+              set -o pipefail
+              ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
           args:
             executable: /bin/bash
           register: ps_dockerd
@@ -60,7 +64,8 @@
           when: docker_rootful or not docker_add_alias | bool
 
         - name: Verify ping functionality
-          ansible.builtin.command: ping -W1 -c1 1.1.1.1
+          ansible.builtin.command:
+            cmd: ping -W1 -c1 1.1.1.1
           register: ping_allowed
           changed_when: false
           failed_when: ping_allowed.rc != 0
@@ -75,21 +80,24 @@
           register: user_bashrc
 
         - name: Check if .bash_aliases is used
-          ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+          ansible.builtin.command:
+            cmd: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
           register: check_aliases
           changed_when: check_aliases.rc >= 2
           failed_when: check_aliases.rc >= 2
           when: user_bashrc.stat.exists
 
         - name: Verify rootless docker .bash_aliases alias
-          ansible.builtin.command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bash_aliases"
+          ansible.builtin.command:
+            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bash_aliases"
           register: verify_bash_aliases
           changed_when: verify_bash_aliases.rc != 0
           failed_when: verify_bash_aliases.rc != 0
           when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
         - name: Verify rootless docker .bashrc alias
-          ansible.builtin.command: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bashrc"
+          ansible.builtin.command:
+            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bashrc"
           register: verify_bashrc_alias
           changed_when: verify_bashrc_alias.rc != 0
           failed_when: verify_bashrc_alias.rc != 0
