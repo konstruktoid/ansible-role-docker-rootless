@@ -5,5 +5,3 @@ exclude_paths:
   - tests/
 enable_list:
   - fqcn-builtins  # opt-in
-warn_list:
-  - name[template]
