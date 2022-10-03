@@ -74,7 +74,7 @@
     - name: Docker alias verification
       when: docker_add_alias | bool and not docker_rootful
       block:
-        - name: Stat {{ ansible_env.HOME }}/.bashrc
+        - name: Stat .bashrc
           ansible.builtin.stat:
             path: "{{ ansible_env.HOME }}/.bashrc"
           register: user_bashrc
@@ -106,14 +106,14 @@
     - name: Docker bash completion verification
       when: docker_user_bashrc
       block:
-        - name: Stat {{ docker_user_info.home }}/.bash_completion
+        - name: Stat Docker user .bash_completion
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion"
           register: bash_comp
           failed_when: not bash_comp.stat.exists
 
-        - name: Stat {{ docker_user_info.home }}/.bash_completion.d/docker
+        - name: Stat Docker user .bash_completion.d/docker
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker"
@@ -123,7 +123,7 @@
     - name: Docker-compose verification
       when: docker_compose
       block:
-        - name: Stat {{ docker_user_info.home }}/.bash_completion.d/docker-compose
+        - name: Stat Docker user .bash_completion.d/docker-compose
           become: true
           ansible.builtin.stat:
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker-compose"

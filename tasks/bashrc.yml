@@ -1,11 +1,11 @@
 ---
-- name: Stat {{ docker_user_info.home }}/.bashrc
+- name: Stat Docker user .bashrc
   become: true
   ansible.builtin.stat:
     path: "{{ docker_user_info.home }}/.bashrc"
   register: docker_user_bashrc
 
-- name: Create {{ docker_user_info.home }}/.bashrc
+- name: Create Docker user .bashrc
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -16,7 +16,7 @@
     mode: 0644
   when: not docker_user_bashrc.stat.exists
 
-- name: Extend docker_user bashrc config
+- name: Extend Docker user bashrc config
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.blockinfile:
