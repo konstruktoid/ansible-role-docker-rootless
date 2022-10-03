@@ -33,7 +33,7 @@
     - docker
     - systemd
 
-- name: Stat /run/user/{{ docker_user_info.uid }}/docker.sock
+- name: Stat Docker user docker.sock
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.stat:

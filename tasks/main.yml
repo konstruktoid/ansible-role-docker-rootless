@@ -48,7 +48,7 @@
       {{ docker_user_info.home }}/bin/docker'
   when: docker_add_alias | bool and not docker_rootful
   block:
-    - name: Stat {{ ansible_env.HOME }}/.bashrc
+    - name: Stat .bashrc
       ansible.builtin.stat:
         path: "{{ ansible_env.HOME }}/.bashrc"
       register: user_bashrc
@@ -60,7 +60,7 @@
       failed_when: check_aliases.rc >= 2
       when: user_bashrc.stat.exists
 
-    - name: Add rootless Docker alias to {{ ansible_env.HOME }}/.bash_aliases
+    - name: Add rootless Docker alias to .bash_aliases
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
         line: "{{ sudo_alias }}"
@@ -70,14 +70,14 @@
         mode: '0640'
       when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
-    - name: Add rootless Docker alias to {{ ansible_env.HOME }}/.bashrc
+    - name: Add rootless Docker alias to .bashrc
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: '^alias docker='
       when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
 
-- name: Create {{ ansible_env.HOME }}/docker_rootless.sh
+- name: Create docker_rootless.sh
   ansible.builtin.template:
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"

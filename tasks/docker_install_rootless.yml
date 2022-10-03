@@ -1,5 +1,5 @@
 ---
-- name: Create "{{ docker_user }}" Docker bin dir
+- name: Create Docker user bin dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -9,7 +9,7 @@
   tags:
     - docker
 
-- name: Create "{{ docker_user }}" systemd config dir
+- name: Create Docker user systemd config dir
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -19,7 +19,7 @@
   tags:
     - docker
 
-- name: Download docker-{{ docker_release }}.tgz
+- name: Download Docker release archive
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
@@ -31,7 +31,7 @@
   tags:
     - docker
 
-- name: Download docker-rootless-extras-{{ docker_release }}.tgz
+- name: Download docker-rootless-extras
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
@@ -43,7 +43,7 @@
   tags:
     - docker
 
-- name: Extract docker-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
+- name: Extract Docker archive into Docker user bin directory
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
@@ -57,7 +57,7 @@
   tags:
     - docker
 
-- name: Extract docker-rootless-extras-{{ docker_release }}.tgz into {{ docker_user_info.home }}/bin
+- name: Extract docker-rootless-extras into Docker user bin directory
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.unarchive:
