@@ -4,4 +4,4 @@
   tasks:
     - name: "Include docker_rootless"
       ansible.builtin.include_role:
-        name: "ansible-docker-rootless"
+        name: "ansible-role-docker-rootless"

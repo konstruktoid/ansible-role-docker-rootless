@@ -6,8 +6,6 @@ driver:
   name: vagrant
   provider:
     name: virtualbox
-  provider_options:
-    linked_clone: false
 provisioner:
   name: ansible
   config_options:
