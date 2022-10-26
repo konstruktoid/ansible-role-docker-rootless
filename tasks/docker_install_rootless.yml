@@ -19,7 +19,7 @@
   tags:
     - docker
 
-- name: Download Docker release archive
+- name: "Download Docker archive {{ docker_release }}"
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.get_url:
