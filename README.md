@@ -11,6 +11,12 @@ Do not use any of this without first testing in a non-operational environment.
 user to mitigate potential vulnerabilities in the daemon and the container
 runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 
+> **Note**
+>
+> There is a [SLSA](https://slsa.dev/) artifact present under the
+> [slsa action workflow](https://github.com/konstruktoid/ansible-role-docker-rootless/actions/workflows/slsa.yml)
+> for verification.
+
 ## Requirements
 
 None.
