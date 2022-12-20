@@ -14,6 +14,13 @@ provisioner:
   log: true
   inventory:
     host_vars:
+      debiantesting:
+        docker_add_alias: true
+        docker_allow_ping: true
+        docker_allow_privileged_ports: false
+        docker_rootful: false
+        docker_user: debiantestinguser
+        docker_user_bashrc: false
       bullseye:
         docker_add_alias: true
         docker_allow_ping: true
@@ -70,6 +77,15 @@ provisioner:
 platforms:
   - name: bullseye
     box: "debian/bullseye64"
+    config_options:
+      vm.boot_timeout: 600
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--natdnshostresolver1', 'on']"
+    instance_raw_config_args:
+      - 'vbguest.auto_update = false'
+    memory: 1024
+  - name: debiantesting
+    box: "debian/testing64"
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
