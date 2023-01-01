@@ -74,6 +74,15 @@ provisioner:
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
+      lunar:
+        docker_add_alias: false
+        docker_allow_ping: true
+        docker_allow_privileged_ports: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: lunaruser
+        docker_user_bashrc: true
+        docker_compose: true
 platforms:
   - name: bullseye
     box: "debian/bullseye64"
@@ -111,6 +120,20 @@ platforms:
     memory: 1024
   - name: jammy
     box: "ubuntu/jammy64"
+    config_options:
+      vm.boot_timeout: 600
+      synced_folder: false
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--uart1', '0x3F8', '4']"
+      - "customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]"
+    instance_raw_config_args:
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
+  - name: lunar
+    box: "lunar/20221227"
+    box_url: "https://cloud-images.ubuntu.com/lunar/20221227/lunar-server-cloudimg-amd64-vagrant.box"
+    box_download_checksum: "5576b35423437b60ddcbf2500a2700a5354947a080d83efc057f75d4a0e08789"
+    box_download_checksum_type: "sha256"
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
