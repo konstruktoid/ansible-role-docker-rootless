@@ -39,9 +39,9 @@ None.
 ```yaml
 ---
 docker_add_alias: true
-docker_release: "20.10.22"
-docker_release_shasum: "945c3a3ddcb79ee7307496c2f39eb3d8372466e8654e63d60bbb462e4a3c1427"
-docker_release_rootless_shasum: "b1c83425ffc524fb66831ee9ac19ea1c46e8c160aaa11c237d0c10c533d28a90"
+docker_release: "20.10.23"
+docker_release_shasum: "0ee39f72cc434137d294c14d30897826bad6e24979e421f51a252769ad37e6d1"
+docker_release_rootless_shasum: "2b3ec9db6d4f8f9059b45f3c5a12fc4c2bc8c97a053bf6855c9f71f3a556097a"
 docker_bash_completion_shasum: "cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0"
 docker_compose_bash_completion_shasum: "9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de"
 docker_rootful: false
@@ -91,7 +91,8 @@ regular user.
 
 `docker_release_shasum` and `docker_release_rootless_shasum` are used to verify
 the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
-module.
+module. The `docker_release_shasum` is used for the Docker `.tgz` file and
+`docker_release_rootless_shasum` for the `docker-ce-rootless-extras` package.
 
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode.
@@ -110,9 +111,7 @@ The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
 is allowed.
 
-The `docker_allow_ping` variable configures if unprivileged users can open [ICMP
-echo
-sockets](https://docs.docker.com/engine/security/rootless/#routing-ping-packets).
+The `docker_allow_ping` variable configures if unprivileged users can open [ICMP echo sockets](https://docs.docker.com/engine/security/rootless/#routing-ping-packets).
 On some distributions, this is not allowed, and thereby containers cannot ping
 to the outside.
 
