@@ -150,7 +150,7 @@
         - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
-            "{{ ansible_env.HOME }}"/docker_rootless.sh run -ti konstruktoid/alpine ping -W1 -c1 1.1.1.1
+            "{{ ansible_env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
           args:
             executable: /bin/bash
           register: alpine_ping
