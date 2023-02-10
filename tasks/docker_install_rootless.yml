@@ -1,4 +1,13 @@
 ---
+- name: Get Docker version
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.command:
+    cmd: "{{ docker_user_info.home }}/bin/docker version"
+  register: rootless_docker_version
+  changed_when: false
+  failed_when: false
+
 - name: Create Docker user bin dir
   become: true
   become_user: "{{ docker_user }}"
@@ -18,56 +27,54 @@
     mode: "0700"
   tags:
     - docker
+    - systemd
 
-- name: "Download Docker archive {{ docker_release }}"
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.get_url:
-    url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
-    dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
-    checksum: "sha256:{{ docker_release_shasum }}"
-    owner: "{{ docker_user }}"
-    mode: "0644"
+- name: Install rootless Docker
   tags:
     - docker
+  when: docker_release not in rootless_docker_version.stdout
+  block:
+    - name: "Download Docker archive {{ docker_release }}"
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.get_url:
+        url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
+        dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
+        checksum: "sha256:{{ docker_release_shasum }}"
+        owner: "{{ docker_user }}"
+        mode: "0644"
 
-- name: Download docker-rootless-extras
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.get_url:
-    url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
-    dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
-    checksum: "sha256:{{ docker_release_rootless_shasum }}"
-    owner: "{{ docker_user }}"
-    mode: "0644"
-  tags:
-    - docker
+    - name: "Download docker-rootless-extras archive {{ docker_release }}"
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.get_url:
+        url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
+        dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
+        checksum: "sha256:{{ docker_release_rootless_shasum }}"
+        owner: "{{ docker_user }}"
+        mode: "0644"
 
-- name: Extract Docker archive into Docker user bin directory
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.unarchive:
-    src: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
-    dest: "{{ docker_user_info.home }}/bin"
-    extra_opts:
-      - --strip-components=1
-    remote_src: true
-  notify:
-    - Restart rootless docker
-  tags:
-    - docker
+    - name: Extract Docker archive into Docker user bin directory
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.unarchive:
+        src: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
+        dest: "{{ docker_user_info.home }}/bin"
+        extra_opts:
+          - --strip-components=1
+        remote_src: true
+      notify:
+        - Restart rootless docker
 
-- name: Extract docker-rootless-extras into Docker user bin directory
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.unarchive:
-    src: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
-    dest: "{{ docker_user_info.home }}/bin"
-    extra_opts:
-      - --strip-components=1
-    remote_src: true
-  tags:
-    - docker
+    - name: Extract docker-rootless-extras into Docker user bin directory
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.unarchive:
+        src: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
+        dest: "{{ docker_user_info.home }}/bin"
+        extra_opts:
+          - --strip-components=1
+        remote_src: true
 
 - name: Add Docker systemd service
   become: true
