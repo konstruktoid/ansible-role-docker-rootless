@@ -1,5 +1,8 @@
-on: [push, pull_request]
-name: Ansible Lint
+---
+on:
+  schedule:
+    - cron: "0 5 * * */3"
+name: Ansible Lint Main - Scheduled
 
 permissions:
   contents: read
@@ -10,4 +13,4 @@ jobs:
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Lint Ansible Playbook
-        uses: ansible/ansible-lint-action@6cf7cb8d0343b8f0e123638bdeafe8e020dc5b80 # main
+        uses: ./action-lint
