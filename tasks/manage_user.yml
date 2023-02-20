@@ -29,7 +29,11 @@
 
 - name: Enable lingering for the Docker user
   become: true
-  ansible.builtin.command: "loginctl enable-linger {{ docker_user }}"
+  ansible.builtin.command:
+    cmd: "loginctl enable-linger {{ docker_user }}"
+  register: enable_lingering
+  changed_when: enable_lingering.rc != 0
+  failed_when: enable_lingering.rc != 0
   when: not docker_user_lingering.stat.exists
   tags:
     - user

@@ -56,7 +56,11 @@
   environment:
     PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-  ansible.builtin.command: dockerd-rootless-setuptool.sh install
+  ansible.builtin.command:
+    cmd: dockerd-rootless-setuptool.sh install
+  register: install_rootless_docker
+  changed_when: install_rootless_docker.rc != 0
+  failed_when: install_rootless_docker.rc != 0
   when: not docker_rootless_sock.stat.exists
 
 - name: Enable and start Docker (rootful installation)

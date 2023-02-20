@@ -48,6 +48,9 @@
       become: true
       ansible.builtin.command:
         cmd: "dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
+      register: add_yum_repo
+      changed_when: add_yum_repo.rc != 0
+      failed_when: add_yum_repo.rc != 0
       when: not docker_ce_repo.stat.exists
 
 - name: Install Docker
