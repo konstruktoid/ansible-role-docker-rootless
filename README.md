@@ -28,8 +28,8 @@ None.
 - hosts: all
   any_errors_fatal: true
   tasks:
-    - name: include the konstruktoid.docker_rootless role
-      include_role:
+    - name: Include the konstruktoid.docker_rootless role
+      ansible.builtin.include_role:
         name: konstruktoid.docker_rootless
 ...
 ```
@@ -126,22 +126,20 @@ available as usual for the Ansible user, too. Type `alias` in the shell to see t
 configuration.
 
 ```yaml
-- name: register "{{ docker_user }}" info
+- name: Register Docker user info
   become: true
-  user:
+  ansible.builtin.user:
     name: "{{ docker_user }}"
   check_mode: true
   register: docker_user_info
-  tags:
-    - user
 
-- name: example container block
+- name: Example container block
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
-    - name: nginx container
+    - name: Nginx container
       become: true
       become_user: "{{ docker_user }}"
       community.docker.docker_container:
