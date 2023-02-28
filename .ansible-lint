@@ -2,6 +2,5 @@
 exclude_paths:
   - .git/
   - .github/
-  - tests/
 enable_list:
   - fqcn-builtins  # opt-in
