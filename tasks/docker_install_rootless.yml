@@ -83,7 +83,7 @@
     src: docker_rootless.service.j2
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: true
-    mode: 0600
+    mode: "0600"
   tags:
     - docker
     - systemd

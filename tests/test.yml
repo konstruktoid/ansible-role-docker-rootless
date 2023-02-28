@@ -1,7 +1,9 @@
 ---
-- hosts: all
+- name: Test playbook
+  hosts: all
   any_errors_fatal: true
   tasks:
-    - include_role:
+    - name: Include konstruktoid.docker_rootless
+      ansible.builtin.include_role:
         name: konstruktoid.docker_rootless
 ...

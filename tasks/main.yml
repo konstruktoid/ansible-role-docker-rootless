@@ -67,7 +67,7 @@
         regexp: '^alias docker='
         state: present
         create: true
-        mode: '0640'
+        mode: "0640"
       when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
 
     - name: Add rootless Docker alias to .bashrc
@@ -81,7 +81,7 @@
   ansible.builtin.template:
     src: docker_rootless.sh.j2
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
-    mode: 0700
+    mode: "0700"
   when: docker_rootful or not docker_add_alias | bool
 
 - name: Deploy bash completion
