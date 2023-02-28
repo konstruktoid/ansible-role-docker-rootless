@@ -15,7 +15,7 @@
       ansible.builtin.get_url:
         url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
         dest: /etc/apt/trusted.gpg.d/docker.asc
-        mode: '0644'
+        mode: "0644"
         force: true
 
     - name: Add apt Docker repository
@@ -24,7 +24,7 @@
         src: docker.repo.j2
         dest: /etc/apt/sources.list.d/docker.list
         backup: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
 

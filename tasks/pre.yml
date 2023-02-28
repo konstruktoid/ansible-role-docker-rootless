@@ -52,7 +52,7 @@
     checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   when: ansible_distribution == "Amazon"
   tags:
     - dnf

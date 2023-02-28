@@ -13,7 +13,7 @@
     state: file
     owner: "{{ docker_user }}"
     group: "{{ docker_user }}"
-    mode: 0644
+    mode: "0644"
   when: not docker_user_bashrc.stat.exists
 
 - name: Extend Docker user bashrc config
@@ -34,7 +34,7 @@
     state: directory
     owner: "{{ docker_user }}"
     group: "{{ docker_user }}"
-    mode: 0750
+    mode: "0750"
 
 - name: Source user bash completion dir
   become: true
@@ -44,7 +44,7 @@
     dest: "{{ docker_user_info.home }}/.bash_completion"
     owner: "{{ docker_user }}"
     group: "{{ docker_user }}"
-    mode: 0750
+    mode: "0750"
 
 - name: Install docker bash completion
   become: true
@@ -53,7 +53,7 @@
     url: "https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker"
     dest: "{{ docker_user_info.home }}/.bash_completion.d/"
     checksum: "sha256:{{ docker_bash_completion_shasum }}"
-    mode: 0644
+    mode: "0644"
 
 - name: Install docker-compose bash completion
   become: true
@@ -62,5 +62,5 @@
     url: "https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose"
     dest: "{{ docker_user_info.home }}/.bash_completion.d/"
     checksum: "sha256:{{ docker_compose_bash_completion_shasum }}"
-    mode: 0644
+    mode: "0644"
   when: docker_compose
