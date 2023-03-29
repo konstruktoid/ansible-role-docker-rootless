@@ -1,106 +1,99 @@
 ---
-- name: Run apt update
+- name: Debian family dependencies
   become: true
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 1800
   when: ansible_os_family == "Debian"
-  tags:
-    - apt
+  block:
+    - name: Run apt update
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 1800
+      tags:
+        - apt
 
-- name: Install Debian family packages
-  become: true
-  ansible.builtin.apt:
-    name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
-           'dbus-user-session', 'gnupg', 'iptables', 'libpam-systemd',
-           'lsb-release', 'python3-pexpect', 'python3-pip', 'python3-six',
-           'slirp4netns', 'uidmap']
-    state: present
-    install_recommends: false
-  when: ansible_os_family == "Debian"
-  tags:
-    - acl
-    - apt
-    - packages
-    - gidmap
+    - name: Install Debian family packages
+      ansible.builtin.apt:
+        name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
+               'dbus-user-session', 'gnupg', 'iptables', 'libpam-systemd',
+               'lsb-release', 'python3-docker', 'python3-pexpect', 'python3-pip',
+               'python3-six', 'slirp4netns', 'uidmap']
+        state: present
+        install_recommends: false
+      tags:
+        - acl
+        - apt
+        - packages
+        - gidmap
 
-- name: Install RedHat family packages
+    - name: Install fuse-overlayfs
+      ansible.builtin.apt:
+        name: fuse-overlayfs
+        state: present
+        install_recommends: false
+      when: >
+        ansible_distribution == "Debian" and
+        (ansible_kernel is version("4.18", ">=") and
+        ansible_kernel is version("5.11", "<="))
+
+- name: RedHat family dependencies
   become: true
-  ansible.builtin.dnf:
-    name: ['curl', 'iptables', 'python3-pip']
-    state: present
   when: ansible_os_family == "RedHat"
-  tags:
-    - dnf
-    - packages
+  block:
+    - name: Install RedHat family packages
+      ansible.builtin.dnf:
+        name: ['curl', 'iptables', 'python3-pip']
+        state: present
+      tags:
+        - dnf
+        - packages
 
-- name: Install RedHat family slirp4netns
-  become: true
-  ansible.builtin.dnf:
-    name: 'slirp4netns'
-    state: present
-  when: ansible_os_family == "RedHat" and ansible_distribution != "Amazon"
-  tags:
-    - dnf
-    - packages
+    - name: Install RedHat family slirp4netns
+      ansible.builtin.dnf:
+        name: 'slirp4netns'
+        state: present
+      when: ansible_distribution != "Amazon"
+      tags:
+        - dnf
+        - packages
 
-- name: Install slirp4netns binary
-  become: true
-  ansible.builtin.get_url:
-    url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64"
-    dest: /usr/bin/slirp4netns
-    checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
-    owner: root
-    group: root
-    mode: "0755"
-  when: ansible_distribution == "Amazon"
-  tags:
-    - dnf
-    - packages
+    - name: Install slirp4netns binary
+      ansible.builtin.get_url:
+        url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64"
+        dest: /usr/bin/slirp4netns
+        checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
+        owner: root
+        group: root
+        mode: "0755"
+      when: ansible_distribution == "Amazon"
+      tags:
+        - dnf
+        - packages
 
-- name: Install fuse-overlayfs
-  become: true
-  ansible.builtin.apt:
-    name: fuse-overlayfs
-    state: present
-    install_recommends: false
-  when: >
-    ansible_distribution == "Debian" and
-    (ansible_kernel is version("4.18", ">=") and
-    ansible_kernel is version("5.11", "<="))
-  tags:
-    - apt
-    - packages
+    - name: Python3-rpm installation
+      ansible.builtin.dnf:
+        name: "python3-rpm"
+        state: present
+      when: ansible_distribution == "RedHat"
+      tags:
+        - dnf
+        - yum
+        - packages
 
-- name: Python3-rpm installation
-  become: true
-  ansible.builtin.dnf:
-    name: "python3-rpm"
-    state: present
-  when: ansible_distribution == "RedHat"
-  tags:
-    - dnf
-    - yum
-    - packages
+    - name: Install python3 setuptools
+      ansible.builtin.dnf:
+        name: "python3-setuptools"
+        state: present
+      when: ansible_distribution == "AlmaLinux"
+      tags:
+        - dnf
+        - packages
 
-- name: Install python3 setuptools
-  become: true
-  ansible.builtin.dnf:
-    name: "python3-setuptools"
-    state: present
-  when: ansible_distribution == "AlmaLinux"
-  tags:
-    - dnf
-    - packages
-
-- name: Install python3 docker
-  become: true
-  ansible.builtin.pip:
-    name: docker
-    state: present
-  tags:
-    - docker
-    - python
+    - name: Install python3 docker
+      ansible.builtin.pip:
+        name: docker
+        state: present
+      tags:
+        - docker
+        - python
 
 - name: Sysctl net.ipv4.ip_forward
   become: true
