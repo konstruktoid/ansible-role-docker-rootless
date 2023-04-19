@@ -1,10 +1,10 @@
 ---
 # https://github.com/docker/roadmap/issues/188
-# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-23.0.3.tgz
+# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-23.0.4.tgz
 docker_add_alias: true
-docker_release: "23.0.3"
-docker_release_shasum: "34b88116ab30c33daa1c780e9be3232bfa092af575edd3436f12c719fb2e44bf"
-docker_release_rootless_shasum: "22f64771d4abb6f8000823b5b8d4fefbd6f777462cda6a5a91db3fdc0addd0f0"
+docker_release: "23.0.4"
+docker_release_shasum: "81bd643a32b3428f6d9eafbd9331d0da1577c958c1c2702db1eff7afa1cdf3cd"
+docker_release_rootless_shasum: "0afed080b7e1b519e85281cfc011c470ed9376e900b8bda2417445fe9ef83a2b"
 docker_bash_completion_shasum: "cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0"
 docker_compose_bash_completion_shasum: "9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de"
 docker_rootful: false
