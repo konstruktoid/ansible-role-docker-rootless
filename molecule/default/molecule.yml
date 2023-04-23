@@ -74,6 +74,15 @@ provisioner:
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
+      lunar:
+        docker_add_alias: false
+        docker_allow_ping: false
+        docker_allow_privileged_ports: false
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: lunaruser
+        docker_user_bashrc: true
+        docker_compose: true
 platforms:
   - name: bullseye
     box: "debian/bullseye64"
@@ -102,7 +111,23 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
+  - name: emeraldroot
+    box: "almalinux/9"
+    config_options:
+      vm.boot_timeout: 600
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--natdnshostresolver1', 'on']"
+    instance_raw_config_args:
+      - 'vbguest.auto_update = false'
+    memory: 1024
   - name: focal
+    box: "bento/ubuntu-20.04"
+    config_options:
+      vm.boot_timeout: 600
+    instance_raw_config_args:
+      - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
+    memory: 1024
+  - name: focalroot
     box: "bento/ubuntu-20.04"
     config_options:
       vm.boot_timeout: 600
@@ -120,19 +145,14 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
-  - name: emeraldroot
-    box: "almalinux/9"
+  - name: lunar
+    box: "ubuntu/lunar64"
     config_options:
       vm.boot_timeout: 600
+      synced_folder: false
     provider_raw_config_args:
-      - "customize ['modifyvm', :id, '--natdnshostresolver1', 'on']"
-    instance_raw_config_args:
-      - 'vbguest.auto_update = false'
-    memory: 1024
-  - name: focalroot
-    box: "bento/ubuntu-20.04"
-    config_options:
-      vm.boot_timeout: 600
+      - "customize ['modifyvm', :id, '--uart1', '0x3F8', '4']"
+      - "customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]"
     instance_raw_config_args:
       - 'vbguest.installer_options = { allow_kernel_upgrade: true }'
     memory: 1024
