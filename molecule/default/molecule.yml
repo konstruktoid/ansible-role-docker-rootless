@@ -158,9 +158,6 @@ platforms:
     memory: 1024
 verifier:
   name: ansible
-lint: |
-  set -e
-  ansible-lint
 scenario:
   name: default
   create_sequence:
@@ -187,7 +184,6 @@ scenario:
     - destroy
   test_sequence:
     - dependency
-    - lint
     - cleanup
     - destroy
     - syntax
