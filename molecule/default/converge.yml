@@ -1,7 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  any_errors_fatal: true
   tasks:
-    - name: "Include docker_rootless"
+    - name: "Include Ansible role"
       ansible.builtin.include_role:
-        name: "ansible-role-docker-rootless"
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
