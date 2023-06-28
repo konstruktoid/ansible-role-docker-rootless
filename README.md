@@ -46,6 +46,7 @@ docker_bash_completion_shasum: "cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8
 docker_compose_bash_completion_shasum: "9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de"
 docker_rootful: false
 docker_rootful_enabled: false
+docker_service_restart: true
 docker_rootful_opts: >
   --live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
@@ -54,7 +55,6 @@ docker_user_bashrc: false
 docker_allow_privileged_ports: false
 docker_allow_ping: false
 docker_compose: false
-...
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -68,6 +68,9 @@ a manual install, not requiring any `root` permissions.
 
 If `docker_rootful: true`, then `docker_rootful_enabled` will decide if the
 daemon should be enabled as a service or not.
+
+`docker_service_restart` will restart the rootless service after the Docker
+binaries has been extracted.
 
 Using `docker_rootful: true` and `docker_rootful_enabled: true`, will result in
 a standard Docker installation, with an additional Docker daemon, running as a

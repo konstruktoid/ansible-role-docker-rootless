@@ -6,4 +6,5 @@
     name: docker.service
     state: restarted
     scope: user
+  when: docker_service_restart
 ...
