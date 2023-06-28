@@ -89,7 +89,9 @@
 
     - name: Install python3 docker
       ansible.builtin.pip:
-        name: docker
+        name:
+          - docker
+          - urllib3<2
         state: present
       tags:
         - docker
