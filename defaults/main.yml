@@ -17,4 +17,5 @@ docker_user_bashrc: false
 docker_allow_privileged_ports: false
 docker_allow_ping: false
 docker_compose: false
+docker_service_restart: true
 ...
