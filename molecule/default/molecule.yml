@@ -29,7 +29,7 @@ provisioner:
         docker_user: bullseyeuser
         docker_user_bashrc: false
         docker_compose: false
-      arctic:
+      almalinux8:
         docker_add_alias: false
         docker_allow_ping: false
         docker_allow_privileged_ports: true
@@ -37,16 +37,16 @@ provisioner:
         docker_rootful_enabled: false
         docker_user: dockeruser
         docker_user_bashrc: true
-        docker_compose: true
-      emeraldroot:
+        docker_compose: false
+      almalinux9:
         docker_add_alias: false
         docker_allow_ping: false
         docker_allow_privileged_ports: false
         docker_rootful: true
-        docker_rootful_enabled: true
+        docker_rootful_enabled: false
         docker_user: dockeruser
         docker_user_bashrc: false
-        docker_compose: false
+        docker_compose: true
       focal:
         docker_add_alias: true
         docker_allow_ping: false
@@ -102,7 +102,7 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
-  - name: arctic
+  - name: almalinux8
     box: "almalinux/8"
     config_options:
       vm.boot_timeout: 600
@@ -111,7 +111,7 @@ platforms:
     instance_raw_config_args:
       - 'vbguest.auto_update = false'
     memory: 1024
-  - name: emeraldroot
+  - name: almalinux9
     box: "almalinux/9"
     config_options:
       vm.boot_timeout: 600
