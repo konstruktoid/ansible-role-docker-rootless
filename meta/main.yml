@@ -18,7 +18,6 @@ galaxy_info:
       versions:
         - focal
         - jammy
-        - lunar
   galaxy_tags:
     - almalinux
     - centos
