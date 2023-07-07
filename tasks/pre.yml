@@ -12,10 +12,22 @@
 
     - name: Install Debian family packages
       ansible.builtin.apt:
-        name: ['acl', 'apt-transport-https', 'ca-certificates', 'curl',
-               'dbus-user-session', 'gnupg', 'iptables', 'libpam-systemd',
-               'lsb-release', 'python3-docker', 'python3-pexpect', 'python3-pip',
-               'python3-six', 'slirp4netns', 'uidmap']
+        name:
+          - acl
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - dbus-user-session
+          - gnupg
+          - iptables
+          - libpam-systemd
+          - lsb-release
+          - python3-docker
+          - python3-pexpect
+          - python3-pip
+          - python3-six
+          - slirp4netns
+          - uidmap
         state: present
         install_recommends: false
       tags:
@@ -40,7 +52,7 @@
   block:
     - name: Install RedHat family packages
       ansible.builtin.dnf:
-        name: ['curl', 'iptables', 'python3-pip']
+        name: [curl, iptables, python3-pip]
         state: present
       tags:
         - dnf
@@ -48,7 +60,7 @@
 
     - name: Install RedHat family slirp4netns
       ansible.builtin.dnf:
-        name: 'slirp4netns'
+        name: slirp4netns
         state: present
       when: ansible_distribution != "Amazon"
       tags:
@@ -57,7 +69,7 @@
 
     - name: Install slirp4netns binary
       ansible.builtin.get_url:
-        url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64"
+        url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64
         dest: /usr/bin/slirp4netns
         checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
         owner: root
@@ -70,7 +82,7 @@
 
     - name: Python3-rpm installation
       ansible.builtin.dnf:
-        name: "python3-rpm"
+        name: python3-rpm
         state: present
       when: ansible_distribution == "RedHat"
       tags:
@@ -80,7 +92,7 @@
 
     - name: Install python3 setuptools
       ansible.builtin.dnf:
-        name: "python3-setuptools"
+        name: python3-setuptools
         state: present
       when: ansible_distribution == "AlmaLinux"
       tags:
@@ -116,9 +128,7 @@
     sysctl_set: true
     state: present
     reload: true
-  when: ansible_distribution == "Debian" and
-        (ansible_distribution_version | int != 0  and
-        ansible_distribution_version is version('11', '<'))
+  when: ansible_distribution == "Debian" and (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
   tags:
     - sysctl
 
@@ -151,8 +161,7 @@
   community.general.modprobe:
     name: overlay
     state: present
-    params: 'permit_mounts_in_userns=1'
+    params: permit_mounts_in_userns=1
   when: ansible_distribution == "Debian"
   tags:
     - modprobe
-...

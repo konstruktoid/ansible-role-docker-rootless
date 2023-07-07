@@ -37,7 +37,7 @@
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.stat:
-    path: "/run/user/{{ docker_user_info.uid }}/docker.sock"
+    path: /run/user/{{ docker_user_info.uid }}/docker.sock
   register: docker_rootless_sock
   tags:
     - docker
@@ -55,7 +55,7 @@
   become_user: "{{ docker_user }}"
   environment:
     PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+    XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
   ansible.builtin.command:
     cmd: dockerd-rootless-setuptool.sh install
   register: install_rootless_docker
@@ -75,4 +75,3 @@
   tags:
     - docker
     - systemd
-...

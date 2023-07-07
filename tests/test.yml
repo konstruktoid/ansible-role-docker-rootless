@@ -6,4 +6,3 @@
     - name: Include konstruktoid.docker_rootless
       ansible.builtin.include_role:
         name: konstruktoid.docker_rootless
-...

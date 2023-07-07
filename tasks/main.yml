@@ -12,9 +12,9 @@
 
 - name: Rootful Docker block
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+    XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+    DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
@@ -25,7 +25,7 @@
 
 - name: Debian information
   ansible.builtin.fail:
-    msg: "slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10"
+    msg: slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: Install and configure rootless docker
@@ -71,7 +71,7 @@
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bash_aliases"
         line: "{{ sudo_alias }}"
-        regexp: '^alias docker='
+        regexp: ^alias docker=
         state: present
         create: true
         mode: "0640"
@@ -81,7 +81,7 @@
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
-        regexp: '^alias docker='
+        regexp: ^alias docker=
       when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
 
 - name: Create docker_rootless.sh
@@ -94,4 +94,3 @@
 - name: Deploy bash completion
   ansible.builtin.include_tasks: bashrc.yml
   when: docker_user_bashrc
-...

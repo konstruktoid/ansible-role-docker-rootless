@@ -8,7 +8,7 @@
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions:
-          - 'yml'
+          - yml
 
     - name: Include host vars
       ansible.builtin.include_vars:
@@ -154,18 +154,17 @@
 
     - name: Container verification block
       environment:
-        XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
+        XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+        DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Reboot host
           become: true
           ansible.builtin.reboot:
-
         - name: Wait for the host and reconnect
           ansible.builtin.wait_for:
             port: 22
-            host: '{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}'
+            host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
             delay: 10
             timeout: 120
 
@@ -187,7 +186,7 @@
             image: konstruktoid/nginx
             state: started
             ports:
-              - "8080:80"
+              - 8080:80
             cap_drop: all
             capabilities:
               - chown
@@ -258,7 +257,7 @@
             state: started
             restart: true
             ports:
-              - "8081:80"
+              - 8081:80
             cap_drop: all
             capabilities:
               - chown
@@ -294,7 +293,7 @@
             state: started
             restart: true
             ports:
-              - "80:80"
+              - 80:80
             cap_drop: all
             capabilities:
               - chown
@@ -339,4 +338,3 @@
           register: published
           failed_when: "'nginx' not in published.content"
           when: docker_allow_privileged_ports | bool
-...

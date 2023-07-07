@@ -34,23 +34,23 @@
     - docker
   when: docker_release not in rootless_docker_version.stdout
   block:
-    - name: "Download Docker archive {{ docker_release }}"
+    - name: Download Docker archive {{ docker_release }}
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.get_url:
         url: "{{ docker_url }}/docker-{{ docker_release }}.tgz"
         dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
-        checksum: "sha256:{{ docker_release_shasum }}"
+        checksum: sha256:{{ docker_release_shasum }}
         owner: "{{ docker_user }}"
         mode: "0644"
 
-    - name: "Download docker-rootless-extras archive {{ docker_release }}"
+    - name: Download docker-rootless-extras archive {{ docker_release }}
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.get_url:
         url: "{{ docker_url }}/docker-rootless-extras-{{ docker_release }}.tgz"
         dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
-        checksum: "sha256:{{ docker_release_rootless_shasum }}"
+        checksum: sha256:{{ docker_release_rootless_shasum }}
         owner: "{{ docker_user }}"
         mode: "0644"
 
@@ -100,4 +100,3 @@
   tags:
     - docker
     - systemd
-...
