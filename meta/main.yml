@@ -13,9 +13,12 @@ galaxy_info:
     - name: EL
       versions:
         - "8"
+        - "9"
     - name: Ubuntu
       versions:
         - focal
+        - jammy
+        - lunar
   galaxy_tags:
     - almalinux
     - centos
