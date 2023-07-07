@@ -31,7 +31,6 @@ None.
     - name: Include the konstruktoid.docker_rootless role
       ansible.builtin.include_role:
         name: konstruktoid.docker_rootless
-...
 ```
 
 ## Role Variables with defaults
@@ -39,14 +38,13 @@ None.
 ```yaml
 ---
 docker_add_alias: true
-docker_release: "24.0.2"
-docker_release_shasum: "fc07577bc0abdcdc02948493cd30b36cf0b096213fade9a7e699132c06c2e34c"
-docker_release_rootless_shasum: "a28a28c9316a5fb7df0bdbcb867092082ebae5f2623933cb5eb479405ba3b054"
+docker_release: "24.0.3"
+docker_release_shasum: "f7bcb029ecb061ed3d647a8fe793b9db26c1a0526716525d6632cc79ee805bcb"
+docker_release_rootless_shasum: "dce01e1c7df0c791dd3ac42d34ac34e8b3e984341e162458e8c36a5ca8caeef5"
 docker_bash_completion_shasum: "cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0"
 docker_compose_bash_completion_shasum: "9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de"
 docker_rootful: false
 docker_rootful_enabled: false
-docker_service_restart: true
 docker_rootful_opts: >
   --live-restore --icc=false --default-ulimit nproc=512:1024 --default-ulimit nofile=100:200 -H fd://
 docker_url: "https://download.docker.com/linux/static/stable/x86_64"
@@ -55,6 +53,7 @@ docker_user_bashrc: false
 docker_allow_privileged_ports: false
 docker_allow_ping: false
 docker_compose: false
+docker_service_restart: true
 ```
 
 Before using this role you first have to decide if you want to install Docker
