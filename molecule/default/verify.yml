@@ -121,7 +121,6 @@
           failed_when: not bash_comp_docker.stat.exists
 
     - name: Docker-compose verification
-      when: docker_compose
       block:
         - name: Stat Docker user .bash_completion.d/docker-compose
           become: true
@@ -129,6 +128,29 @@
             path: "{{ docker_user_info.home }}/.bash_completion.d/docker-compose"
           register: bash_comp_docker_compose
           failed_when: not bash_comp_docker_compose.stat.exists
+          when: docker_compose and docker_user_bashrc
+
+        - name: Verify Docker compose plugin is installed
+          become: true
+          become_user: "{{ docker_user }}"
+          ansible.builtin.command:
+            cmd: docker compose version
+          register: docker_compose_plugin
+          changed_when: false
+          failed_when: docker_compose_plugin.rc != 0
+          when: docker_rootful and docker_compose
+
+        - name: Verify that docker-compose is installed
+          become: true
+          become_user: "{{ docker_user }}"
+          environment:
+            PATH: "{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin"
+          ansible.builtin.command:
+            cmd: docker-compose version
+          register: docker_compose_version
+          changed_when: false
+          failed_when: docker_compose_version.rc != 0
+          when: not docker_rootful and docker_compose
 
     - name: Container verification block
       environment:
