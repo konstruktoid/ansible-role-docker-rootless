@@ -3,8 +3,10 @@
 # https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-24.0.4.tgz
 docker_add_alias: true
 docker_release: 24.0.4
+docker_compose_release: 2.20.0
 docker_release_shasum: 0ab79ae5f19e2ef5bdc3c3009c8b770dea6189e0f1e0ef4935d78fd30519b11d
 docker_release_rootless_shasum: f99243ecd015974a44fbcba5c7d80256cecd9ceba26bd80211af2f3917920edc
+docker_compose_release_shasum: b49e358d11c198fa228fb7eca2a177affd8e1e33e06d29940668668482f797cd
 docker_bash_completion_shasum: cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0
 docker_compose_bash_completion_shasum: 9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de
 docker_rootful: false

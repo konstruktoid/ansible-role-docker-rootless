@@ -62,3 +62,14 @@
     - apt
     - dnf
     - docker
+
+- name: Install Docker compose
+  become: true
+  ansible.builtin.package:
+    name: docker-compose-plugin
+    state: present
+  when: docker_compose
+  tags:
+    - apt
+    - dnf
+    - docker-compose
