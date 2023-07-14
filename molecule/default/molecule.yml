@@ -82,7 +82,7 @@ provisioner:
         docker_rootful_enabled: false
         docker_user: lunaruser
         docker_user_bashrc: true
-        docker_compose: false
+        docker_compose: true
 platforms:
   - name: bullseye
     box: debian/bullseye64

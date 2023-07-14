@@ -39,8 +39,10 @@ None.
 ---
 docker_add_alias: true
 docker_release: 24.0.4
+docker_compose_release: 2.20.0
 docker_release_shasum: 0ab79ae5f19e2ef5bdc3c3009c8b770dea6189e0f1e0ef4935d78fd30519b11d
 docker_release_rootless_shasum: f99243ecd015974a44fbcba5c7d80256cecd9ceba26bd80211af2f3917920edc
+docker_compose_release_shasum: b49e358d11c198fa228fb7eca2a177affd8e1e33e06d29940668668482f797cd
 docker_bash_completion_shasum: cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0
 docker_compose_bash_completion_shasum: 9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de
 docker_rootful: false
@@ -78,9 +80,9 @@ non-root user.
 > Note that Debian 10 and earlier requires `docker_rootful: false` due to missing
 dependencies.
 
-The `docker_url` and `docker_release` variables defines where you find the
-relevant binaries and which version you should use when doing a manual
-installation.
+The `docker_url`, `docker_release`, and `docker_compose_release`
+variables defines where you find the relevant binaries and which version you
+should use when doing a manual installation.
 
 You define the name of the Docker user that will be created with the
 `docker_user` variable. This user will download and install the binaries if
@@ -91,8 +93,10 @@ rootless installation script and starting a isolated daemon.
 daemon and related containers, and not for system administration or used as a
 regular user.
 
-`docker_release_shasum` and `docker_release_rootless_shasum` are used to verify
-the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
+
+`docker_release_shasum`, `docker_release_rootless_shasum`,
+`docker_compose_release_shasum` and `docker_bash_completion_shasum`
+are used to verify the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 module. The `docker_release_shasum` is used for the Docker `.tgz` file and
 `docker_release_rootless_shasum` for the `docker-ce-rootless-extras` package.
 
@@ -104,7 +108,8 @@ or `.bash_aliases` of the Ansible user. If `false`, a shell script named `docker
 created in the Ansible user home directory. This works as a substitute to the
 `docker` command so that the Ansible user can execute the rootless Docker installation from the `docker_user`.
 
-If `docker_compose: true`, then `docker-compose` will be installed via pip.
+If `docker_compose: true`, then the Docker `compose` plugin or `docker-compose`
+will be installed.
 
 If `docker_user_bashrc: true`, a .bashrc with completion for the docker(-compose)
 command will be placed inside the `docker_user` home.

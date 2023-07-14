@@ -76,6 +76,19 @@
           - --strip-components=1
         remote_src: true
 
+- name: Download docker-compose
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_release }}/docker-compose-linux-x86_64"
+    dest: "{{ docker_user_info.home }}/bin/docker-compose"
+    checksum: sha256:{{ docker_compose_release_shasum }}
+    owner: "{{ docker_user }}"
+    mode: "0755"
+  when: docker_compose
+  tags:
+    - docker-compose
+
 - name: Add Docker systemd service
   become: true
   become_user: "{{ docker_user }}"
