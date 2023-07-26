@@ -38,11 +38,11 @@ None.
 ```yaml
 ---
 docker_add_alias: true
-docker_release: 24.0.4
-docker_compose_release: 2.20.0
-docker_release_shasum: 0ab79ae5f19e2ef5bdc3c3009c8b770dea6189e0f1e0ef4935d78fd30519b11d
-docker_release_rootless_shasum: f99243ecd015974a44fbcba5c7d80256cecd9ceba26bd80211af2f3917920edc
-docker_compose_release_shasum: b49e358d11c198fa228fb7eca2a177affd8e1e33e06d29940668668482f797cd
+docker_release: 24.0.5
+docker_compose_release: 2.20.2
+docker_release_shasum: 0a5f3157ce25532c5c1261a97acf3b25065cfe25940ef491fa01d5bea18ddc86
+docker_release_rootless_shasum: a1f7ae45b1d36fd53185eaf6188b105d72f4d45b6d2f960e7e95ebec9547346c
+docker_compose_release_shasum: b9385dabb7931636a3afc0aee94625ebff3bb29584493a87804afb6ebaf2d916
 docker_bash_completion_shasum: cd9c70120bc5f7e6772b6a5350abf63099004c357814abc8a8a3689a7f2e3df0
 docker_compose_bash_completion_shasum: 9926c945b466fad570ad574089d6a90f7d9ba452a2d6a8ba67611a664707f0de
 docker_rootful: false
@@ -168,8 +168,8 @@ configuration.
 ## Testing with molecule
 
 If [Ansible Molecule](https://molecule.readthedocs.io/en/latest/)
-with the [molecule-vagrant](https://github.com/ansible-community/molecule-vagrant)
-plugin and related software is installed, running `molecule test` is supported.
+with the [vagrant plugin](https://github.com/ansible-community/molecule-plugins)
+and related software is installed, running `molecule test` is supported.
 
 `tox -l` will list all available `tox` test environments.
 
