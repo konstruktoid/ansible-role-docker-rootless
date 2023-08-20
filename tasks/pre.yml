@@ -69,9 +69,9 @@
 
     - name: Install slirp4netns binary
       ansible.builtin.get_url:
-        url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.0/slirp4netns-x86_64
+        url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.2.1/slirp4netns-x86_64
         dest: /usr/bin/slirp4netns
-        checksum: sha256:11080fdfb2c47b99f2b0c2b72d92cc64400d0eaba11c1ec34f779e17e8844360
+        checksum: sha256:cb1d7b7f9bc946c6179efdb8e069d5ee673c3f135668da6bf54f2ed689981833
         owner: root
         group: root
         mode: "0755"
