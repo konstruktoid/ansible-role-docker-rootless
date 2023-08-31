@@ -21,12 +21,12 @@ provisioner:
         docker_rootful: false
         docker_user: debiantestinguser
         docker_user_bashrc: false
-      bullseye:
+      bookworm:
         docker_add_alias: true
         docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: false
-        docker_user: bullseyeuser
+        docker_user: bookwormuser
         docker_user_bashrc: false
         docker_compose: false
       almalinux8:
@@ -84,8 +84,8 @@ provisioner:
         docker_user_bashrc: true
         docker_compose: true
 platforms:
-  - name: bullseye
-    box: debian/bullseye64
+  - name: bookworm
+    box: debian/bookworm64
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
