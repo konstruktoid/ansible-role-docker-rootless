@@ -22,10 +22,6 @@
         path: "{{ docker_user_info.home }}/bin/docker-compose"
       register: docker_compose_bin
 
-    - name: Debug
-      ansible.builtin.debug:
-        msg: "{{ docker_compose_bin }}"
-
     - name: Create cli-plugins directory
       ansible.builtin.file:
         path: "{{ docker_user_info.home }}/.docker/cli-plugins"
