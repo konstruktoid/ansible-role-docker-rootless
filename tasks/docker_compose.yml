@@ -1,0 +1,54 @@
+---
+- name: Install Docker compose
+  become: true
+  ansible.builtin.package:
+    name: docker-compose-plugin
+    state: present
+  when: docker_rootful
+  tags:
+    - apt
+    - dnf
+    - docker-compose
+
+- name: Install rootless Docker compose
+  when: not docker_rootful
+  become: true
+  become_user: "{{ docker_user }}"
+  tags:
+    - docker-compose
+  block:
+    - name: Stat Compose in /bin dir
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}/bin/docker-compose"
+      register: docker_compose_bin
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "{{ docker_compose_bin }}"
+
+    - name: Create cli-plugins directory
+      ansible.builtin.file:
+        path: "{{ docker_user_info.home }}/.docker/cli-plugins"
+        state: directory
+        mode: "0700"
+
+    - name: Download docker-compose
+      ansible.builtin.get_url:
+        url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_release }}/docker-compose-linux-x86_64"
+        dest: "{{ docker_user_info.home }}/.docker/cli-plugins/docker-compose"
+        checksum: sha256:{{ docker_compose_release_shasum }}
+        owner: "{{ docker_user }}"
+        mode: "0755"
+      when: docker_compose
+
+    - name: Remove Compose in /bin dir
+      ansible.builtin.file:
+        path: "{{ docker_user_info.home }}/bin/docker-compose"
+        state: absent
+      when: docker_compose_bin.stat.exists and not docker_compose_bin.stat.islnk
+
+    - name: Create Compose link
+      ansible.builtin.file:
+        src: "{{ docker_user_info.home }}/.docker/cli-plugins/docker-compose"
+        dest: "{{ docker_user_info.home }}/bin/docker-compose"
+        state: link

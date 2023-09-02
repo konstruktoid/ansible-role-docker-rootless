@@ -133,24 +133,14 @@
         - name: Verify Docker compose plugin is installed
           become: true
           become_user: "{{ docker_user }}"
+          environment:
+            PATH: "{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:{{ ansible_env.PATH }}"
           ansible.builtin.command:
             cmd: docker compose version
           register: docker_compose_plugin
           changed_when: false
           failed_when: docker_compose_plugin.rc != 0
-          when: docker_rootful and docker_compose
-
-        - name: Verify that docker-compose is installed
-          become: true
-          become_user: "{{ docker_user }}"
-          environment:
-            PATH: "{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin"
-          ansible.builtin.command:
-            cmd: docker-compose version
-          register: docker_compose_version
-          changed_when: false
-          failed_when: docker_compose_version.rc != 0
-          when: not docker_rootful and docker_compose
+          when: docker_compose
 
     - name: Container verification block
       environment:
