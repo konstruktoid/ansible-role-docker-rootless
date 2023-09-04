@@ -28,9 +28,13 @@
     msg: slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
-- name: Install and configure rootless docker
+- name: Install and configure rootless Docker
   ansible.builtin.include_tasks: docker_install_rootless.yml
   when: not docker_rootful
+
+- name: Install Docker Compose
+  ansible.builtin.include_tasks: docker_compose.yml
+  when: docker_compose
 
 - name: Add user sudo alias
   vars:

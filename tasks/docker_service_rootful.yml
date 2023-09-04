@@ -50,7 +50,7 @@
   tags:
     - modprobe
 
-- name: Install rootless docker
+- name: Install rootless Docker
   become: true
   become_user: "{{ docker_user }}"
   environment:
