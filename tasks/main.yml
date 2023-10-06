@@ -1,9 +1,11 @@
 ---
 - name: Install required packages and configure sysctl
-  ansible.builtin.include_tasks: pre.yml
+  ansible.builtin.include_tasks:
+    file: pre.yml
 
 - name: Manage Docker user
-  ansible.builtin.include_tasks: manage_user.yml
+  ansible.builtin.include_tasks:
+    file: manage_user.yml
 
 - name: Remove obselete Docker instruction file
   ansible.builtin.file:
@@ -18,10 +20,12 @@
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
-      ansible.builtin.include_tasks: docker_install_rootful.yml
+      ansible.builtin.include_tasks:
+        file: docker_install_rootful.yml
 
     - name: Configure rootful Docker service
-      ansible.builtin.include_tasks: docker_service_rootful.yml
+      ansible.builtin.include_tasks:
+        file: docker_service_rootful.yml
 
 - name: Debian information
   ansible.builtin.fail:
@@ -29,11 +33,13 @@
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: Install and configure rootless Docker
-  ansible.builtin.include_tasks: docker_install_rootless.yml
+  ansible.builtin.include_tasks:
+    file: docker_install_rootless.yml
   when: not docker_rootful
 
 - name: Install Docker Compose
-  ansible.builtin.include_tasks: docker_compose.yml
+  ansible.builtin.include_tasks:
+    file: docker_compose.yml
   when: docker_compose
 
 - name: Add user sudo alias
@@ -81,5 +87,6 @@
   when: docker_rootful or not docker_add_alias | bool
 
 - name: Deploy bash completion
-  ansible.builtin.include_tasks: bashrc.yml
+  ansible.builtin.include_tasks:
+    file: bashrc.yml
   when: docker_user_bashrc
