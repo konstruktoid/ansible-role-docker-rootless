@@ -8,7 +8,7 @@
   changed_when: false
   failed_when: false
 
-- name: Create Docker user bin dir
+- name: Create Docker user bin directory
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
@@ -18,11 +18,22 @@
   tags:
     - docker
 
-- name: Create Docker user systemd config dir
+- name: Create user systemd .config directory
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.file:
     path: "{{ docker_user_info.home }}/.config/systemd/user"
+    state: directory
+    mode: "0700"
+  tags:
+    - docker
+    - systemd
+
+- name: Create user Docker .config directory
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.config/docker"
     state: directory
     mode: "0700"
   tags:
@@ -80,13 +91,22 @@
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.template:
-    src: docker_rootless.service.j2
+    src: "{{ docker_rootless_service_template }}"
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: true
     mode: "0600"
   tags:
     - docker
     - systemd
+
+- name: Add rootless Docker configuration file
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.template:
+    src: "{{ docker_daemon_json_template }}"
+    dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
+    backup: true
+    mode: "0644"
 
 - name: Enable and start Docker (rootless installation)
   become: true
