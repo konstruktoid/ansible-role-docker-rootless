@@ -2,7 +2,7 @@
 - name: Add Docker systemd service
   become: true
   ansible.builtin.template:
-    src: docker_rootful.service.j2
+    src: "{{ docker_rootful_service_template }}"
     dest: /etc/systemd/system/docker.service
     mode: "0644"
     owner: root
