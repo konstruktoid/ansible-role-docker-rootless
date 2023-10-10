@@ -21,7 +21,7 @@
     - name: Add apt Docker repository
       become: true
       ansible.builtin.template:
-        src: docker.repo.j2
+        src: "{{ docker_repository_template }}"
         dest: /etc/apt/sources.list.d/docker.list
         backup: true
         mode: "0644"
@@ -62,3 +62,14 @@
     - apt
     - dnf
     - docker
+
+- name: Add rootful Docker configuration file
+  become: true
+  ansible.builtin.template:
+    src: "{{ docker_daemon_json_template }}"
+    dest: /etc/docker/daemon.json
+    backup: true
+    mode: "0644"
+    owner: root
+    group: root
+    validate: dockerd --validate --config-file %s

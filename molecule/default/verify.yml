@@ -21,6 +21,36 @@
       check_mode: true
       register: docker_user_info
 
+    - name: Stat rootful daemon.json
+      ansible.builtin.stat:
+        path: /etc/docker/daemon.json
+      register: rootful_daemon_json
+      when: docker_rootful
+
+    - name: Stat rootless daemon.json
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}/.config/docker/daemon.json"
+      register: rootless_daemon_json
+      when: not docker_rootful
+
+    - name: Assert rootful daemon.json
+      ansible.builtin.assert:
+        that:
+          - rootful_daemon_json.stat.mode == "0644"
+        success_msg: "{{ rootful_daemon_json.stat.path }} has correct permissions: {{ rootful_daemon_json.stat.mode }}"
+        fail_msg: "{{ rootful_daemon_json.stat.path }} permissions are incorrect: {{ rootful_daemon_json.stat.mode }}"
+      when: docker_rootful
+
+    - name: Assert rootless daemon.json
+      ansible.builtin.assert:
+        that:
+          - rootless_daemon_json.stat.mode == "0644"
+        success_msg: "{{ rootless_daemon_json.stat.path }} has correct permissions: {{ rootless_daemon_json.stat.mode }}"
+        fail_msg: "{{ rootless_daemon_json.stat.path }} permissions are incorrect: {{ rootless_daemon_json.stat.mode }}"
+      when: not docker_rootful
+
     - name: User verification block
       block:
         - name: Verify docker_user creation
@@ -273,6 +303,7 @@
             that:
               - docker_user_info.uid|string in nginx_container_restarted.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_restarted.container.HostnamePath
+
 
         - name: Verify rootless port 80 nginx container
           become: true

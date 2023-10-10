@@ -81,7 +81,7 @@
 
 - name: Create docker_rootless.sh
   ansible.builtin.template:
-    src: docker_rootless.sh.j2
+    src: "{{ docker_rootless_script_template }}"
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: "0700"
   when: docker_rootful or not docker_add_alias | bool
