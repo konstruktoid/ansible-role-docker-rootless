@@ -5,8 +5,8 @@ LABEL "com.github.actions.description"="Upstream main ansible-lint"
 LABEL "com.github.actions.icon"="shield"
 LABEL "com.github.actions.color"="purple"
 
-LABEL "repository"="https://github.com/konstruktoid/ansible-role-hardening"
-LABEL "homepage"="https://github.com/konstruktoid/ansible-role-hardening"
+LABEL "repository"="https://github.com/konstruktoid/ansible-role-docker-rootless"
+LABEL "homepage"="https://github.com/konstruktoid/ansible-role-docker-rootless"
 LABEL "maintainer"="Thomas Sjögren <konstruktoid@users.noreply.github.com>"
 
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
@@ -17,7 +17,7 @@ RUN apk --update --no-cache add cargo gcc git g++ libffi-dev openssl-dev \
     python3 -m ensurepip --upgrade && \
     python3 -m pip install --no-cache-dir --upgrade pip && \
     python3 -m pip install --no-cache-dir wheel && \
-    python3 -m pip install --no-cache-dir cryptography && \
+    python3 -m pip install --no-cache-dir cryptography passlib && \
     python3 -m pip install --no-cache-dir git+https://github.com/ansible/ansible-lint.git && \
     rm -rf /var/cache/*
 
