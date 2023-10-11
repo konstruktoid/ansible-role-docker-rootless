@@ -127,7 +127,7 @@ The `docker_allow_ping` variable configures if unprivileged users can open
 On some distributions, this is not allowed, and thereby containers cannot ping
 to the outside.
 
-The variables named `\*\_template` are the locations of the
+The variables named `*_template` are the locations of the
 [templates](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html)
 in use, this to make it easier to replace them with custom ones.
 
