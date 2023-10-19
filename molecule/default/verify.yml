@@ -169,7 +169,7 @@
             cmd: docker compose version
           register: docker_compose_plugin
           changed_when: false
-          failed_when: docker_compose_plugin.rc != 0
+          failed_when: docker_compose_plugin.rc != 0 and (not docker_compose_release in docker_compose_plugin.stdout)
           when: docker_compose
 
     - name: Container verification block
@@ -303,7 +303,6 @@
             that:
               - docker_user_info.uid|string in nginx_container_restarted.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_restarted.container.HostnamePath
-
 
         - name: Verify rootless port 80 nginx container
           become: true
