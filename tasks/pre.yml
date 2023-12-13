@@ -156,6 +156,18 @@
   tags:
     - sysctl
 
+- name: Sysctl user.max_user_namespaces=28633
+  become: true
+  ansible.posix.sysctl:
+    name: user.max_user_namespaces
+    value: "28633"
+    sysctl_set: true
+    state: present
+    reload: true
+  when: not docker_rootful
+  tags:
+    - sysctl
+
 - name: Load the overlay module
   become: true
   community.general.modprobe:
