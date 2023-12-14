@@ -152,14 +152,6 @@
 
     - name: Docker-compose verification
       block:
-        - name: Stat Docker user .bash_completion.d/docker-compose
-          become: true
-          ansible.builtin.stat:
-            path: "{{ docker_user_info.home }}/.bash_completion.d/docker-compose"
-          register: bash_comp_docker_compose
-          failed_when: not bash_comp_docker_compose.stat.exists
-          when: docker_compose and docker_user_bashrc
-
         - name: Verify Docker compose plugin is installed
           become: true
           become_user: "{{ docker_user }}"
