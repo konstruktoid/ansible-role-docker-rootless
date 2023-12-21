@@ -114,8 +114,8 @@ created in the Ansible user home directory. This works as a substitute to the
 If `docker_compose: true`, then the Docker `compose` plugin or `docker-compose`
 will be installed.
 
-If `docker_user_bashrc: true`, a .bashrc with completion for the `docker`  and
-`docker-compose command will be placed inside the `docker_user` home.
+If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
+`docker compose` command will be placed inside the `docker_user` home.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
