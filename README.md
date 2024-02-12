@@ -136,6 +136,8 @@ Docker `daemon.json` configuration file template.
 
 ## Container management
 
+### Standalone container
+
 Running containers is not that much different from when a rootful Docker daemon
 is used, but you still need to become the unprivileged user and adapt any paths
 to the user working directores.
@@ -175,6 +177,37 @@ configuration.
         pull: true
         hostname: "{{ ansible_nodename }}"
         container_default_behavior: compatibility
+```
+
+### Docker compose service
+
+```yaml
+- name: Register Docker user info
+  become: true
+  ansible.builtin.user:
+    name: "{{ docker_user }}"
+  check_mode: true
+  register: docker_user_info
+
+- name: Example docker compose block
+  become: true
+  become_user: "{{ docker_user }}"
+  environment:
+    XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
+    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+    DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+  block:
+    - name: Install pip dependencies
+      ansible.builtin.pip:
+        name:
+          - docker<7 # https://github.com/docker/docker-py/issues/3194
+          - docker-compose
+
+    - name: Create and start services
+      community.docker.docker_compose:
+        project_src: /var/tmp/
+        files: "{{ docker_user }}-docker-compose.yml"
+      register: compose_output
 ```
 
 ## Testing with molecule

@@ -150,19 +150,106 @@
           register: bash_comp_docker
           failed_when: not bash_comp_docker.stat.exists
 
-    - name: Docker-compose verification
+    - name: Reboot host
+      become: true
+      ansible.builtin.reboot:
+        msg: "Rebooting machine"
+
+    - name: Wait for the host and reconnect
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
+        delay: 10
+        timeout: 120
+
+    - name: Ensure no docker-compose.yml exists
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.file:
+        path: "/var/tmp/{{ docker_user }}-docker-compose.yml"
+        state: absent
+
+    - name: Create compose file
+      become: true
+      become_user: "{{ docker_user }}"
+      ansible.builtin.lineinfile:
+        path: "/var/tmp/{{ docker_user }}-docker-compose.yml"
+        line: |
+          version: '3'
+          services:
+            web:
+              image: nginx:latest
+              ports:
+                - "8181:80"
+        state: present
+        create: true
+        owner: "{{ docker_user }}"
+        mode: "0644"
+
+    - name: Binary docker-compose verification
+      when:
+        - docker_compose
+        - not ansible_distribution == "AlmaLinux"
+      become: true
+      become_user: "{{ docker_user }}"
+      environment:
+        XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       block:
-        - name: Verify Docker compose plugin is installed
-          become: true
-          become_user: "{{ docker_user }}"
-          environment:
-            PATH: "{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:{{ ansible_env.PATH }}"
+        - name: Verify Docker compose
           ansible.builtin.command:
             cmd: docker compose version
           register: docker_compose_plugin
           changed_when: false
-          failed_when: docker_compose_plugin.rc != 0 and (not docker_compose_release in docker_compose_plugin.stdout)
-          when: docker_compose
+          failed_when:
+            - docker_compose_plugin.rc != 0
+            - (not docker_compose_release in docker_compose_plugin.stdout)
+
+        - name: Run Docker Compose
+          environment:
+            XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
+            PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+            DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+          ansible.builtin.command:
+            cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
+          changed_when: false
+          register: compose_output
+
+        - name: Verify compose website
+          ansible.builtin.uri:
+            url: http://127.0.0.1:8181
+            return_content: true
+          register: published
+          failed_when: "'nginx' not in published.content"
+
+    - name: Ansible docker-compose verification
+      when:
+        - docker_compose
+        - ansible_distribution == "AlmaLinux"
+      become: true
+      become_user: "{{ docker_user }}"
+      environment:
+        XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+      block:
+        - name: Install pip dependencies
+          ansible.builtin.pip:
+            name:
+              - docker<7  # https://github.com/docker/docker-py/issues/3194
+              - docker-compose
+
+        - name: Create and start services
+          community.docker.docker_compose:
+            project_src: /var/tmp/
+            files: "{{ docker_user }}-docker-compose.yml"
+          register: compose_output
+
+        - name: Verify that web service are running
+          ansible.builtin.assert:
+            that:
+              - "compose_output.services.web.tmp_web_1.state.running"
 
     - name: Container verification block
       environment:
@@ -170,17 +257,7 @@
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
-        - name: Reboot host
-          become: true
-          ansible.builtin.reboot:
-        - name: Wait for the host and reconnect
-          ansible.builtin.wait_for:
-            port: 22
-            host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
-            delay: 10
-            timeout: 120
-
-        - name: Test alpine ping container
+        - name: Test alpine ping containe
           ansible.builtin.shell: >
             set -o pipefail &&
             "{{ ansible_env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
