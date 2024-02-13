@@ -153,7 +153,7 @@
     - name: Reboot host
       become: true
       ansible.builtin.reboot:
-        msg: "Rebooting machine"
+        msg: Rebooting host
 
     - name: Wait for the host and reconnect
       ansible.builtin.wait_for:
@@ -166,14 +166,14 @@
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.file:
-        path: "/var/tmp/{{ docker_user }}-docker-compose.yml"
+        path: /var/tmp/{{ docker_user }}-docker-compose.yml
         state: absent
 
     - name: Create compose file
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.lineinfile:
-        path: "/var/tmp/{{ docker_user }}-docker-compose.yml"
+        path: /var/tmp/{{ docker_user }}-docker-compose.yml
         line: |
           version: '3'
           services:
@@ -195,7 +195,7 @@
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+        DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Verify Docker compose
           ansible.builtin.command:
@@ -210,7 +210,7 @@
           environment:
             XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
             PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-            DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+            DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
           ansible.builtin.command:
             cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
           changed_when: false
@@ -232,12 +232,12 @@
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
-        DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+        DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Install pip dependencies
           ansible.builtin.pip:
             name:
-              - docker<7  # https://github.com/docker/docker-py/issues/3194
+              - docker<7 # https://github.com/docker/docker-py/issues/3194
               - docker-compose
 
         - name: Create and start services
@@ -249,7 +249,7 @@
         - name: Verify that web service are running
           ansible.builtin.assert:
             that:
-              - "compose_output.services.web.tmp_web_1.state.running"
+              - compose_output.services.web.tmp_web_1.state.running
 
     - name: Container verification block
       environment:
