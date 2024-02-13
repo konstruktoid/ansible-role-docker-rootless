@@ -7,9 +7,6 @@
     mode: "0644"
     owner: root
     group: root
-  tags:
-    - docker
-    - systemd
 
 - name: Disable rootful Docker daemon
   become: true
@@ -18,9 +15,6 @@
     state: stopped
     enabled: false
   when: not docker_rootful_enabled
-  tags:
-    - docker
-    - systemd
 
 - name: Enable rootful Docker daemon
   become: true
@@ -29,9 +23,6 @@
     state: started
     enabled: true
   when: docker_rootful_enabled
-  tags:
-    - docker
-    - systemd
 
 - name: Stat Docker user docker.sock
   become: true
@@ -39,16 +30,12 @@
   ansible.builtin.stat:
     path: /run/user/{{ docker_user_info.uid }}/docker.sock
   register: docker_rootless_sock
-  tags:
-    - docker
 
 - name: Load the ip_tables module
   become: true
   community.general.modprobe:
     name: ip_tables
     state: present
-  tags:
-    - modprobe
 
 - name: Install rootless Docker
   become: true
@@ -72,6 +59,3 @@
     state: started
     scope: user
     daemon_reload: true
-  tags:
-    - docker
-    - systemd

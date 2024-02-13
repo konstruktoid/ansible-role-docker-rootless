@@ -4,5 +4,5 @@
   any_errors_fatal: true
   tasks:
     - name: Include konstruktoid.docker_rootless
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: konstruktoid.docker_rootless

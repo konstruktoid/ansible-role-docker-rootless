@@ -15,8 +15,6 @@
     path: "{{ docker_user_info.home }}/bin"
     state: directory
     mode: "0700"
-  tags:
-    - docker
 
 - name: Create user systemd .config directory
   become: true
@@ -25,9 +23,6 @@
     path: "{{ docker_user_info.home }}/.config/systemd/user"
     state: directory
     mode: "0700"
-  tags:
-    - docker
-    - systemd
 
 - name: Create user Docker .config directory
   become: true
@@ -36,13 +31,8 @@
     path: "{{ docker_user_info.home }}/.config/docker"
     state: directory
     mode: "0700"
-  tags:
-    - docker
-    - systemd
 
 - name: Install rootless Docker
-  tags:
-    - docker
   when: docker_release not in rootless_docker_version.stdout
   block:
     - name: Download Docker archive {{ docker_release }}
@@ -95,9 +85,6 @@
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: true
     mode: "0600"
-  tags:
-    - docker
-    - systemd
 
 - name: Add rootless Docker configuration file
   become: true
@@ -117,6 +104,3 @@
     state: started
     scope: user
     daemon_reload: true
-  tags:
-    - docker
-    - systemd

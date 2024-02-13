@@ -1,13 +1,8 @@
 ---
 - name: Update facts
   ansible.builtin.setup:
-  tags:
-    - fact
 
 - name: Install Docker for Debian family
-  tags:
-    - apt
-    - docker
   when: ansible_os_family == "Debian"
   block:
     - name: Import Docker gpg key
@@ -35,9 +30,6 @@
 
 - name: Install Docker for RedHat family
   when: ansible_os_family == "RedHat"
-  tags:
-    - dnf
-    - docker
   block:
     - name: Stat docker-ce.repo file
       ansible.builtin.stat:
@@ -58,10 +50,6 @@
   ansible.builtin.package:
     name: [docker-ce, docker-ce-rootless-extras]
     state: present
-  tags:
-    - apt
-    - dnf
-    - docker
 
 - name: Add rootful Docker configuration file
   become: true

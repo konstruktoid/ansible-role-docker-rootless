@@ -7,8 +7,6 @@
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 1800
-      tags:
-        - apt
 
     - name: Install Debian family packages
       ansible.builtin.apt:
@@ -30,11 +28,6 @@
           - uidmap
         state: present
         install_recommends: false
-      tags:
-        - acl
-        - apt
-        - packages
-        - gidmap
 
     - name: Install fuse-overlayfs
       ansible.builtin.apt:
@@ -54,18 +47,12 @@
       ansible.builtin.dnf:
         name: [curl, iptables, python3-pip]
         state: present
-      tags:
-        - dnf
-        - packages
 
     - name: Install RedHat family slirp4netns
       ansible.builtin.dnf:
         name: slirp4netns
         state: present
       when: ansible_distribution != "Amazon"
-      tags:
-        - dnf
-        - packages
 
     - name: Install slirp4netns binary
       ansible.builtin.get_url:
@@ -76,28 +63,18 @@
         group: root
         mode: "0755"
       when: ansible_distribution == "Amazon"
-      tags:
-        - dnf
-        - packages
 
     - name: Python3-rpm installation
       ansible.builtin.dnf:
         name: python3-rpm
         state: present
       when: ansible_distribution == "RedHat"
-      tags:
-        - dnf
-        - yum
-        - packages
 
     - name: Install python3 setuptools
       ansible.builtin.dnf:
         name: python3-setuptools
         state: present
       when: ansible_distribution == "AlmaLinux"
-      tags:
-        - dnf
-        - packages
 
     - name: Install python3 docker
       ansible.builtin.pip:
@@ -105,9 +82,6 @@
           - docker
           - urllib3<2
         state: present
-      tags:
-        - docker
-        - python
 
 - name: Sysctl net.ipv4.ip_forward
   become: true
@@ -117,8 +91,6 @@
     sysctl_set: true
     state: present
     reload: true
-  tags:
-    - sysctl
 
 - name: Sysctl kernel.unprivileged_userns_clone
   become: true
@@ -129,8 +101,6 @@
     state: present
     reload: true
   when: ansible_distribution == "Debian" and (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
-  tags:
-    - sysctl
 
 - name: Sysctl net.ipv4.ip_unprivileged_port_start=0
   become: true
@@ -141,8 +111,6 @@
     state: present
     reload: true
   when: docker_allow_privileged_ports
-  tags:
-    - sysctl
 
 - name: Sysctl net.ipv4.ping_group_range=0 2147483647
   become: true
@@ -153,8 +121,6 @@
     state: present
     reload: true
   when: docker_allow_ping
-  tags:
-    - sysctl
 
 - name: Sysctl user.max_user_namespaces=28633
   become: true
@@ -165,8 +131,6 @@
     state: present
     reload: true
   when: not docker_rootful
-  tags:
-    - sysctl
 
 - name: Load the overlay module
   become: true
@@ -175,5 +139,3 @@
     state: present
     params: permit_mounts_in_userns=1
   when: ansible_distribution == "Debian"
-  tags:
-    - modprobe
