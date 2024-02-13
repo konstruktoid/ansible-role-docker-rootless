@@ -1,56 +1,38 @@
 ---
-- name: Stat Docker user .bashrc
-  become: true
-  ansible.builtin.stat:
-    path: "{{ docker_user_info.home }}/.bashrc"
-  register: docker_user_bashrc
-
-- name: Add .bash_completion script
+- name: Docker user bash config and completion
   become: true
   become_user: "{{ docker_user }}"
-  ansible.builtin.copy:
-    src: bash_completion
-    dest: "{{ docker_user_info.home }}/.bash_completion"
-    owner: "{{ docker_user }}"
-    group: "{{ docker_user }}"
-    mode: "0750"
+  block:
+    - name: Add .bash_completion script
+      ansible.builtin.copy:
+        src: bash_completion
+        dest: "{{ docker_user_info.home }}/.bash_completion"
+        owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
+        mode: "0750"
 
-- name: Create Docker user .bashrc
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.file:
-    path: "{{ docker_user_info.home }}/.bashrc"
-    state: file
-    owner: "{{ docker_user }}"
-    group: "{{ docker_user }}"
-    mode: "0644"
-  when: not docker_user_bashrc.stat.exists
+    - name: Create user bash completion dir
+      ansible.builtin.file:
+        path: "{{ docker_user_info.home }}/.bash_completion.d"
+        state: directory
+        owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
+        mode: "0750"
 
-- name: Create user bash completion dir
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.file:
-    path: "{{ docker_user_info.home }}/.bash_completion.d"
-    state: directory
-    owner: "{{ docker_user }}"
-    group: "{{ docker_user }}"
-    mode: "0750"
+    - name: Install docker bash completion
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker
+        dest: "{{ docker_user_info.home }}/.bash_completion.d/"
+        checksum: sha256:{{ docker_bash_completion_shasum }}
+        mode: "0644"
 
-- name: Install docker bash completion
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker
-    dest: "{{ docker_user_info.home }}/.bash_completion.d/"
-    checksum: sha256:{{ docker_bash_completion_shasum }}
-    mode: "0644"
-
-- name: Extend Docker user bashrc config
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.blockinfile:
-    path: "{{ docker_user_info.home }}/.bashrc"
-    block: |
-      export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
-      export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
-      export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
+    - name: Extend Docker user bashrc config
+      ansible.builtin.blockinfile:
+        path: "{{ docker_user_info.home }}/.bashrc"
+        owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
+        mode: "0644"
+        block: |
+          export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
+          export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
+          export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
