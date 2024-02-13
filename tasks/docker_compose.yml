@@ -5,17 +5,11 @@
     name: docker-compose-plugin
     state: present
   when: docker_rootful
-  tags:
-    - apt
-    - dnf
-    - docker-compose
 
 - name: Install rootless Docker compose
   when: not docker_rootful
   become: true
   become_user: "{{ docker_user }}"
-  tags:
-    - docker-compose
   block:
     - name: Stat Compose in /bin dir
       ansible.builtin.stat:

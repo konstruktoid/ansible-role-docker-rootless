@@ -1,11 +1,15 @@
 ---
 - name: Install required packages and configure sysctl
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: pre.yml
+  tags:
+    - always
 
 - name: Manage Docker user
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: manage_user.yml
+  tags:
+    - always
 
 - name: Remove obselete Docker instruction file
   ansible.builtin.file:
@@ -13,6 +17,8 @@
     state: absent
 
 - name: Rootful Docker block
+  tags:
+    - docker_rootful
   environment:
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
@@ -20,11 +26,11 @@
   when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
-      ansible.builtin.include_tasks:
+      ansible.builtin.import_tasks:
         file: docker_install_rootful.yml
 
     - name: Configure rootful Docker service
-      ansible.builtin.include_tasks:
+      ansible.builtin.import_tasks:
         file: docker_service_rootful.yml
 
 - name: Debian information
@@ -33,14 +39,18 @@
   when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: Install and configure rootless Docker
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: docker_install_rootless.yml
   when: not docker_rootful
+  tags:
+    - docker_rootless
 
 - name: Install Docker Compose
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: docker_compose.yml
   when: docker_compose
+  tags:
+    - docker_compose
 
 - name: Add user sudo alias
   vars:
@@ -49,6 +59,10 @@
       DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       {{ docker_user_info.home }}/bin/docker'
   when: docker_add_alias | bool and not docker_rootful
+  tags:
+    - docker_rootful
+    - docker_rootless
+    - docker_compose
   block:
     - name: Stat .bashrc
       ansible.builtin.stat:
@@ -85,8 +99,13 @@
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: "0700"
   when: docker_rootful or not docker_add_alias | bool
+  tags:
+    - docker_rootful
 
 - name: Deploy bash completion
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: bashrc.yml
   when: docker_user_bashrc
+  tags:
+    - docker_rootful
+    - docker_rootless

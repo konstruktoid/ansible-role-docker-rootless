@@ -6,8 +6,6 @@
     state: present
     shell: /bin/bash
   register: docker_user_info
-  tags:
-    - user
 
 - name: Adding Docker user to systemd-journal group
   become: true
@@ -16,16 +14,11 @@
     groups: systemd-journal
     append: true
   when: ansible_distribution == "Debian"
-  tags:
-    - user
 
 - name: Ensure Docker user is lingering
   ansible.builtin.stat:
     path: /var/lib/systemd/linger/{{ docker_user }}
   register: docker_user_lingering
-  tags:
-    - user
-    - systemd
 
 - name: Enable lingering for the Docker user
   become: true
@@ -35,9 +28,6 @@
   changed_when: enable_lingering.rc != 0
   failed_when: enable_lingering.rc != 0
   when: not docker_user_lingering.stat.exists
-  tags:
-    - user
-    - systemd
 
 - name: Create Docker user Ansible tmp dir
   become: true
@@ -46,5 +36,3 @@
     path: "{{ docker_user_info.home }}/.ansible/tmp"
     state: directory
     mode: "0700"
-  tags:
-    - user
