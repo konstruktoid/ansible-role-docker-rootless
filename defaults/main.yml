@@ -6,8 +6,8 @@ docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_bash_completion_shasum: 241df3ad4a3396b2447f8f83ccc17241717ab82dcc89eea71f9c1c13f376a12f
 docker_compose: false
-docker_compose_release: 2.24.5
-docker_compose_release_shasum: 94355be1d1d395040bbda1490f98d5c7627c30798a7955e1f2a78fda33a4b3e1
+docker_compose_release: 2.24.6
+docker_compose_release_shasum: eca30ae32dc451f9e6d6c8ddce078a76f23b355c3ca0ab391d58f59e87c0d310
 docker_daemon_json_template: daemon.json.j2
 docker_release: 25.0.3
 docker_release_rootless_shasum: d6c6734dc84f8c67c5993080849427a5b39d3ce2a92078af6cfdb02b71296e8a
