@@ -40,7 +40,6 @@ None.
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
-docker_bash_completion_shasum: fc8a8cf2226849cc7733199b1497d9a54c25be76b4882af74848e37e3907e7f5
 docker_compose: false
 docker_compose_release: 2.24.7
 docker_compose_release_shasum: 19c9deb6f4d3915f5c93441b8d2da751a09af82df62d55eab097c2cbfebd519f
@@ -96,9 +95,9 @@ rootless installation script and starting a isolated daemon.
 daemon and related containers, and not for system administration or used as a
 regular user.
 
-`docker_release_shasum`, `docker_release_rootless_shasum`,
-`docker_compose_release_shasum` and `docker_bash_completion_shasum`
-are used to verify the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
+`docker_release_shasum`, `docker_release_rootless_shasum` and
+`docker_compose_release_shasum` are used to verify the files when
+downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 module. The `docker_release_shasum` is used for the Docker `.tgz` file and
 `docker_release_rootless_shasum` for the `docker-ce-rootless-extras` package.
 

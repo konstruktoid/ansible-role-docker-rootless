@@ -19,12 +19,10 @@
         group: "{{ docker_user }}"
         mode: "0750"
 
-    - name: Install docker bash completion
-      ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker
-        dest: "{{ docker_user_info.home }}/.bash_completion.d/"
-        checksum: sha256:{{ docker_bash_completion_shasum }}
-        mode: "0644"
+    - name: Stat bash completion
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}/.bash_completion.d/docker"
+      register: docker_completion
 
     - name: Extend Docker user bashrc config
       ansible.builtin.blockinfile:
@@ -36,3 +34,17 @@
           export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
           export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
           export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
+
+    - name: Install docker bash completion
+      environment:
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+      ansible.builtin.shell: |
+        set -o pipefail
+        docker completion bash | tee "{{ docker_user_info.home }}/.bash_completion.d/docker"
+      args:
+        executable: /bin/bash
+      register: completion_bash
+      changed_when: completion_bash.rc == 0
+      failed_when: completion_bash.rc != 0
+      when:
+        - not docker_completion.stat.exists
