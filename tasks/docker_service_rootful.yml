@@ -14,7 +14,8 @@
     name: docker
     state: stopped
     enabled: false
-  when: not docker_rootful_enabled
+  when:
+    - not docker_rootful_enabled
 
 - name: Enable rootful Docker daemon
   become: true
@@ -22,7 +23,8 @@
     name: docker
     state: started
     enabled: true
-  when: docker_rootful_enabled
+  when:
+    - docker_rootful_enabled
 
 - name: Stat Docker user docker.sock
   become: true
@@ -48,7 +50,8 @@
   register: install_rootless_docker
   changed_when: install_rootless_docker.rc != 0
   failed_when: install_rootless_docker.rc != 0
-  when: not docker_rootless_sock.stat.exists
+  when:
+    - not docker_rootless_sock.stat.exists
 
 - name: Enable and start Docker (rootful installation)
   become: true

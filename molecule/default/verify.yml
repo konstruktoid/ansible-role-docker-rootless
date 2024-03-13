@@ -25,7 +25,8 @@
       ansible.builtin.stat:
         path: /etc/docker/daemon.json
       register: rootful_daemon_json
-      when: docker_rootful
+      when:
+        - docker_rootful
 
     - name: Stat rootless daemon.json
       become: true
@@ -33,7 +34,8 @@
       ansible.builtin.stat:
         path: "{{ docker_user_info.home }}/.config/docker/daemon.json"
       register: rootless_daemon_json
-      when: not docker_rootful
+      when:
+        - not docker_rootful
 
     - name: Assert rootful daemon.json
       ansible.builtin.assert:
@@ -41,7 +43,8 @@
           - rootful_daemon_json.stat.mode == "0644"
         success_msg: "{{ rootful_daemon_json.stat.path }} has correct permissions: {{ rootful_daemon_json.stat.mode }}"
         fail_msg: "{{ rootful_daemon_json.stat.path }} permissions are incorrect: {{ rootful_daemon_json.stat.mode }}"
-      when: docker_rootful
+      when:
+        - docker_rootful
 
     - name: Assert rootless daemon.json
       ansible.builtin.assert:
@@ -49,7 +52,8 @@
           - rootless_daemon_json.stat.mode == "0644"
         success_msg: "{{ rootless_daemon_json.stat.path }} has correct permissions: {{ rootless_daemon_json.stat.mode }}"
         fail_msg: "{{ rootless_daemon_json.stat.path }} permissions are incorrect: {{ rootless_daemon_json.stat.mode }}"
-      when: not docker_rootful
+      when:
+        - not docker_rootful
 
     - name: User verification block
       block:
@@ -91,7 +95,9 @@
           register: docker_rootless_sh
           changed_when: not docker_rootless_sh.stat.exists
           failed_when: not docker_rootless_sh.stat.exists
-          when: docker_rootful or not docker_add_alias | bool
+          when:
+            - docker_rootful
+            - not docker_add_alias | bool
 
         - name: Verify ping functionality
           ansible.builtin.command:
@@ -99,10 +105,13 @@
           register: ping_allowed
           changed_when: false
           failed_when: ping_allowed.rc != 0
-          when: docker_allow_ping | bool
+          when:
+            - docker_allow_ping | bool
 
     - name: Docker alias verification
-      when: docker_add_alias | bool and not docker_rootful
+      when:
+        - docker_add_alias | bool
+        - not docker_rootful
       block:
         - name: Stat .bashrc
           ansible.builtin.stat:
@@ -115,7 +124,8 @@
           register: check_aliases
           changed_when: check_aliases.rc >= 2
           failed_when: check_aliases.rc >= 2
-          when: user_bashrc.stat.exists
+          when:
+            - user_bashrc.stat.exists
 
         - name: Verify rootless docker .bash_aliases alias
           ansible.builtin.command:
@@ -123,7 +133,10 @@
           register: verify_bash_aliases
           changed_when: verify_bash_aliases.rc != 0
           failed_when: verify_bash_aliases.rc != 0
-          when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
+          when:
+            - check_aliases.rc == 0
+            - user_bashrc.stat.exists
+            - not docker_rootful
 
         - name: Verify rootless docker .bashrc alias
           ansible.builtin.command:
@@ -131,7 +144,10 @@
           register: verify_bashrc_alias
           changed_when: verify_bashrc_alias.rc != 0
           failed_when: verify_bashrc_alias.rc != 0
-          when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
+          when:
+            - user_bashrc.stat.exists
+            - check_aliases.rc != 0
+            - not docker_rootful
 
     - name: Docker bash completion verification
       when: docker_user_bashrc
@@ -266,7 +282,9 @@
           register: alpine_ping
           changed_when: alpine_ping.stdout.find(' 0% packet loss') != -1
           failed_when: alpine_ping.stdout.find('  0% packet loss') != -1
-          when: docker_allow_ping | bool and (docker_rootful or not docker_add_alias | bool)
+          when:
+            - docker_allow_ping | bool
+            - (docker_rootful or not docker_add_alias | bool)
 
         - name: Start rootful nginx container
           become: true
@@ -286,7 +304,9 @@
             pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          when: docker_rootful | bool and docker_rootful_enabled | bool
+          when:
+            - docker_rootful | bool
+            - docker_rootful_enabled | bool
 
         - name: Verify running rootful container
           become: true
@@ -295,14 +315,18 @@
           register: nginxroot_container_running
           changed_when: not nginxroot_container_running
           failed_when: not nginxroot_container_running
-          when: docker_rootful | bool and docker_rootful_enabled | bool
+          when:
+            - docker_rootful | bool
+            - docker_rootful_enabled | bool
 
         - name: Assert rootful container settings
           ansible.builtin.assert:
             that:
               - docker_user_info.uid|string in nginxroot_container_running.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginxroot_container_running.container.HostnamePath
-          when: docker_rootful | bool and docker_rootful_enabled | bool
+          when:
+            - docker_rootful | bool
+            - docker_rootful_enabled | bool
 
         - name: Start rootless nginx container
           become: true
@@ -393,7 +417,8 @@
             pull: true
             hostname: "{{ ansible_nodename }}"
             container_default_behavior: compatibility
-          when: docker_allow_privileged_ports | bool
+          when:
+            - docker_allow_privileged_ports | bool
 
         - name: Verify rootless port 80 container
           become: true
@@ -403,7 +428,8 @@
           register: nginxport_container_restarted
           changed_when: not nginxport_container_restarted
           failed_when: not nginxport_container_restarted
-          when: docker_allow_privileged_ports | bool
+          when:
+            - docker_allow_privileged_ports | bool
 
         - name: Verify rootful website
           ansible.builtin.uri:
@@ -411,7 +437,9 @@
             return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
-          when: docker_rootful | bool and docker_rootful_enabled | bool
+          when:
+            - docker_rootful | bool
+            - docker_rootful_enabled | bool
 
         - name: Verify rootless website
           ansible.builtin.uri:
@@ -426,4 +454,5 @@
             return_content: true
           register: published
           failed_when: "'nginx' not in published.content"
-          when: docker_allow_privileged_ports | bool
+          when:
+            - docker_allow_privileged_ports | bool

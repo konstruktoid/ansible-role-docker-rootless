@@ -13,7 +13,8 @@
     name: "{{ docker_user }}"
     groups: systemd-journal
     append: true
-  when: ansible_distribution == "Debian"
+  when:
+    - ansible_distribution == "Debian"
 
 - name: Ensure Docker user is lingering
   ansible.builtin.stat:
@@ -27,7 +28,8 @@
   register: enable_lingering
   changed_when: enable_lingering.rc != 0
   failed_when: enable_lingering.rc != 0
-  when: not docker_user_lingering.stat.exists
+  when:
+    - not docker_user_lingering.stat.exists
 
 - name: Create Docker user Ansible tmp dir
   become: true
