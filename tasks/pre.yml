@@ -1,7 +1,8 @@
 ---
 - name: Debian family dependencies
   become: true
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
   block:
     - name: Run apt update
       ansible.builtin.apt:
@@ -41,7 +42,8 @@
 
 - name: RedHat family dependencies
   become: true
-  when: ansible_os_family == "RedHat"
+  when:
+    - ansible_os_family == "RedHat"
   block:
     - name: Install RedHat family packages
       ansible.builtin.dnf:
@@ -52,7 +54,8 @@
       ansible.builtin.dnf:
         name: slirp4netns
         state: present
-      when: ansible_distribution != "Amazon"
+      when:
+        - ansible_distribution != "Amazon"
 
     - name: Install slirp4netns binary
       ansible.builtin.get_url:
@@ -62,19 +65,22 @@
         owner: root
         group: root
         mode: "0755"
-      when: ansible_distribution == "Amazon"
+      when:
+        - ansible_distribution == "Amazon"
 
     - name: Python3-rpm installation
       ansible.builtin.dnf:
         name: python3-rpm
         state: present
-      when: ansible_distribution == "RedHat"
+      when:
+        - ansible_distribution == "RedHat"
 
     - name: Install python3 setuptools
       ansible.builtin.dnf:
         name: python3-setuptools
         state: present
-      when: ansible_distribution == "AlmaLinux"
+      when:
+        - ansible_distribution == "AlmaLinux"
 
     - name: Install python3 docker
       ansible.builtin.pip:
@@ -100,7 +106,9 @@
     sysctl_set: true
     state: present
     reload: true
-  when: ansible_distribution == "Debian" and (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
+  when:
+    - ansible_distribution == "Debian"
+    - (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
 
 - name: Sysctl net.ipv4.ip_unprivileged_port_start=0
   become: true
@@ -110,7 +118,8 @@
     sysctl_set: true
     state: present
     reload: true
-  when: docker_allow_privileged_ports
+  when:
+    - docker_allow_privileged_ports
 
 - name: Sysctl net.ipv4.ping_group_range=0 2147483647
   become: true
@@ -120,7 +129,8 @@
     sysctl_set: true
     state: present
     reload: true
-  when: docker_allow_ping
+  when:
+    - docker_allow_ping
 
 - name: Sysctl user.max_user_namespaces=28633
   become: true
@@ -130,7 +140,8 @@
     sysctl_set: true
     state: present
     reload: true
-  when: not docker_rootful
+  when:
+    - not docker_rootful
 
 - name: Load the overlay module
   become: true
@@ -138,4 +149,5 @@
     name: overlay
     state: present
     params: permit_mounts_in_userns=1
-  when: ansible_distribution == "Debian"
+  when:
+    - ansible_distribution == "Debian"

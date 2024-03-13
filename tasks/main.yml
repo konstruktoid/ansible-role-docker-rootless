@@ -23,7 +23,9 @@
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
     PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
-  when: docker_rootful and not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+  when:
+    - docker_rootful
+    - not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
       ansible.builtin.import_tasks:
@@ -36,19 +38,23 @@
 - name: Debian information
   ansible.builtin.fail:
     msg: slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10
-  when: docker_rootful and (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+  when:
+    - docker_rootful
+    - (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
 
 - name: Install and configure rootless Docker
   ansible.builtin.import_tasks:
     file: docker_install_rootless.yml
-  when: not docker_rootful
+  when:
+    - not docker_rootful
   tags:
     - docker_rootless
 
 - name: Install Docker Compose
   ansible.builtin.import_tasks:
     file: docker_compose.yml
-  when: docker_compose
+  when:
+    - docker_compose
   tags:
     - docker_compose
 
@@ -58,7 +64,9 @@
       alias docker='sudo XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
       DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
       {{ docker_user_info.home }}/bin/docker'
-  when: docker_add_alias | bool and not docker_rootful
+  when:
+    - docker_add_alias | bool
+    - not docker_rootful
   tags:
     - docker_rootful
     - docker_rootless
@@ -74,7 +82,8 @@
       register: check_aliases
       changed_when: check_aliases.rc >= 2
       failed_when: check_aliases.rc >= 2
-      when: user_bashrc.stat.exists
+      when:
+        - user_bashrc.stat.exists
 
     - name: Add rootless Docker alias to .bash_aliases
       ansible.builtin.lineinfile:
@@ -84,28 +93,36 @@
         state: present
         create: true
         mode: "0640"
-      when: check_aliases.rc == 0 and user_bashrc.stat.exists and not docker_rootful
+      when:
+        - check_aliases.rc == 0
+        - user_bashrc.stat.exists and not docker_rootful
 
     - name: Add rootless Docker alias to .bashrc
       ansible.builtin.lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: ^alias docker=
-      when: user_bashrc.stat.exists and check_aliases.rc != 0 and not docker_rootful
+      when:
+        - user_bashrc.stat.exists
+        - check_aliases.rc != 0
+        - not docker_rootful
 
 - name: Create docker_rootless.sh
   ansible.builtin.template:
     src: "{{ docker_rootless_script_template }}"
     dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
     mode: "0700"
-  when: docker_rootful or not docker_add_alias | bool
+  when:
+    - docker_rootful
+    - not docker_add_alias | bool
   tags:
     - docker_rootful
 
 - name: Deploy bash completion
   ansible.builtin.import_tasks:
     file: bashrc.yml
-  when: docker_user_bashrc
+  when:
+    - docker_user_bashrc
   tags:
     - docker_rootful
     - docker_rootless
