@@ -74,7 +74,6 @@ provisioner:
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
-        docker_compose: true
 platforms:
   - name: bookworm
     box: debian/bookworm64
