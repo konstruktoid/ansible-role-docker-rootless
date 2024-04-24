@@ -43,6 +43,7 @@ docker_allow_privileged_ports: false
 docker_compose: false
 docker_compose_release: 2.26.0
 docker_compose_release_shasum: 59c6b262bedc4a02f46c8400e830e660935684899c770c3f5e804a2b7079fc16
+docker_compose_url: https://github.com/docker/compose/releases/download/v
 docker_daemon_json_template: daemon.json.j2
 docker_release: 26.1.0
 docker_release_rootless_shasum: c40ce28994ae8c481eac796f25da587a4cdf1711c279abc9b9472ffca01d5d9e
@@ -82,7 +83,7 @@ non-root user.
 > Note that Debian 10 and earlier requires `docker_rootful: false` due to missing
 dependencies.
 
-The `docker_url`, `docker_release`, and `docker_compose_release`
+The `docker_url`, `docker_release`, `docker_compose_url` and `docker_compose_release`
 variables defines where you find the relevant binaries and which version you
 should use when doing a manual installation.
 
