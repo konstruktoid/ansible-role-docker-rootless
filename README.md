@@ -106,8 +106,6 @@ module. The `docker_release_shasum` is used for the Docker `.tgz` file and
 running in rootful mode, if unset the settings in
 `docker_rootful_service_template` will be used.
 
-If `docker_expose_docker_api_via_tcp: true` then the docker daemon will expose its API via tcp. This is insecure, please check the [official docs](https://docs.docker.com/config/daemon/remote-access/) and ensure you understand the implications before activating this.
-
 If `docker_add_alias: true`, then a `docker` alias will be added to either `.bashrc`
 or `.bash_aliases` of the Ansible user. If `false`, a shell script named `docker_rootless.sh` is
 created in the Ansible user home directory. This works as a substitute to the
@@ -135,6 +133,10 @@ in use, this to make it easier to replace them with custom ones.
 The most important template is most likely
 `docker_daemon_json_template: daemon.json.j2`, which is the location of the
 Docker `daemon.json` configuration file template.
+
+If `docker_expose_docker_api_via_tcp: true` then the docker daemon will expose its API via tcp. This is insecure, please check the [official docs](https://docs.docker.com/config/daemon/remote-access/) and ensure you understand the implications before activating this.
+
+Exposing the Docker API securely by using TLS is currently not supported via Ansible variable. You will need to edit the [template/docker_rootless.service.j2](https://github.com/konstruktoid/ansible-role-docker-rootless/blob/main/templates/docker_rootless.service.j2) file yourself or provide your own template using the `docker_rootless_service_template` variable. In general you'll need to change the `DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS` and `tcp_connection_str` within the template to use port `:2376` and include the necessary `--tlsverify`, `--tlscacert`, `--tlscert` and `tlskey` parameters. Check the [official Docker docs](https://docs.docker.com/engine/security/rootless/#expose-docker-api-socket-through-tcp) for more info about that.
 
 ## Container management
 
