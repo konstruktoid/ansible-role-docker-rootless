@@ -44,6 +44,7 @@ docker_compose: false
 docker_compose_release: 2.26.0
 docker_compose_release_shasum: 59c6b262bedc4a02f46c8400e830e660935684899c770c3f5e804a2b7079fc16
 docker_daemon_json_template: daemon.json.j2
+docker_expose_docker_api_via_tcp: false
 docker_release: 26.1.0
 docker_release_rootless_shasum: c40ce28994ae8c481eac796f25da587a4cdf1711c279abc9b9472ffca01d5d9e
 docker_release_shasum: ab46df00fbf4d218a8694da06f9c171760b6cad875924ed251a3a9d57a7180bf
@@ -104,6 +105,8 @@ module. The `docker_release_shasum` is used for the Docker `.tgz` file and
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode, if unset the settings in
 `docker_rootful_service_template` will be used.
+
+If `docker_expose_docker_api_via_tcp: true` then the docker daemon will expose its API via tcp. This is insecure, please check the [official docs](https://docs.docker.com/config/daemon/remote-access/) and ensure you understand the implications before activating this.
 
 If `docker_add_alias: true`, then a `docker` alias will be added to either `.bashrc`
 or `.bash_aliases` of the Ansible user. If `false`, a shell script named `docker_rootless.sh` is
