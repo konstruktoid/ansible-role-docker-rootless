@@ -21,7 +21,6 @@ provisioner:
         docker_rootful: false
         docker_user: debiantestinguser
         docker_user_bashrc: false
-        docker_expose_docker_api_via_tcp: true
       bookworm:
         docker_add_alias: true
         docker_allow_ping: true
@@ -30,7 +29,6 @@ provisioner:
         docker_user: bookwormuser
         docker_user_bashrc: false
         docker_compose: false
-        docker_expose_docker_api_via_tcp: true
       almalinux8:
         docker_add_alias: false
         docker_allow_ping: false
@@ -40,7 +38,6 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: true
         docker_compose: false
-        docker_expose_docker_api_via_tcp: true
       almalinux9:
         docker_add_alias: false
         docker_allow_ping: false
@@ -60,7 +57,6 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: false
-        docker_expose_docker_api_via_tcp: true
       focalroot:
         docker_add_alias: false
         docker_allow_ping: true
@@ -80,7 +76,6 @@ provisioner:
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
-        docker_expose_docker_api_via_tcp: true
 platforms:
   - name: bookworm
     box: debian/bookworm64
