@@ -88,6 +88,8 @@
           register: ps_dockerd
           changed_when: docker_user[:7] not in ps_dockerd.stdout
           failed_when: docker_user[:7] not in ps_dockerd.stdout
+          when:
+            - not docker_expose_docker_api_via_tcp
 
         - name: Verify docker_rootless.sh
           ansible.builtin.stat:
@@ -177,6 +179,20 @@
         host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
         delay: 10
         timeout: 120
+
+    - name: Verify tcp exposure
+      become: true
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          ss -ltnp | grep '\:2375.*rootlesskit'
+      args:
+        executable: /bin/bash
+      register: tcp_exposure
+      changed_when: false
+      failed_when: tcp_exposure.rc != 0
+      when:
+        - docker_expose_docker_api_via_tcp
 
     - name: Ensure no docker-compose.yml exists
       become: true
