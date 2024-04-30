@@ -45,6 +45,7 @@ docker_compose_release: v2.27.0
 docker_compose_release_shasum: f3ba3bf1e4ab18e96c2d36526a075a02a78fb5f8e80d3e3ca9c5bf256d81d0a0
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
+docker_expose_docker_api_via_tcp: false
 docker_release: 26.1.0
 docker_release_rootless_shasum: c40ce28994ae8c481eac796f25da587a4cdf1711c279abc9b9472ffca01d5d9e
 docker_release_shasum: ab46df00fbf4d218a8694da06f9c171760b6cad875924ed251a3a9d57a7180bf
@@ -133,6 +134,10 @@ in use, this to make it easier to replace them with custom ones.
 The most important template is most likely
 `docker_daemon_json_template: daemon.json.j2`, which is the location of the
 Docker `daemon.json` configuration file template.
+
+If `docker_expose_docker_api_via_tcp: true` then the docker daemon will expose its API via tcp. This is insecure, please check the [official docs](https://docs.docker.com/config/daemon/remote-access/) and ensure you understand the implications before activating this.
+
+Exposing the Docker API securely by using TLS is currently not supported via Ansible variable. You will need to edit the [template/docker_rootless.service.j2](https://github.com/konstruktoid/ansible-role-docker-rootless/blob/main/templates/docker_rootless.service.j2) file yourself or provide your own template using the `docker_rootless_service_template` variable. In general you'll need to change the `DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS` and `tcp_connection_str` within the template to use port `:2376` and include the necessary `--tlsverify`, `--tlscacert`, `--tlscert` and `--tlskey` parameters. Check the [official Docker docs](https://docs.docker.com/engine/security/rootless/#expose-docker-api-socket-through-tcp) for more info about that.
 
 ## Container management
 

@@ -12,3 +12,4 @@
 .yamllint
 drafts/*
 hosts
+.vscode/settings.json

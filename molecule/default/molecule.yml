@@ -29,6 +29,7 @@ provisioner:
         docker_user: bookwormuser
         docker_user_bashrc: false
         docker_compose: false
+        docker_expose_docker_api_via_tcp: true
       almalinux8:
         docker_add_alias: false
         docker_allow_ping: false
@@ -65,6 +66,7 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: false
+        docker_expose_docker_api_via_tcp: true
       jammy:
         docker_add_alias: false
         docker_allow_ping: false
