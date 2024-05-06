@@ -16,20 +16,14 @@
   when:
     - ansible_distribution == "Debian"
 
-- name: Ensure Docker user is lingering
-  ansible.builtin.stat:
-    path: /var/lib/systemd/linger/{{ docker_user }}
-  register: docker_user_lingering
-
 - name: Enable lingering for the Docker user
   become: true
   ansible.builtin.command:
     cmd: loginctl enable-linger {{ docker_user }}
+    creates: /var/lib/systemd/linger/{{ docker_user }}
   register: enable_lingering
   changed_when: enable_lingering.rc != 0
   failed_when: enable_lingering.rc != 0
-  when:
-    - not docker_user_lingering.stat.exists
 
 - name: Create Docker user Ansible tmp dir
   become: true
