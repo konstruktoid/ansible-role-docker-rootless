@@ -1,6 +1,6 @@
 ---
 # https://github.com/docker/roadmap/issues/188
-# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-26.1.1.tgz
+# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-26.1.2.tgz
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
@@ -9,9 +9,9 @@ docker_compose_release: v2.27.0
 docker_compose_release_shasum: f3ba3bf1e4ab18e96c2d36526a075a02a78fb5f8e80d3e3ca9c5bf256d81d0a0
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
-docker_release: 26.1.1
-docker_release_rootless_shasum: e8bfe679705bd1e2dc2e9d9710754184b0c0425636e820fa1ef9cb0bb81808ca
-docker_release_shasum: c0ef0ee7d00deb803a6f5fa78d83ec8cbe1848eaaea9fb7071364d526624278f
+docker_release: 26.1.2
+docker_release_rootless_shasum: cafbff11fbb446bbf84d9a4b7e324bf3b318f978379f99f7b84e8f71408d6572
+docker_release_shasum: 1448f51a05b36c09edcd604561bd298c01e9b949b9b46d2c2465a7dc77e5cc1b
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
