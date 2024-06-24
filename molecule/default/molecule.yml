@@ -29,15 +29,6 @@ provisioner:
         docker_user: bookwormuser
         docker_user_bashrc: false
         docker_compose: false
-      almalinux8:
-        docker_add_alias: false
-        docker_allow_ping: false
-        docker_allow_privileged_ports: true
-        docker_rootful: false
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_bashrc: true
-        docker_compose: false
       almalinux9:
         docker_add_alias: false
         docker_allow_ping: false
@@ -86,15 +77,6 @@ platforms:
     memory: 1024
   - name: debiantesting
     box: debian/testing64
-    config_options:
-      vm.boot_timeout: 600
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-    instance_raw_config_args:
-      - vbguest.auto_update = false
-    memory: 1024
-  - name: almalinux8
-    box: almalinux/8
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
