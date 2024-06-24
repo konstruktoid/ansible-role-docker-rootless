@@ -40,8 +40,8 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v2.28.0
-docker_compose_release_shasum: 359043c2336e243662d7038c3edfeadcd5b9fc28dabe6973dbaecf48c0c1f967
+docker_compose_release: v2.28.1
+docker_compose_release_shasum: 5b480d4f9e3517b375f0fbb781b39c63cec934f44b13c43b8f1d0f22bf6de8c3
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_release: 26.1.4
