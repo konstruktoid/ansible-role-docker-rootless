@@ -1,14 +1,14 @@
 ---
 collections:
   - name: ansible.posix
-    version: '1.5.4'
+    version: 1.5.4
     source: https://github.com/ansible-collections/ansible.posix.git
     type: git
   - name: community.docker
-    version: '3.10.4'
+    version: 3.10.4
     source: https://github.com/ansible-collections/community.docker.git
     type: git
   - name: community.general
-    version: '9.1.0'
+    version: 9.1.0
     source: https://github.com/ansible-collections/community.general.git
     type: git
