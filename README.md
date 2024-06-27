@@ -44,9 +44,9 @@ docker_compose_release: v2.28.1
 docker_compose_release_shasum: 5b480d4f9e3517b375f0fbb781b39c63cec934f44b13c43b8f1d0f22bf6de8c3
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
-docker_release: 26.1.4
-docker_release_rootless_shasum: 19a84b917fe6677db4438456e98933aef992fd3b2c949dfa7638d055cfaa5e81
-docker_release_shasum: a9cede81aa3337f310132c2c920dba2edc8d29b7d97065b63ba41cf47ae1ca4f
+docker_release: 27.0.2
+docker_release_rootless_shasum: b76a223c5cd5cef3be2e31536a057de3eae5c34c2499a5b87f3fd4ca235bc2b6
+docker_release_shasum: cc0dc835067509b7bedb31ed5db5b44f54666f820dd33f5191a9f9f5c68d4fe8
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
