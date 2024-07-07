@@ -40,6 +40,7 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
+docker_compose_arch: x86_64
 docker_compose_release: v2.28.1
 docker_compose_release_shasum: 5b480d4f9e3517b375f0fbb781b39c63cec934f44b13c43b8f1d0f22bf6de8c3
 docker_compose_url: https://github.com/docker/compose/releases/download
@@ -111,7 +112,8 @@ created in the Ansible user home directory. This works as a substitute to the
 `docker` command so that the Ansible user can execute the rootless Docker installation from the `docker_user`.
 
 If `docker_compose: true`, then the Docker `compose` plugin or `docker-compose`
-will be installed.
+will be installed. `docker_compose_arch` are used to define the architecture of
+the `docker-compose` binary.
 
 If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
 `docker compose` command will be placed inside the `docker_user` home.
