@@ -5,6 +5,7 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
+docker_compose_arch: x86_64
 docker_compose_release: v2.28.1
 docker_compose_release_shasum: 5b480d4f9e3517b375f0fbb781b39c63cec934f44b13c43b8f1d0f22bf6de8c3
 docker_compose_url: https://github.com/docker/compose/releases/download
