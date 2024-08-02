@@ -18,7 +18,14 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 
 ## Requirements
 
-None.
+```yaml
+---
+roles:
+  - name: konstruktoid.docker_rootless
+    version: v0.52.0
+    src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
+    scm: git
+```
 
 ## Playbook example
 
@@ -41,13 +48,13 @@ docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
 docker_compose_arch: x86_64
-docker_compose_release: v2.28.1
-docker_compose_release_shasum: 5b480d4f9e3517b375f0fbb781b39c63cec934f44b13c43b8f1d0f22bf6de8c3
+docker_compose_release: v2.29.1
+docker_compose_release_shasum: 5ea89dd65d33912a83737d8a4bf070d5de534a32b8493a21fbefc924484786a9
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
-docker_release: 27.0.3
-docker_release_rootless_shasum: ecd68ff2bf4e177c111279b4cd4b3582ce25ca1abf1965575a8ab8afae4298af
-docker_release_shasum: f6299aeada422d527cba35061fe56df5e2294776f6d39b7830d699335054b1e6
+docker_release: 27.1.1
+docker_release_rootless_shasum: 31cffd0f0c84ead9a5b28c1ad0c8e56eb9ef352036099a1f6501315574d4f63e
+docker_release_shasum: 118da6b8fc8e8b6c086ab0dd5e64ee549376c3a3f963723bbc9a46db475bf21f
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
