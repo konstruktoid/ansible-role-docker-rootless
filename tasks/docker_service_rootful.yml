@@ -11,18 +11,26 @@
 - name: Disable rootful Docker daemon
   become: true
   ansible.builtin.systemd:
-    name: docker
+    name: "{{ item }}"
     state: stopped
     enabled: false
+  loop:
+    - docker.service
+    - docker.socket
+    - containerd.service
   when:
     - not docker_rootful_enabled
 
 - name: Enable rootful Docker daemon
   become: true
   ansible.builtin.systemd:
-    name: docker
+    name: "{{ item }}"
     state: started
     enabled: true
+  loop:
+    - docker.service
+    - docker.socket
+    - containerd.service
   when:
     - docker_rootful_enabled
 
