@@ -8,6 +8,7 @@
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 1800
+      changed_when: false
 
     - name: Install Debian family packages
       ansible.builtin.apt:
