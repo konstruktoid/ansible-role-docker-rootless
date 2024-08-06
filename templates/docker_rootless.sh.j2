@@ -7,7 +7,7 @@
 # Ensure the following environment variables are set when managing
 # the docker service:
 #  XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
-#  PATH="{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+#  PATH="{{ docker_user_info.home }}/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 #  DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
 #
 # See https://docs.docker.com/engine/security/rootless/ for more information.
