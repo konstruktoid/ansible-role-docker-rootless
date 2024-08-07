@@ -255,6 +255,7 @@
             name:
               - docker<7 # https://github.com/docker/docker-py/issues/3194
               - docker-compose
+              - requests<2.32
 
         - name: Create and start services
           community.docker.docker_compose:
