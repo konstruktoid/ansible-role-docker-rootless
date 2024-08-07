@@ -255,7 +255,7 @@
             name:
               - docker<7 # https://github.com/docker/docker-py/issues/3194
               - docker-compose
-              - requests<2.32
+              - requests<2.32 # https://github.com/ansible-community/molecule-plugins/issues/256
 
         - name: Create and start services
           community.docker.docker_compose:
