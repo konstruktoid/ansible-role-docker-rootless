@@ -1,0 +1,24 @@
+- name: Configure Docker network/port drivers
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.lineinfile:
+    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
+    insertafter: '\[Service\]'
+    firstmatch: true
+    regexp: "^Environment=\"{{ item.key }}="
+    line: "Environment=\"{{ item.key }}={{ item.value }}\""
+  loop:
+    - key: DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER
+      value: "{{ docker_driver_port }}"
+    - key: DOCKERD_ROOTLESS_ROOTLESSKIT_NET
+      value: "{{ docker_driver_network }}"
+
+- name: Enable and start Docker
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.systemd:
+    name: docker.service
+    enabled: true
+    state: started
+    scope: user
+    daemon_reload: true
