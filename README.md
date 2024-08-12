@@ -136,7 +136,7 @@ The `docker_allow_ping` variable configures if unprivileged users can open
 On some distributions, this is not allowed, and thereby containers cannot ping
 to the outside.
 
-The `docker_driver_network` and `docker_driver_port` variables configure RootlessKit's 
+The `docker_driver_network` and `docker_driver_port` variables configure RootlessKit's
 [network driver](https://github.com/rootless-containers/rootlesskit/blob/master/docs/network.md) or
 [port driver](https://github.com/rootless-containers/rootlesskit/blob/master/docs/port.md),
 respectively. This is useful for
