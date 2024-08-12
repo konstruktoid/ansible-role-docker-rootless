@@ -24,6 +24,21 @@
         owner: root
         group: root
 
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Unattended upgrades for Docker
+      ansible.builtin.lineinfile:
+        path: /etc/apt/apt.conf.d/55unattended-upgrades-docker
+        line: 'Unattended-Upgrade::Origins-Pattern { "o=Docker,a=${distro_codename}"; };'
+        state: present
+        create: true
+        owner: root
+        group: root
+        mode: "0644"
+      when: "'unattended-upgrades' in ansible_facts.packages"
+
     - name: Run apt update
       become: true
       ansible.builtin.apt:
