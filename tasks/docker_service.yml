@@ -6,6 +6,7 @@
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
     line: "[Service]"
     create: true
+    mode: "0644"
 
 - name: Configure Docker network/port drivers
   become: true
