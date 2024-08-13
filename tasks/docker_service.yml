@@ -1,9 +1,17 @@
 ---
+- name: Add Docker systemd service override.conf
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.lineinfile:
+    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
+    line: "[Service]"
+    create: true
+
 - name: Configure Docker network/port drivers
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.lineinfile:
-    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
+    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
     insertafter: \[Service\]
     firstmatch: true
     regexp: ^Environment="{{ item.key }}=
