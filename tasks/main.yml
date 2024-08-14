@@ -11,7 +11,7 @@
   tags:
     - always
 
-- name: Remove obselete Docker instruction file
+- name: Remove obsolete Docker instruction file
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
     state: absent
@@ -48,6 +48,13 @@
   when:
     - not docker_rootful
   tags:
+    - docker_rootless
+
+- name: Configure Docker service
+  ansible.builtin.import_tasks:
+    file: docker_service.yml
+  tags:
+    - docker_rootful
     - docker_rootless
 
 - name: Install Docker Compose
