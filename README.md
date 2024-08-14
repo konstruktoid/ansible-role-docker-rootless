@@ -52,6 +52,8 @@ docker_compose_release: v2.29.1
 docker_compose_release_shasum: 5ea89dd65d33912a83737d8a4bf070d5de534a32b8493a21fbefc924484786a9
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
+docker_driver_network: slirp4netns
+docker_driver_port: builtin
 docker_release: 27.1.1
 docker_release_rootless_shasum: 31cffd0f0c84ead9a5b28c1ad0c8e56eb9ef352036099a1f6501315574d4f63e
 docker_release_shasum: 118da6b8fc8e8b6c086ab0dd5e64ee549376c3a3f963723bbc9a46db475bf21f
@@ -133,6 +135,17 @@ The `docker_allow_ping` variable configures if unprivileged users can open
 [ICMP echo sockets](https://docs.docker.com/engine/security/rootless/#routing-ping-packets).
 On some distributions, this is not allowed, and thereby containers cannot ping
 to the outside.
+
+The `docker_driver_network` and `docker_driver_port` variables configure RootlessKit's
+[network driver](https://github.com/rootless-containers/rootlesskit/blob/master/docs/network.md) or
+[port driver](https://github.com/rootless-containers/rootlesskit/blob/master/docs/port.md),
+respectively. This is useful for
+[optimising network performance](https://docs.docker.com/engine/security/rootless/#networking-errors)
+and necessary if
+[source IP propagation](https://docs.docker.com/engine/security/rootless/#docker-run--p-does-not-propagate-source-ip-addresses)
+is required. By default, the `builtin` port driver does not expose the actual source IP; instead,
+all connections appear to the container as originating from the Docker gateway (e.g. 172.19.0.1).
+Set `docker_driver_port: slirp4netns` to enable source IP propagation.
 
 The variables named `*_template` are the locations of the
 [templates](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html)
