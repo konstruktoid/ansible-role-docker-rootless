@@ -1,34 +1,71 @@
 ---
-- name: Add Docker systemd service override.conf
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.lineinfile:
-    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
-    line: "[Service]"
-    create: true
-    mode: "0644"
+- name: Stat AppArmor ABI file
+  ansible.builtin.stat:
+    path: /etc/apparmor.d/abi/4.0
+  register: apparmor_abi
 
-- name: Configure Docker network/port drivers
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.lineinfile:
-    dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
-    insertafter: \[Service\]
-    firstmatch: true
-    regexp: ^Environment="{{ item.key }}=
-    line: Environment="{{ item.key }}={{ item.value }}"
-  loop:
-    - key: DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER
-      value: "{{ docker_driver_port }}"
-    - key: DOCKERD_ROOTLESS_ROOTLESSKIT_NET
-      value: "{{ docker_driver_network }}"
-
-- name: Enable and start Docker
-  become: true
-  become_user: "{{ docker_user }}"
+- name: Get apparmor service
   ansible.builtin.systemd:
-    name: docker.service
-    enabled: true
-    state: started
-    scope: user
-    daemon_reload: true
+    name: apparmor
+  register: apparmor_service
+
+- name: Add rootlesskit AppArmor profile
+  when:
+    - apparmor_abi.stat.exists
+    - apparmor_service.status is defined
+    - "'apparmor.service' in apparmor_service.status.FragmentPath"
+    - apparmor_service.status.UnitFileState == "enabled"
+  block:
+    - name: Set rootlesskit path as fact
+      ansible.builtin.set_fact:
+        rootlesskit_path: "{{ docker_user_info.home }}/bin/rootlesskit"
+
+    - name: Add AppArmor profile for Docker
+      become: true
+      ansible.builtin.template:
+        src: apparmor_rootlesskit.j2
+        dest: /etc/apparmor.d/{{ rootlesskit_path[1:] | regex_replace('/', '.') }}
+        owner: root
+        group: root
+        mode: "0644"
+      register: apparmor_rootlesskit
+
+    - name: Reload AppArmor profiles
+      become: true
+      ansible.builtin.systemd:
+        name: apparmor.service
+        state: reloaded
+      when:
+        - apparmor_rootlesskit.changed
+
+- name: Configure and enable the Docker service
+  become: true
+  become_user: "{{ docker_user }}"
+  block:
+    - name: Add Docker systemd service override.conf
+      ansible.builtin.lineinfile:
+        dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
+        line: "[Service]"
+        create: true
+        mode: "0644"
+
+    - name: Configure Docker network/port drivers
+      ansible.builtin.lineinfile:
+        dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
+        insertafter: \[Service\]
+        firstmatch: true
+        regexp: ^Environment="{{ item.key }}=
+        line: Environment="{{ item.key }}={{ item.value }}"
+      loop:
+        - key: DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER
+          value: "{{ docker_driver_port }}"
+        - key: DOCKERD_ROOTLESS_ROOTLESSKIT_NET
+          value: "{{ docker_driver_network }}"
+
+    - name: Enable and start Docker
+      ansible.builtin.systemd:
+        name: docker.service
+        enabled: true
+        state: started
+        scope: user
+        daemon_reload: true
