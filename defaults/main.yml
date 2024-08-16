@@ -6,8 +6,8 @@ docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
 docker_compose_arch: x86_64
-docker_compose_release: v2.29.1
-docker_compose_release_shasum: 5ea89dd65d33912a83737d8a4bf070d5de534a32b8493a21fbefc924484786a9
+docker_compose_release: v2.29.2
+docker_compose_release_shasum: d037bd4937bf18fba67cff4366e084ee125a3e15c25657ee1aeceff8db3672b4
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns

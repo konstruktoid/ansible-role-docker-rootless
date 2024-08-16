@@ -274,7 +274,7 @@
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
-        - name: Test alpine ping containe
+        - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
             "{{ ansible_env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
