@@ -37,7 +37,7 @@
         owner: root
         group: root
         mode: "0644"
-      when: "'unattended-upgrades' in ansible_facts.packages"
+      when: docker_unattended_upgrades | bool and 'unattended-upgrades' in ansible_facts.packages
 
     - name: Run apt update
       become: true

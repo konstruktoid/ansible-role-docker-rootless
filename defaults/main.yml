@@ -23,6 +23,7 @@ docker_rootful_service_template: docker_rootful.service.j2
 docker_rootless_script_template: docker_rootless.sh.j2
 docker_rootless_service_template: docker_rootless.service.j2
 docker_service_restart: true
+docker_unattended_upgrades: false
 docker_url: https://download.docker.com/linux/static/stable/x86_64
 docker_user_bashrc: false
 docker_user: dockeruser
