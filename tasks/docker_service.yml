@@ -36,7 +36,7 @@
         name: apparmor.service
         state: reloaded
       when:
-        - apparmor_rootlesskit.changed
+        - apparmor_rootlesskit.changed # noqa: no-handler
 
 - name: Configure and enable the Docker service
   become: true
