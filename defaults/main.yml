@@ -1,20 +1,20 @@
 ---
 # https://github.com/docker/roadmap/issues/188
-# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-27.2.1.tgz
+# https://download.docker.com/linux/static/stable/x86_64/{docker,docker-rootless-extras}-27.3.0.tgz
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
 docker_compose_arch: x86_64
-docker_compose_release: v2.29.2
-docker_compose_release_shasum: d037bd4937bf18fba67cff4366e084ee125a3e15c25657ee1aeceff8db3672b4
+docker_compose_release: v2.29.7
+docker_compose_release_shasum: 383ce6698cd5d5bbf958d2c8489ed75094e34a77d340404d9f32c4ae9e12baf0
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 27.2.1
-docker_release_rootless_shasum: 5fc59413633656190be70c1dab32cdb514d4da914e8e72ef71da0eec86bae6a5
-docker_release_shasum: afa9895e15bd7c0cac3c57979edc5706a4d5e7ac78c902d22e3b426fedf0c8a8
+docker_release: 27.3.0
+docker_release_rootless_shasum: aa52c95276df3294235f9d6308eeb438abd3e89c505fd24477f05198cfd0da63
+docker_release_shasum: 1d47501a8fd99923ad655b1b85bb24f12b66db3b0e28c6dd12000d397b4f20d6
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
