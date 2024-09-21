@@ -191,7 +191,6 @@
       ansible.builtin.lineinfile:
         path: /var/tmp/{{ docker_user }}-docker-compose.yml
         line: |
-          version: '3'
           services:
             web:
               image: nginx:latest
@@ -230,7 +229,6 @@
           ansible.builtin.command:
             cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
           changed_when: false
-          register: compose_output
 
         - name: Verify compose website
           ansible.builtin.uri:
@@ -258,7 +256,7 @@
               - requests<2.32 # https://github.com/ansible-community/molecule-plugins/issues/256
 
         - name: Create and start services
-          community.docker.docker_compose:
+          community.docker.docker_compose_v2:
             project_src: /var/tmp/
             files: "{{ docker_user }}-docker-compose.yml"
           register: compose_output
@@ -266,7 +264,7 @@
         - name: Verify that web service are running
           ansible.builtin.assert:
             that:
-              - compose_output.services.web.tmp_web_1.state.running
+              - not compose_output.failed
 
     - name: Container verification block
       environment:

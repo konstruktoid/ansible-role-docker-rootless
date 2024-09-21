@@ -110,6 +110,7 @@ platforms:
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
+      ssh.key_type: ed25519
     provider_raw_config_args:
       - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
       - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
@@ -122,6 +123,7 @@ platforms:
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
+      ssh.key_type: ed25519
     provider_raw_config_args:
       - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
       - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
