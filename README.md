@@ -54,9 +54,9 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 27.3.0
-docker_release_rootless_shasum: aa52c95276df3294235f9d6308eeb438abd3e89c505fd24477f05198cfd0da63
-docker_release_shasum: 1d47501a8fd99923ad655b1b85bb24f12b66db3b0e28c6dd12000d397b4f20d6
+docker_release: 27.3.1
+docker_release_rootless_shasum: 4e897d5838c1d9d89a7540f4558a3a0d1ef90cfc263c32b7346e8f58415ce4c3
+docker_release_shasum: 9b4f6fe406e50f9085ee474c451e2bb5adb119a03591f467922d3b4e2ddf31d3
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
