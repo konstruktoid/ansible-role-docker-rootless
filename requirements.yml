@@ -5,7 +5,7 @@ collections:
     source: https://github.com/ansible-collections/ansible.posix.git
     type: git
   - name: community.docker
-    version: 3.12.2
+    version: 3.13.0
     source: https://github.com/ansible-collections/community.docker.git
     type: git
   - name: community.general
