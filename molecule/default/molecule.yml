@@ -62,6 +62,7 @@ provisioner:
         docker_allow_privileged_ports: false
         docker_rootful: false
         docker_rootful_enabled: false
+        docker_unattended_upgrades: true
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
