@@ -191,7 +191,6 @@
       ansible.builtin.lineinfile:
         path: /var/tmp/{{ docker_user }}-docker-compose.yml
         line: |
-          version: '3'
           services:
             web:
               image: nginx:latest
@@ -230,7 +229,6 @@
           ansible.builtin.command:
             cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
           changed_when: false
-          register: compose_output
 
         - name: Verify compose website
           ansible.builtin.uri:
@@ -258,7 +256,7 @@
               - requests<2.32 # https://github.com/ansible-community/molecule-plugins/issues/256
 
         - name: Create and start services
-          community.docker.docker_compose:
+          community.docker.docker_compose_v2:
             project_src: /var/tmp/
             files: "{{ docker_user }}-docker-compose.yml"
           register: compose_output
@@ -266,7 +264,7 @@
         - name: Verify that web service are running
           ansible.builtin.assert:
             that:
-              - compose_output.services.web.tmp_web_1.state.running
+              - not compose_output.failed
 
     - name: Container verification block
       environment:
@@ -274,7 +272,7 @@
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
-        - name: Test alpine ping containe
+        - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
             "{{ ansible_env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1

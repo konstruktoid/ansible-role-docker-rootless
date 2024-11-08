@@ -38,24 +38,6 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: true
-      focal:
-        docker_add_alias: true
-        docker_allow_ping: false
-        docker_allow_privileged_ports: true
-        docker_rootful: false
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: false
-      focalroot:
-        docker_add_alias: false
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: true
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: false
       jammy:
         docker_add_alias: false
         docker_allow_ping: false
@@ -66,6 +48,24 @@ provisioner:
         docker_user: jammyuser
         docker_user_bashrc: true
         docker_compose: true
+      noble:
+        docker_add_alias: true
+        docker_allow_ping: false
+        docker_allow_privileged_ports: true
+        docker_rootful: false
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
+      nobleroot:
+        docker_add_alias: false
+        docker_allow_ping: true
+        docker_allow_privileged_ports: false
+        docker_rootful: true
+        docker_rootful_enabled: false
+        docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
 platforms:
   - name: bookworm
     box: debian/bookworm64
@@ -94,22 +94,6 @@ platforms:
     instance_raw_config_args:
       - vbguest.auto_update = false
     memory: 1024
-  - name: focal
-    box: bento/ubuntu-20.04
-    config_options:
-      vm.boot_timeout: 600
-    instance_raw_config_args:
-      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
-      - vbguest.auto_update = false
-    memory: 1024
-  - name: focalroot
-    box: bento/ubuntu-20.04
-    config_options:
-      vm.boot_timeout: 600
-    instance_raw_config_args:
-      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
-      - vbguest.auto_update = false
-    memory: 1024
   - name: jammy
     box: bento/ubuntu-22.04
     config_options:
@@ -122,6 +106,32 @@ platforms:
       - "vbguest.installer_options = { allow_kernel_upgrade: false }"
       - vbguest.auto_update = false
     memory: 1024
+  - name: noble
+    box: bento/ubuntu-24.04
+    config_options:
+      vm.boot_timeout: 600
+      synced_folder: false
+      ssh.key_type: ed25519
+    provider_raw_config_args:
+      - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
+      - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
+    instance_raw_config_args:
+      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
+      - vbguest.auto_update = false
+    memory: 2048
+  - name: nobleroot
+    box: bento/ubuntu-24.04
+    config_options:
+      vm.boot_timeout: 600
+      synced_folder: false
+      ssh.key_type: ed25519
+    provider_raw_config_args:
+      - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
+      - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
+    instance_raw_config_args:
+      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
+      - vbguest.auto_update = false
+    memory: 2048
 verifier:
   name: ansible
 scenario:
