@@ -65,6 +65,7 @@ docker_rootful_service_template: docker_rootful.service.j2
 docker_rootless_script_template: docker_rootless.sh.j2
 docker_rootless_service_template: docker_rootless.service.j2
 docker_service_restart: true
+docker_unattended_upgrades: false
 docker_url: https://download.docker.com/linux/static/stable/x86_64
 docker_user_bashrc: false
 docker_user: dockeruser
@@ -126,6 +127,9 @@ the `docker-compose` binary.
 
 If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
 `docker compose` command will be placed inside the `docker_user` home.
+
+If `docker_unattended_upgrades: true` and the `unattended-upgrades` package is installed,
+the `docker` and `docker-compose` binaries will be updated automatically.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
