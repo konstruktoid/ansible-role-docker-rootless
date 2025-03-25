@@ -5,15 +5,15 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
   end
 
-  config.vm.define "focal" do |focal|
-    focal.vm.box = "ubuntu/focal64"
+  config.vm.define "noble" do |focal|
+    focal.vm.box = "bento/ubuntu-24.04"
     focal.ssh.insert_key = true
     focal.vm.hostname = "focal"
     focal.vm.boot_timeout = 600
    end
 
   config.vm.define "alma" do |alma|
-    alma.vm.box = "almalinux/8"
+    alma.vm.box = "almalinux/9"
     alma.ssh.insert_key = true
     alma.vm.hostname = "alma"
     alma.vm.boot_timeout = 600
