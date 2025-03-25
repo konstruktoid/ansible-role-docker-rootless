@@ -4,7 +4,9 @@
 *.retry
 *.rpm
 *suid.list
+.ansible
 .cache
+.docker
 .scannerwork
 .sonar
 .tox
