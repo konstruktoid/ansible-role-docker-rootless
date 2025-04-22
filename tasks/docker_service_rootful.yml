@@ -48,13 +48,14 @@
     state: present
 
 - name: Install rootless Docker
+  # https://github.com/docker/docker-install/pull/487
   become: true
   become_user: "{{ docker_user }}"
   environment:
     PATH: "{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
   ansible.builtin.command:
-    cmd: dockerd-rootless-setuptool.sh install
+    cmd: "dockerd-rootless-setuptool.sh install {{ '--skip-iptables' if ansible_distribution == 'AlmaLinux' else omit }}"
   register: install_rootless_docker
   changed_when: install_rootless_docker.rc != 0
   failed_when: install_rootless_docker.rc != 0
