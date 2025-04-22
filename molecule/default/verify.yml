@@ -82,7 +82,7 @@
           ansible.builtin.shell:
             cmd: |
               set -o pipefail
-              ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$' | awk '{print $1}'
+              ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$|dockerd --iptables=false$' | awk '{print $1}'
           args:
             executable: /bin/bash
           register: ps_dockerd
@@ -104,7 +104,9 @@
             cmd: ping -W1 -c1 1.1.1.1
           register: ping_allowed
           changed_when: false
-          failed_when: ping_allowed.rc != 0
+          failed_when:
+            - ping_allowed.rc != 0
+            - "'Destination Net Unreachable' not in ping_allowed.stdout"
           when:
             - docker_allow_ping | bool
 
