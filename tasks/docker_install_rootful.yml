@@ -83,3 +83,20 @@
     owner: root
     group: root
     validate: dockerd --validate --config-file %s
+
+- name: Create user Docker .config directory
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.config/docker"
+    state: directory
+    mode: "0700"
+
+- name: Add Docker configuration file to user
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.template:
+    src: "{{ docker_daemon_json_template }}"
+    dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
+    backup: true
+    mode: "0644"
