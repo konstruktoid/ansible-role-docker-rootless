@@ -10,6 +10,9 @@
   register: apparmor_service
 
 - name: Add rootlesskit AppArmor profile
+  become: true
+  tags:
+    - privileged
   when:
     - apparmor_abi.stat.exists
     - apparmor_service.status is defined
@@ -21,7 +24,6 @@
         rootlesskit_path: "{{ docker_user_info.home }}/bin/rootlesskit"
 
     - name: Add AppArmor profile for Docker
-      become: true
       ansible.builtin.template:
         src: apparmor_rootlesskit.j2
         dest: /etc/apparmor.d/{{ rootlesskit_path[1:] | regex_replace('/', '.') }}
@@ -31,7 +33,6 @@
       register: apparmor_rootlesskit
 
     - name: Reload AppArmor profiles
-      become: true
       ansible.builtin.systemd:
         name: apparmor.service
         state: reloaded

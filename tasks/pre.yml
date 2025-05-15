@@ -1,6 +1,8 @@
 ---
 - name: Debian family dependencies
   become: true
+  tags:
+    - privileged
   when:
     - ansible_os_family == "Debian"
   block:
@@ -43,6 +45,8 @@
 
 - name: RedHat family dependencies
   become: true
+  tags:
+    - privileged
   when:
     - ansible_os_family == "RedHat"
   block:
@@ -90,65 +94,64 @@
           - urllib3<2
         state: present
 
-- name: Sysctl net.ipv4.ip_forward
+- name: Sysctl and kernel modules
   become: true
-  ansible.posix.sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
-    sysctl_set: true
-    state: present
-    reload: true
+  tags:
+    - privileged
+  block:
+    - name: Sysctl net.ipv4.ip_forward
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: "1"
+        sysctl_set: true
+        state: present
+        reload: true
 
-- name: Sysctl kernel.unprivileged_userns_clone
-  become: true
-  ansible.posix.sysctl:
-    name: kernel.unprivileged_userns_clone
-    value: "1"
-    sysctl_set: true
-    state: present
-    reload: true
-  when:
-    - ansible_distribution == "Debian"
-    - (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
+    - name: Sysctl kernel.unprivileged_userns_clone
+      ansible.posix.sysctl:
+        name: kernel.unprivileged_userns_clone
+        value: "1"
+        sysctl_set: true
+        state: present
+        reload: true
+      when:
+        - ansible_distribution == "Debian"
+        - (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
 
-- name: Sysctl net.ipv4.ip_unprivileged_port_start=0
-  become: true
-  ansible.posix.sysctl:
-    name: net.ipv4.ip_unprivileged_port_start
-    value: "0"
-    sysctl_set: true
-    state: present
-    reload: true
-  when:
-    - docker_allow_privileged_ports
+    - name: Sysctl net.ipv4.ip_unprivileged_port_start=0
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_unprivileged_port_start
+        value: "0"
+        sysctl_set: true
+        state: present
+        reload: true
+      when:
+        - docker_allow_privileged_ports
 
-- name: Sysctl net.ipv4.ping_group_range=0 2147483647
-  become: true
-  ansible.posix.sysctl:
-    name: net.ipv4.ping_group_range
-    value: 0 2147483647
-    sysctl_set: true
-    state: present
-    reload: true
-  when:
-    - docker_allow_ping
+    - name: Sysctl net.ipv4.ping_group_range=0 2147483647
+      ansible.posix.sysctl:
+        name: net.ipv4.ping_group_range
+        value: 0 2147483647
+        sysctl_set: true
+        state: present
+        reload: true
+      when:
+        - docker_allow_ping
 
-- name: Sysctl user.max_user_namespaces=28633
-  become: true
-  ansible.posix.sysctl:
-    name: user.max_user_namespaces
-    value: "28633"
-    sysctl_set: true
-    state: present
-    reload: true
-  when:
-    - not docker_rootful
+    - name: Sysctl user.max_user_namespaces=28633
+      ansible.posix.sysctl:
+        name: user.max_user_namespaces
+        value: "28633"
+        sysctl_set: true
+        state: present
+        reload: true
+      when:
+        - not docker_rootful
 
-- name: Load the overlay module
-  become: true
-  community.general.modprobe:
-    name: overlay
-    state: present
-    params: permit_mounts_in_userns=1
-  when:
-    - ansible_distribution == "Debian"
+    - name: Load the overlay module
+      community.general.modprobe:
+        name: overlay
+        state: present
+        params: permit_mounts_in_userns=1
+      when:
+        - ansible_distribution == "Debian"
