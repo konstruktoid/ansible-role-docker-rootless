@@ -1,38 +1,48 @@
 ---
-- name: Add Docker systemd service
+- name: Manage Docker systemd service
   become: true
-  ansible.builtin.template:
-    src: "{{ docker_rootful_service_template }}"
-    dest: /etc/systemd/system/docker.service
-    mode: "0644"
-    owner: root
-    group: root
+  tags:
+    - privileged
+  block:
+    - name: Add Docker systemd service
+      ansible.builtin.template:
+        src: "{{ docker_rootful_service_template }}"
+        dest: /etc/systemd/system/docker.service
+        mode: "0644"
+        owner: root
+        group: root
 
-- name: Disable rootful Docker daemon
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: stopped
-    enabled: false
-  loop:
-    - docker.service
-    - docker.socket
-    - containerd.service
-  when:
-    - not docker_rootful_enabled
+    - name: Disable rootful Docker daemon
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+      loop:
+        - docker.service
+        - docker.socket
+        - containerd.service
+      when:
+        - not docker_rootful_enabled
 
-- name: Enable rootful Docker daemon
+    - name: Enable rootful Docker daemon
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - docker.service
+        - docker.socket
+        - containerd.service
+      when:
+        - docker_rootful_enabled
+
+- name: Load the ip_tables module
   become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: true
-  loop:
-    - docker.service
-    - docker.socket
-    - containerd.service
-  when:
-    - docker_rootful_enabled
+  tags:
+    - privileged
+  community.general.modprobe:
+    name: ip_tables
+    state: present
 
 - name: Stat Docker user docker.sock
   become: true
@@ -40,12 +50,6 @@
   ansible.builtin.stat:
     path: /run/user/{{ docker_user_info.uid }}/docker.sock
   register: docker_rootless_sock
-
-- name: Load the ip_tables module
-  become: true
-  community.general.modprobe:
-    name: ip_tables
-    state: present
 
 - name: Install rootless Docker
   # https://github.com/docker/docker-install/pull/487

@@ -3,11 +3,13 @@
   ansible.builtin.setup:
 
 - name: Install Docker for Debian family
+  become: true
+  tags:
+    - privileged
   when:
     - ansible_os_family == "Debian"
   block:
     - name: Import Docker gpg key
-      become: true
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
         dest: /etc/apt/trusted.gpg.d/docker.asc
@@ -15,7 +17,6 @@
         force: true
 
     - name: Add apt Docker repository
-      become: true
       ansible.builtin.template:
         src: "{{ docker_repository_template }}"
         dest: /etc/apt/sources.list.d/docker.list
@@ -29,7 +30,6 @@
         manager: auto
 
     - name: Unattended upgrades for Docker
-      become: true
       ansible.builtin.lineinfile:
         path: /etc/apt/apt.conf.d/55unattended-upgrades-docker
         line: Unattended-Upgrade::Origins-Pattern { "o=Docker,a=${distro_codename}"; };
@@ -43,11 +43,13 @@
         - "'unattended-upgrades' in ansible_facts.packages"
 
     - name: Run apt update
-      become: true
       ansible.builtin.apt:
         update_cache: true
 
 - name: Install Docker for RedHat family
+  become: true
+  tags:
+    - privileged
   when:
     - ansible_os_family == "RedHat"
   block:
@@ -57,7 +59,6 @@
       register: docker_ce_repo
 
     - name: Add Docker yum repo
-      become: true
       ansible.builtin.command:
         cmd: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
       register: add_yum_repo
@@ -72,6 +73,8 @@
       - docker-ce
       - docker-ce-rootless-extras
     state: present
+  tags:
+    - privileged
 
 - name: Add rootful Docker configuration file
   become: true
@@ -83,6 +86,8 @@
     owner: root
     group: root
     validate: dockerd --validate --config-file %s
+  tags:
+    - privileged
 
 - name: Create user Docker .config directory
   become: true

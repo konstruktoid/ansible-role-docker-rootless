@@ -1,6 +1,8 @@
 ---
 - name: Manage user
   become: true
+  tags:
+    - privileged
   block:
     - name: Create Docker user group
       ansible.builtin.group:
@@ -31,10 +33,10 @@
       changed_when: enable_lingering.rc != 0
       failed_when: enable_lingering.rc != 0
 
-    - name: Create Docker user Ansible tmp dir
-      become: true
-      become_user: "{{ docker_user }}"
-      ansible.builtin.file:
-        path: "{{ docker_user_info.home }}/.ansible/tmp"
-        state: directory
-        mode: "0700"
+- name: Create Docker user Ansible tmp dir
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.ansible/tmp"
+    state: directory
+    mode: "0700"

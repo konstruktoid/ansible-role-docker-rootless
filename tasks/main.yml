@@ -2,14 +2,10 @@
 - name: Install required packages and configure sysctl
   ansible.builtin.import_tasks:
     file: pre.yml
-  tags:
-    - always
 
 - name: Manage Docker user
   ansible.builtin.import_tasks:
     file: manage_user.yml
-  tags:
-    - always
 
 - name: Remove obsolete Docker instruction file
   ansible.builtin.file:
