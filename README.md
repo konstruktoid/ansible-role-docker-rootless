@@ -43,6 +43,10 @@ roles:
 
 ```yaml
 ---
+configure_sysctl: true
+create_docker_user: true
+install_dependencies: true
+
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
@@ -76,6 +80,11 @@ using the packages available to the distribution, also known as the "rootful"
 installation since it requires `root` permissions and installs the upstream
 Docker daemon or if you want to download the static binaries and do a manual
 install.
+
+If you run the role on a system without having `root` permissions, you will
+need to set `configure_sysctl: false`, `create_docker_user: false` and
+`install_dependencies: false` and ensure that the system has the
+required dependencies installed and the `docker` user created beforehand.
 
 If you set `docker_rootful: false` you will download the static binaries and do
 a manual install, not requiring any `root` permissions.

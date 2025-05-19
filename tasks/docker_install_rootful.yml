@@ -8,6 +8,7 @@
     - privileged
   when:
     - ansible_os_family == "Debian"
+    - install_dependencies
   block:
     - name: Import Docker gpg key
       ansible.builtin.get_url:
@@ -52,6 +53,7 @@
     - privileged
   when:
     - ansible_os_family == "RedHat"
+    - install_dependencies
   block:
     - name: Stat docker-ce.repo file
       ansible.builtin.stat:
@@ -68,26 +70,28 @@
 
 - name: Install Docker
   become: true
-  ansible.builtin.package:
-    name:
-      - docker-ce
-      - docker-ce-rootless-extras
-    state: present
   tags:
     - privileged
+  when:
+    - install_dependencies
+  block:
+    - name: Install Docker packages
+      ansible.builtin.package:
+        name:
+          - docker-ce
+          - docker-ce-rootless-extras
+        state: present
 
-- name: Add rootful Docker configuration file
-  become: true
-  ansible.builtin.template:
-    src: "{{ docker_daemon_json_template }}"
-    dest: /etc/docker/daemon.json
-    backup: true
-    mode: "0644"
-    owner: root
-    group: root
-    validate: dockerd --validate --config-file %s
-  tags:
-    - privileged
+    - name: Add rootful Docker configuration file
+      become: true
+      ansible.builtin.template:
+        src: "{{ docker_daemon_json_template }}"
+        dest: /etc/docker/daemon.json
+        backup: true
+        mode: "0644"
+        owner: root
+        group: root
+        validate: dockerd --validate --config-file %s
 
 - name: Create user Docker .config directory
   become: true

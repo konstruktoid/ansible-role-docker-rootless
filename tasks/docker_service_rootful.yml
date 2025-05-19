@@ -3,6 +3,8 @@
   become: true
   tags:
     - privileged
+  when:
+    - install_dependencies
   block:
     - name: Add Docker systemd service
       ansible.builtin.template:
@@ -36,13 +38,12 @@
       when:
         - docker_rootful_enabled
 
-- name: Load the ip_tables module
-  become: true
-  tags:
-    - privileged
-  community.general.modprobe:
-    name: ip_tables
-    state: present
+    - name: Load the ip_tables module
+      tags:
+        - privileged
+      community.general.modprobe:
+        name: ip_tables
+        state: present
 
 - name: Stat Docker user docker.sock
   become: true

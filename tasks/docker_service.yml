@@ -18,6 +18,7 @@
     - apparmor_service.status is defined
     - "'apparmor.service' in apparmor_service.status.FragmentPath"
     - apparmor_service.status.UnitFileState == "enabled"
+    - install_dependencies
   block:
     - name: Set rootlesskit path as fact
       ansible.builtin.set_fact:

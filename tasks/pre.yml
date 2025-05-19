@@ -5,6 +5,7 @@
     - privileged
   when:
     - ansible_os_family == "Debian"
+    - install_dependencies
   block:
     - name: Run apt update
       ansible.builtin.apt:
@@ -49,6 +50,7 @@
     - privileged
   when:
     - ansible_os_family == "RedHat"
+    - install_dependencies
   block:
     - name: Install RedHat family packages
       ansible.builtin.dnf:
@@ -98,6 +100,8 @@
   become: true
   tags:
     - privileged
+  when:
+    - configure_sysctl
   block:
     - name: Sysctl net.ipv4.ip_forward
       ansible.posix.sysctl:
