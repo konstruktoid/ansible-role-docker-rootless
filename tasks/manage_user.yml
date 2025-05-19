@@ -3,6 +3,8 @@
   become: true
   tags:
     - privileged
+  when:
+    - create_docker_user
   block:
     - name: Create Docker user group
       ansible.builtin.group:

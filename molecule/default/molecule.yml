@@ -39,6 +39,9 @@ provisioner:
         docker_user_bashrc: false
         docker_compose: true
       jammy:
+        configure_sysctl: false
+        create_docker_user: true
+        install_dependencies: false
         docker_add_alias: false
         docker_allow_ping: false
         docker_allow_privileged_ports: false

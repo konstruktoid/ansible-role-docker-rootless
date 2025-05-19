@@ -8,6 +8,7 @@
     - privileged
   when:
     - docker_rootful
+    - install_dependencies
 
 - name: Install rootless Docker compose
   when:

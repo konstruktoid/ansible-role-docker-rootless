@@ -3,6 +3,24 @@
   hosts: all
   any_errors_fatal: true
   tasks:
+    - name: Debian family dependencies
+      become: true
+      when:
+        - ansible_os_family == "Debian"
+      block:
+        - name: Run apt update
+          ansible.builtin.apt:
+            update_cache: true
+            cache_valid_time: 1800
+          changed_when: false
+
+        - name: Install Debian acl package
+          ansible.builtin.apt:
+            name:
+              - acl
+              - slirp4netns
+              - uidmap
+
     - name: Include Ansible role
       ansible.builtin.import_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
