@@ -34,6 +34,7 @@
           export XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
           export DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
           export PATH="{{ docker_user_info.home }}/bin:{{ docker_user_info.home }}/.local/bin:$PATH"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - docker"
 
     - name: Install Docker bash completion
       environment:
