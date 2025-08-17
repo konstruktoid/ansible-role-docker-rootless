@@ -1,0 +1,7 @@
+ansible
+ansible-lint
+jmespath
+molecule
+molecule-plugins[vagrant]
+passlib
+tox
