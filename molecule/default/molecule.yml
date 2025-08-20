@@ -16,43 +16,21 @@ provisioner:
   log: true
   inventory:
     host_vars:
-      debiantesting:
+      trixie:
         docker_add_alias: true
         docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: false
-        docker_user: debiantestinguser
-        docker_user_bashrc: false
-      bookworm:
-        docker_add_alias: true
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: false
-        docker_user: bookwormuser
+        docker_user: trixieuser
         docker_user_bashrc: false
         docker_compose: false
-      almalinux9:
-        docker_add_alias: false
+      almalinux10:
+        docker_add_alias: true
         docker_allow_ping: false
-        docker_allow_privileged_ports: false
-        docker_rootful: true
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: true
-      jammy:
-        configure_sysctl: false
-        create_docker_user: true
-        install_dependencies: false
-        docker_add_alias: false
-        docker_allow_ping: false
-        docker_allow_privileged_ports: false
+        docker_allow_privileged_ports: true
         docker_rootful: false
         docker_rootful_enabled: false
-        docker_unattended_upgrades: true
-        docker_user: jammyuser
-        docker_user_bashrc: true
-        docker_compose: true
+        docker_user: dockeruser
       noble:
         docker_add_alias: true
         docker_allow_ping: false
@@ -72,43 +50,21 @@ provisioner:
         docker_user_bashrc: false
         docker_compose: false
 platforms:
-  - name: bookworm
-    box: debian/bookworm64
+  - name: almalinux10
+    box: almalinux/10
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
       - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     instance_raw_config_args:
       - vbguest.auto_update = false
-    memory: 1024
-  - name: debiantesting
-    box: debian/testing64
+  - name: trixie
+    box: bento/debian-13
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
       - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     instance_raw_config_args:
-      - vbguest.auto_update = false
-    memory: 1024
-  - name: almalinux9
-    box: almalinux/9
-    config_options:
-      vm.boot_timeout: 600
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-    instance_raw_config_args:
-      - vbguest.auto_update = false
-    memory: 1024
-  - name: jammy
-    box: bento/ubuntu-22.04
-    config_options:
-      vm.boot_timeout: 600
-      synced_folder: false
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
-      - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
-    instance_raw_config_args:
-      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
       - vbguest.auto_update = false
     memory: 1024
   - name: noble
