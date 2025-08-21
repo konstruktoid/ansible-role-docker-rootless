@@ -54,7 +54,11 @@
   block:
     - name: Install RedHat family packages
       ansible.builtin.dnf:
-        name: [curl, iptables, python3-pip]
+        name:
+          - acl
+          - curl
+          - iptables
+          - python3-pip
         state: present
 
     - name: Install RedHat family slirp4netns
