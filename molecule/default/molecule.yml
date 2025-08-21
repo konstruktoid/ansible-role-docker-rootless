@@ -16,14 +16,6 @@ provisioner:
   log: true
   inventory:
     host_vars:
-      trixie:
-        docker_add_alias: true
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: false
-        docker_user: trixieuser
-        docker_user_bashrc: false
-        docker_compose: false
       almalinux10:
         docker_add_alias: true
         docker_allow_ping: false
@@ -49,17 +41,17 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: false
+      trixie:
+        docker_add_alias: true
+        docker_allow_ping: true
+        docker_allow_privileged_ports: false
+        docker_rootful: false
+        docker_user: trixieuser
+        docker_user_bashrc: false
+        docker_compose: false
 platforms:
   - name: almalinux10
-    box: almalinux/10
-    config_options:
-      vm.boot_timeout: 600
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-    instance_raw_config_args:
-      - vbguest.auto_update = false
-  - name: trixie
-    box: bento/debian-13
+    box: almalinux/10-kitten-x86_64_v2
     config_options:
       vm.boot_timeout: 600
     provider_raw_config_args:
@@ -74,6 +66,7 @@ platforms:
       synced_folder: false
       ssh.key_type: ed25519
     provider_raw_config_args:
+      - customize ["modifyvm", :id, "--cableconnected1", "on"]
       - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
       - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
     instance_raw_config_args:
@@ -87,12 +80,22 @@ platforms:
       synced_folder: false
       ssh.key_type: ed25519
     provider_raw_config_args:
+      - customize ["modifyvm", :id, "--cableconnected1", "on"]
       - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
       - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
     instance_raw_config_args:
       - "vbguest.installer_options = { allow_kernel_upgrade: false }"
       - vbguest.auto_update = false
     memory: 2048
+  - name: trixie
+    box: bento/debian-13
+    config_options:
+      vm.boot_timeout: 600
+    provider_raw_config_args:
+      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+    instance_raw_config_args:
+      - vbguest.auto_update = false
+    memory: 1024
 verifier:
   name: ansible
 scenario:

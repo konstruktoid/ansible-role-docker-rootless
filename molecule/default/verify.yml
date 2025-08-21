@@ -82,7 +82,7 @@
           ansible.builtin.shell:
             cmd: |
               set -o pipefail
-              ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$|dockerd --iptables=false$' | awk '{print $1}'
+              ps -fe | grep -E 'dockerd$|dockerd -s fuse-overlayfs$|dockerd --iptables=(false|true)$' | awk '{print $1}'
           args:
             executable: /bin/bash
           register: ps_dockerd
