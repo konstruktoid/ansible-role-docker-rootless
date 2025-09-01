@@ -6,7 +6,7 @@ configure_sysctl: true
 create_docker_user: true
 install_dependencies: true
 
-docker_arch: '{{ ansible_architecture }}'
+docker_arch: "{{ ansible_architecture }}"
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
@@ -39,4 +39,3 @@ shasums:
   docker_compose_release:
     x86_64: a55a8cd4ef103aac282812554e531aac8df7e914a287ee81e14d695556a22902
     aarch64: 54488fffb60782f3c8787a48b95ed15f49f5a3a85f4105304bd46db5edd9db61
-
