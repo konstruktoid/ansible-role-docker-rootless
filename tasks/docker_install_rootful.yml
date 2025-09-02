@@ -7,12 +7,12 @@
   tags:
     - privileged
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts.os_family == "Debian"
     - install_dependencies
   block:
     - name: Import Docker gpg key
       ansible.builtin.get_url:
-        url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+        url: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg
         dest: /etc/apt/trusted.gpg.d/docker.asc
         mode: "0644"
         force: true
@@ -41,7 +41,7 @@
         mode: "0644"
       when:
         - docker_unattended_upgrades | bool
-        - "'unattended-upgrades' in ansible_facts.packages"
+        - "'unattended-upgrades' in ansible_facts.facts.packages"
 
     - name: Run apt update
       ansible.builtin.apt:
@@ -52,7 +52,7 @@
   tags:
     - privileged
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts.os_family == "RedHat"
     - install_dependencies
   block:
     - name: Stat docker-ce.repo file

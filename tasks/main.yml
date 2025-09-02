@@ -9,7 +9,7 @@
 
 - name: Remove obsolete Docker instruction file
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/ROOTLESS_DOCKER.README"
+    path: "{{ ansible_facts.env.HOME }}/ROOTLESS_DOCKER.README"
     state: absent
 
 - name: Rootful Docker block
@@ -17,11 +17,11 @@
     - docker_rootful
   environment:
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
     DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
   when:
     - docker_rootful
-    - not (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+    - not (ansible_facts.distribution == "Debian" and ansible_facts.distribution_major_version <= '10')
   block:
     - name: Install rootful Docker
       ansible.builtin.import_tasks:
@@ -36,7 +36,7 @@
     msg: slirp4netns (>= 0.4.0) is required, currently not available in Debian <= 10
   when:
     - docker_rootful
-    - (ansible_distribution == "Debian" and ansible_distribution_major_version <= '10')
+    - (ansible_facts.distribution == "Debian" and ansible_facts.distribution_major_version <= '10')
 
 - name: Install and configure rootless Docker
   ansible.builtin.import_tasks:
@@ -77,11 +77,11 @@
   block:
     - name: Stat .bashrc
       ansible.builtin.stat:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "{{ ansible_facts.env.HOME }}/.bashrc"
       register: user_bashrc
 
     - name: Check if .bash_aliases is used
-      ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+      ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_facts.env.HOME }}/.bashrc"
       register: check_aliases
       changed_when: check_aliases.rc >= 2
       failed_when: check_aliases.rc >= 2
@@ -90,7 +90,7 @@
 
     - name: Add rootless Docker alias to .bash_aliases
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.bash_aliases"
+        path: "{{ ansible_facts.env.HOME }}/.bash_aliases"
         line: "{{ sudo_alias }}"
         regexp: ^alias docker=
         state: present
@@ -102,7 +102,7 @@
 
     - name: Add rootless Docker alias to .bashrc
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "{{ ansible_facts.env.HOME }}/.bashrc"
         line: "{{ sudo_alias }}"
         regexp: ^alias docker=
       when:
@@ -113,7 +113,7 @@
 - name: Create docker_rootless.sh
   ansible.builtin.template:
     src: "{{ docker_rootless_script_template }}"
-    dest: "{{ ansible_env.HOME }}/docker_rootless.sh"
+    dest: "{{ ansible_facts.env.HOME }}/docker_rootless.sh"
     mode: "0700"
   when:
     - docker_rootful

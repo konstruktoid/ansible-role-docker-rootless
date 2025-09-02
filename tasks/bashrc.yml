@@ -38,7 +38,7 @@
 
     - name: Install Docker bash completion
       environment:
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
       ansible.builtin.shell: |
         set -o pipefail
         docker completion bash | tee "{{ docker_user_info.home }}/.bash_completion.d/docker"

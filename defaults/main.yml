@@ -6,7 +6,7 @@ configure_sysctl: true
 create_docker_user: true
 install_dependencies: true
 
-docker_arch: "{{ ansible_architecture }}"
+docker_arch: "{{ ansible_facts.architecture }}"
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false

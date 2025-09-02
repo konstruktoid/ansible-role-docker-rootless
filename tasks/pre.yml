@@ -4,7 +4,7 @@
   tags:
     - privileged
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts.os_family == "Debian"
     - install_dependencies
   block:
     - name: Run apt update
@@ -40,16 +40,16 @@
         state: present
         install_recommends: false
       when: >
-        ansible_distribution == "Debian" and
-        (ansible_kernel is version("4.18", ">=") and
-        ansible_kernel is version("5.11", "<="))
+        ansible_facts.distribution == "Debian" and
+        (ansible_facts.kernel is version("4.18", ">=") and
+        ansible_facts.kernel is version("5.11", "<="))
 
 - name: RedHat family dependencies
   become: true
   tags:
     - privileged
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts.os_family == "RedHat"
     - install_dependencies
   block:
     - name: Install RedHat family packages
@@ -66,7 +66,7 @@
         name: slirp4netns
         state: present
       when:
-        - ansible_distribution != "Amazon"
+        - ansible_facts.distribution != "Amazon"
 
     - name: Install slirp4netns binary
       ansible.builtin.get_url:
@@ -77,21 +77,21 @@
         group: root
         mode: "0755"
       when:
-        - ansible_distribution == "Amazon"
+        - ansible_facts.distribution == "Amazon"
 
     - name: Python3-rpm installation
       ansible.builtin.dnf:
         name: python3-rpm
         state: present
       when:
-        - ansible_distribution == "RedHat"
+        - ansible_facts.distribution == "RedHat"
 
     - name: Install python3 setuptools
       ansible.builtin.dnf:
         name: python3-setuptools
         state: present
       when:
-        - ansible_distribution == "AlmaLinux"
+        - ansible_facts.distribution == "AlmaLinux"
 
     - name: Install python3 docker
       ansible.builtin.pip:
@@ -123,8 +123,8 @@
         state: present
         reload: true
       when:
-        - ansible_distribution == "Debian"
-        - (ansible_distribution_version | int != 0  and ansible_distribution_version is version('11', '<'))
+        - ansible_facts.distribution == "Debian"
+        - (ansible_facts.distribution_version | int != 0  and ansible_facts.distribution_version is version('11', '<'))
 
     - name: Sysctl net.ipv4.ip_unprivileged_port_start=0
       ansible.posix.sysctl:
@@ -162,4 +162,4 @@
         state: present
         params: permit_mounts_in_userns=1
       when:
-        - ansible_distribution == "Debian"
+        - ansible_facts.distribution == "Debian"
