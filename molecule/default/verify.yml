@@ -12,7 +12,7 @@
 
     - name: Include host vars
       ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/inventory/host_vars/{{ ansible_hostname }}"
+        file: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/inventory/host_vars/{{ ansible_facts.hostname }}"
 
     - name: Register docker_user info
       become: true
@@ -91,7 +91,7 @@
 
         - name: Verify docker_rootless.sh
           ansible.builtin.stat:
-            path: "{{ ansible_env.HOME }}/docker_rootless.sh"
+            path: "{{ ansible_facts.env.HOME }}/docker_rootless.sh"
           register: docker_rootless_sh
           changed_when: not docker_rootless_sh.stat.exists
           failed_when: not docker_rootless_sh.stat.exists
@@ -117,12 +117,12 @@
       block:
         - name: Stat .bashrc
           ansible.builtin.stat:
-            path: "{{ ansible_env.HOME }}/.bashrc"
+            path: "{{ ansible_facts.env.HOME }}/.bashrc"
           register: user_bashrc
 
         - name: Check if .bash_aliases is used
           ansible.builtin.command:
-            cmd: grep -q '.bash_aliases' "{{ ansible_env.HOME }}/.bashrc"
+            cmd: grep -q '.bash_aliases' "{{ ansible_facts.env.HOME }}/.bashrc"
           register: check_aliases
           changed_when: check_aliases.rc >= 2
           failed_when: check_aliases.rc >= 2
@@ -131,7 +131,7 @@
 
         - name: Verify rootless docker .bash_aliases alias
           ansible.builtin.command:
-            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bash_aliases"
+            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_facts.env.HOME }}/.bash_aliases"
           register: verify_bash_aliases
           changed_when: verify_bash_aliases.rc != 0
           failed_when: verify_bash_aliases.rc != 0
@@ -142,7 +142,7 @@
 
         - name: Verify rootless docker .bashrc alias
           ansible.builtin.command:
-            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_env.HOME }}/.bashrc"
+            cmd: grep -q "alias docker='sudo XDG_RUNTIME_DIR" "{{ ansible_facts.env.HOME }}/.bashrc"
           register: verify_bashrc_alias
           changed_when: verify_bashrc_alias.rc != 0
           failed_when: verify_bashrc_alias.rc != 0
@@ -176,7 +176,7 @@
     - name: Wait for the host and reconnect
       ansible.builtin.wait_for:
         port: 22
-        host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
+        host: "{{ (ansible_facts.ssh_host | default(ansible_facts.host)) | default(inventory_hostname) }}"
         delay: 10
         timeout: 120
 
@@ -206,12 +206,12 @@
     - name: Binary docker-compose verification
       when:
         - docker_compose
-        - not ansible_distribution == "AlmaLinux"
+        - not ansible_facts.distribution == "AlmaLinux"
       become: true
       become_user: "{{ docker_user }}"
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Verify Docker compose
@@ -226,7 +226,7 @@
         - name: Run Docker Compose
           environment:
             XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-            PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+            PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
             DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
           ansible.builtin.command:
             cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
@@ -242,12 +242,12 @@
     - name: Ansible docker-compose verification
       when:
         - docker_compose
-        - ansible_distribution == "AlmaLinux"
+        - ansible_facts.distribution == "AlmaLinux"
       become: true
       become_user: "{{ docker_user }}"
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Install pip dependencies
@@ -271,13 +271,13 @@
     - name: Container verification block
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
-            "{{ ansible_env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
+            "{{ ansible_facts.env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
           args:
             executable: /bin/bash
           register: alpine_ping
@@ -303,7 +303,7 @@
               - setgid
               - setuid
             pull: true
-            hostname: "{{ ansible_nodename }}"
+            hostname: "{{ ansible_facts.nodename }}"
             container_default_behavior: compatibility
           when:
             - docker_rootful | bool
@@ -344,7 +344,7 @@
               - setgid
               - setuid
             pull: true
-            hostname: "{{ ansible_nodename }}"
+            hostname: "{{ ansible_facts.nodename }}"
             container_default_behavior: compatibility
 
         - name: Verify running rootless container
@@ -380,7 +380,7 @@
               - setgid
               - setuid
             pull: true
-            hostname: "{{ ansible_nodename }}"
+            hostname: "{{ ansible_facts.nodename }}"
             container_default_behavior: compatibility
 
         - name: Verify restarted rootless container
@@ -416,7 +416,7 @@
               - setgid
               - setuid
             pull: true
-            hostname: "{{ ansible_nodename }}"
+            hostname: "{{ ansible_facts.nodename }}"
             container_default_behavior: compatibility
           when:
             - docker_allow_privileged_ports | bool

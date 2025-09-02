@@ -47,12 +47,11 @@ configure_sysctl: true
 create_docker_user: true
 install_dependencies: true
 
-docker_arch: "{{ ansible_architecture }}"
+docker_arch: "{{ ansible_facts.architecture }}"
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_arch: x86_64
 docker_compose_release: v2.39.2
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
