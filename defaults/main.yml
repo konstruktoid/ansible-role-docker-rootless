@@ -6,20 +6,17 @@ configure_sysctl: true
 create_docker_user: true
 install_dependencies: true
 
+docker_arch: "{{ ansible_architecture }}"
 docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_arch: x86_64
 docker_compose_release: v2.39.2
-docker_compose_release_shasum: a55a8cd4ef103aac282812554e531aac8df7e914a287ee81e14d695556a22902
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
 docker_release: 28.3.3
-docker_release_rootless_shasum: fdf844dfea6b4b23358c1587bec497a285aebf0a1105cede4cfeb001ffcc67ff
-docker_release_shasum: 40c16bcf324f354b382d07e845e6a79e3493fc0c09b252dff9e1a46125589bff
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -29,6 +26,16 @@ docker_rootless_script_template: docker_rootless.sh.j2
 docker_rootless_service_template: docker_rootless.service.j2
 docker_service_restart: true
 docker_unattended_upgrades: false
-docker_url: https://download.docker.com/linux/static/stable/x86_64
+docker_url: "https://download.docker.com/linux/static/stable/{{ docker_arch }}"
 docker_user_bashrc: false
 docker_user: dockeruser
+shasums:
+  docker_release:
+    x86_64: 40c16bcf324f354b382d07e845e6a79e3493fc0c09b252dff9e1a46125589bff
+    aarch64: db69fed523677c5a24bbc6ef2e85db07205a6af2fe8838c4db652bfff8227cfa
+  docker_rootless_release:
+    x86_64: fdf844dfea6b4b23358c1587bec497a285aebf0a1105cede4cfeb001ffcc67ff
+    aarch64: 45c939d8ad88d4762001a767e0fb7abf1018a4d8666c276c973c1d9c0f53e3d1
+  docker_compose_release:
+    x86_64: a55a8cd4ef103aac282812554e531aac8df7e914a287ee81e14d695556a22902
+    aarch64: 54488fffb60782f3c8787a48b95ed15f49f5a3a85f4105304bd46db5edd9db61

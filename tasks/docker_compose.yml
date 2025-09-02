@@ -29,9 +29,9 @@
 
     - name: Download docker-compose
       ansible.builtin.get_url:
-        url: "{{ docker_compose_url }}/{{ docker_compose_release }}/docker-compose-linux-{{ docker_compose_arch }}"
+        url: "{{ docker_compose_url }}/{{ docker_compose_release }}/docker-compose-linux-{{ docker_arch }}"
         dest: "{{ docker_user_info.home }}/.docker/cli-plugins/docker-compose"
-        checksum: sha256:{{ docker_compose_release_shasum }}
+        checksum: "sha256:{{ shasums['docker_compose_release'][docker_arch] }}"
         owner: "{{ docker_user }}"
         mode: "0755"
 
