@@ -48,7 +48,7 @@ provisioner:
         docker_rootful: false
         docker_user: trixieuser
         docker_user_bashrc: false
-        docker_compose: false
+        docker_compose: true
 platforms:
   - name: almalinux10
     box: almalinux/10-kitten-x86_64_v2
