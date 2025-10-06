@@ -296,6 +296,8 @@
               -f /var/tmp/{{ docker_user }}-Dockerfile
               -t {{ docker_user }}/alpine:latest
               /var/tmp/
+          register: buildx_output
+          changed_when: false
 
     - name: Container usage verification block
       environment:
