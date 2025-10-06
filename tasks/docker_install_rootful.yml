@@ -78,6 +78,7 @@
     - name: Install Docker packages
       ansible.builtin.package:
         name:
+          - docker-buildx-plugin
           - docker-ce
           - docker-ce-rootless-extras
         state: present

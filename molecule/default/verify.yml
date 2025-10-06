@@ -268,7 +268,38 @@
             that:
               - not compose_output.failed
 
-    - name: Container verification block
+    - name: Container build verification block
+      become: true
+      become_user: "{{ docker_user }}"
+      when:
+        - docker_rootful
+      environment:
+        XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
+        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
+      block:
+        - name: Write Dockerfile
+          ansible.builtin.blockinfile:
+            path: /var/tmp/{{ docker_user }}-Dockerfile
+            mode: "0644"
+            create: true
+            block: |
+              FROM konstruktoid/alpine:latest
+              ENTRYPOINT ["/bin/bash"]
+
+        - name: Build test Dockerfile using buildx
+          ansible.builtin.command:
+            cmd: >
+              docker buildx build
+              --load
+              --progress=plain
+              -f /var/tmp/{{ docker_user }}-Dockerfile
+              -t {{ docker_user }}/alpine:latest
+              /var/tmp/
+          register: buildx_output
+          changed_when: false
+
+    - name: Container usage verification block
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
@@ -277,7 +308,7 @@
         - name: Test alpine ping container
           ansible.builtin.shell: >
             set -o pipefail &&
-            "{{ ansible_facts.env.HOME }}/docker_rootless.sh" run alpine ping -W1 -c1 1.1.1.1
+            "{{ ansible_facts.env.HOME }}/docker_rootless.sh" run {{ docker_user }}/alpine:latest ping -W1 -c1 1.1.1.1
           args:
             executable: /bin/bash
           register: alpine_ping
