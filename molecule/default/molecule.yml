@@ -37,7 +37,7 @@ provisioner:
         docker_allow_ping: true
         docker_allow_privileged_ports: false
         docker_rootful: true
-        docker_rootful_enabled: false
+        docker_rootful_enabled: true
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: false
