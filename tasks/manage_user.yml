@@ -32,8 +32,9 @@
         cmd: loginctl enable-linger {{ docker_user }}
         creates: /var/lib/systemd/linger/{{ docker_user }}
       register: enable_lingering
-      changed_when: enable_lingering.rc != 0
-      failed_when: enable_lingering.rc != 0
+      changed_when:
+        - user_linger.rc == 0
+        - "'skipped' not in user_linger.stdout"
 
 - name: Create Docker user Ansible tmp dir
   become: true
