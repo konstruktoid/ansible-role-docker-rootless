@@ -31,7 +31,7 @@
       ansible.builtin.command:
         cmd: loginctl enable-linger {{ docker_user }}
         creates: /var/lib/systemd/linger/{{ docker_user }}
-      register: enable_lingering
+      register: user_linger
       changed_when:
         - user_linger.rc == 0
         - "'skipped' not in user_linger.stdout"
