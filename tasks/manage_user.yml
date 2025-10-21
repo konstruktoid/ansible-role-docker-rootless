@@ -15,9 +15,9 @@
       ansible.builtin.user:
         name: "{{ docker_user }}"
         group: "{{ docker_user }}"
+        create_home: true
         state: present
         shell: /bin/bash
-      register: docker_user_info
 
     - name: Adding Docker user to systemd-journal group
       ansible.builtin.user:
@@ -36,10 +36,7 @@
         - user_linger.rc == 0
         - "'skipped' not in user_linger.stdout"
 
-- name: Create Docker user Ansible tmp dir
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.file:
-    path: "{{ docker_user_info.home }}/.ansible/tmp"
-    state: directory
-    mode: "0700"
+- name: Get Docker user info
+  ansible.builtin.user:
+    name: "{{ docker_user }}"
+  register: docker_user_info

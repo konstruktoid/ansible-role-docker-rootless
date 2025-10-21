@@ -42,7 +42,7 @@
   ansible.builtin.import_tasks:
     file: docker_install_rootless.yml
   when:
-    - not docker_rootful
+    - not docker_rootful | bool
   tags:
     - docker_rootless
 
