@@ -21,6 +21,19 @@
       check_mode: true
       register: docker_user_info
 
+    - name: Stat Docker home directory
+      become: true
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}"
+      register: docker_user_home_stat
+
+    - name: Assert Docker home directory permissions
+      ansible.builtin.assert:
+        that:
+          - docker_user_home_stat.stat.mode <= "0755"
+        success_msg: "{{ docker_user_info.home }} has correct permissions: {{ docker_user_home_stat.stat.mode }}"
+        fail_msg: "{{ docker_user_info.home }} permissions are incorrect: {{ docker_user_home_stat.stat.mode }}"
+
     - name: Stat rootful daemon.json
       ansible.builtin.stat:
         path: /etc/docker/daemon.json
@@ -267,6 +280,7 @@
           ansible.builtin.assert:
             that:
               - not compose_output.failed
+              - compose_output.services['web'].state == 'running'
 
     - name: Container build verification block
       become: true
