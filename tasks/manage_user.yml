@@ -40,11 +40,3 @@
   ansible.builtin.user:
     name: "{{ docker_user }}"
   register: docker_user_info
-
-- name: Create Docker user Ansible tmp dir
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.file:
-    path: "{{ docker_user_info.home }}/.ansible/tmp"
-    state: directory
-    mode: "0700"
