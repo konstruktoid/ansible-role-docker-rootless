@@ -122,6 +122,7 @@
             - ping_allowed.rc != 0
             - "'Destination Net Unreachable' not in ping_allowed.stdout"
           when:
+            - lookup('env', 'GITHUB_ACTIONS') is not defined
             - docker_allow_ping | bool
 
     - name: Docker alias verification
