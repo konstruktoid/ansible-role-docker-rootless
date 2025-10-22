@@ -35,6 +35,8 @@
       changed_when:
         - user_linger.rc == 0
         - "'skipped' not in user_linger.stdout"
+      when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
 - name: Get Docker user info
   ansible.builtin.user:

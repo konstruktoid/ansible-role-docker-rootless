@@ -25,6 +25,7 @@
         - containerd.service
       when:
         - not docker_rootful_enabled
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
     - name: Enable rootful Docker daemon
       ansible.builtin.systemd:
@@ -37,6 +38,7 @@
         - containerd.service
       when:
         - docker_rootful_enabled
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
     - name: Load the ip_tables module
       tags:
@@ -44,6 +46,8 @@
       community.general.modprobe:
         name: ip_tables
         state: present
+      when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
 - name: Stat Docker user docker.sock
   become: true

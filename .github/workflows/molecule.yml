@@ -1,0 +1,53 @@
+---
+name: Molecule testing workflow
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: "30 5 * * */3"
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  tox-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv tool install tox --with tox-uv
+
+      - name: Test stable releases
+        run: |
+          tox run -e docker
+
+  tox-docker-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv tool install tox --with tox-uv
+
+      - name: Test upstream code
+        run: |
+          tox run -e docker-upstream

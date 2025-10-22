@@ -2,7 +2,6 @@
 - name: Verify
   hosts: all
   any_errors_fatal: true
-
   tasks:
     - name: Include default vars
       ansible.builtin.include_vars:
@@ -101,6 +100,8 @@
           register: ps_dockerd
           changed_when: docker_user[:7] not in ps_dockerd.stdout
           failed_when: docker_user[:7] not in ps_dockerd.stdout
+          when:
+            - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
         - name: Verify docker_rootless.sh
           ansible.builtin.stat:
@@ -181,17 +182,21 @@
           register: bash_comp_docker
           failed_when: not bash_comp_docker.stat.exists
 
-    - name: Reboot host
-      become: true
-      ansible.builtin.reboot:
-        msg: Rebooting host
+    - name: Reboot
+      when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
+      block:
+        - name: Reboot host
+          become: true
+          ansible.builtin.reboot:
+            msg: Rebooting host
 
-    - name: Wait for the host and reconnect
-      ansible.builtin.wait_for:
-        port: 22
-        host: "{{ (ansible_facts.ssh_host | default(ansible_facts.host)) | default(inventory_hostname) }}"
-        delay: 10
-        timeout: 120
+        - name: Wait for the host and reconnect
+          ansible.builtin.wait_for:
+            port: 22
+            host: "{{ (ansible_facts.ssh_host | default(ansible_facts.host)) | default(inventory_hostname) }}"
+            delay: 10
+            timeout: 120
 
     - name: Ensure no docker-compose.yml exists
       become: true
@@ -218,6 +223,7 @@
 
     - name: Binary docker-compose verification
       when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
         - docker_compose
         - not ansible_facts.distribution == "AlmaLinux"
       become: true
@@ -254,6 +260,7 @@
 
     - name: Ansible docker-compose verification
       when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
         - docker_compose
         - ansible_facts.distribution == "AlmaLinux"
       become: true
@@ -286,6 +293,7 @@
       become: true
       become_user: "{{ docker_user }}"
       when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
         - docker_rootful
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
@@ -318,6 +326,8 @@
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
         PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
+      when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
       block:
         - name: Test alpine ping container
           ansible.builtin.shell: >

@@ -14,12 +14,15 @@
             cache_valid_time: 1800
           changed_when: false
 
-        - name: Install Debian acl package
+        - name: Install dependencies
           ansible.builtin.apt:
-            name:
-              - acl
-              - slirp4netns
-              - uidmap
+            name: "{{ item }}"
+            state: present
+          loop:
+            - acl
+            - inetutils-ping
+            - slirp4netns
+            - uidmap
 
     - name: Include Ansible role
       ansible.builtin.import_role:
