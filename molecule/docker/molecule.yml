@@ -1,0 +1,71 @@
+---
+dependency:
+  name: galaxy
+  enabled: true
+driver:
+  name: docker
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_tasks
+  env:
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
+  playbooks:
+    converge: ../default/converge.yml
+    verify: ../default/verify.yml
+  log: true
+  inventory:
+    host_vars:
+      nobleroot:
+        docker_add_alias: false
+        docker_allow_ping: true
+        docker_allow_privileged_ports: false
+        docker_rootful: true
+        docker_rootful_enabled: true
+        docker_user: dockeruser
+        docker_user_bashrc: false
+        docker_compose: false
+platforms:
+  - name: nobleroot
+    image: docker.io/ubuntu:noble
+    privileged: true
+    volume_mounts:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+verifier:
+  name: ansible
+scenario:
+  name: docker
+  create_sequence:
+    - dependency
+    - create
+    - prepare
+  check_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+    - dependency
+    - cleanup
+    - destroy
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - cleanup
+    - destroy

@@ -14,6 +14,7 @@
   tags:
     - privileged
   when:
+    - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
     - apparmor_abi.stat.exists
     - apparmor_service.status is defined
     - "'apparmor.service' in apparmor_service.status.FragmentPath"
@@ -39,6 +40,7 @@
         state: reloaded
       when:
         - apparmor_rootlesskit.changed # noqa: no-handler
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
 - name: Configure and enable the Docker service
   become: true
@@ -71,3 +73,5 @@
         state: started
         scope: user
         daemon_reload: true
+      when:
+        - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
