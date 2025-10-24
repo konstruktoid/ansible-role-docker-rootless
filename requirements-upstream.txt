@@ -5,4 +5,5 @@ jmespath
 molecule-plugins[docker]@git+https://github.com/ansible-community/molecule-plugins.git
 molecule-plugins[vagrant]@git+https://github.com/ansible-community/molecule-plugins.git
 passlib
+python-debian
 tox

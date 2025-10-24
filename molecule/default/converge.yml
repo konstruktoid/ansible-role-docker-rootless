@@ -21,6 +21,7 @@
           loop:
             - acl
             - inetutils-ping
+            - python3-debian
             - slirp4netns
             - uidmap
 
