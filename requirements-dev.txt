@@ -5,4 +5,5 @@ molecule
 molecule-plugins[docker]
 molecule-plugins[vagrant]
 passlib
+python-debian
 tox
