@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Test Lint
-        uses: ansible/ansible-lint@pyver
+        uses: ansible/ansible-lint@4aa85fcf683504f838adffe1a58fcd76cb9bd9d8
         with:
           python_version: "3.13"
 
