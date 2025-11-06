@@ -1,11 +1,15 @@
-on: [push, pull_request]
+---
+on:
+  push:
+  schedule:
+    - cron: "0 1 * * */3"
 name: Ansible Lint
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
