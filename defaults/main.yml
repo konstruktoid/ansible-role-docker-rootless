@@ -1,6 +1,6 @@
 ---
 # https://github.com/docker/roadmap/issues/188
-# https://download.docker.com/linux/static/stable/{aarch64,x86_64}/{docker,docker-rootless-extras}-28.5.1.tgz
+# https://download.docker.com/linux/static/stable/{aarch64,x86_64}/{docker,docker-rootless-extras}-28.5.2.tgz
 
 configure_sysctl: true
 create_docker_user: true
@@ -16,7 +16,7 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 28.5.1
+docker_release: 28.5.2
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -31,11 +31,11 @@ docker_user_bashrc: false
 docker_user: dockeruser
 shasums:
   docker_release:
-    aarch64: de54e37157f45a43f42f6271302372d95c0eb992cc35ecaee74989bb14058c94
-    x86_64: 5c0d19f31fece1accd0358bb8cff591fe25d7b6cba19f0fd412cbfdc07f75ff6
+    aarch64: 9e4f82996ab790724094475ebed33a736434bfe5d45231b676fef22ffb80044d
+    x86_64: ea90cfd12e1eeb12aa1c971741adb8bd4ed88e2a574eaac13f5029a1dbc6300d
   docker_rootless_release:
-    aarch64: 6bd0f6b9aaf755b70b52db24ca7d3da4480432544e1bee0124ccc32768151fe6
-    x86_64: d0bf8c7442ee9f6ed65966d74bf381c2293f78a89f181153c25ba39b3d708d4e
+    aarch64: 9cd2f32f303fc8b1de8efe5956bff3f649a66c79068a19e0b4cc4978373e1104
+    x86_64: 0db2681d8825cfc0295033f282849b9aa4cfcc9178293061447ab5d1d8956fab
   docker_compose_release:
     aarch64: d26373b19e89160546d15407516cc59f453030d9bc5b43ba7faf16f7b4980137
     x86_64: dba9d98e1ba5bfe11d88c99b9bd32fc4a0624a30fafe68eea34d61a3e42fd372
