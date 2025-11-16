@@ -22,7 +22,7 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 ---
 roles:
   - name: konstruktoid.docker_rootless
-    version: v1.5.0
+    version: v1.6.0
     src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
     scm: git
 ```
@@ -57,7 +57,7 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 29.0.0
+docker_release: 29.0.1
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -72,11 +72,11 @@ docker_user_bashrc: false
 docker_user: dockeruser
 shasums:
   docker_release:
-    aarch64: d487f3d0c8b11c15988ca0bf0477ced7356e2d513552acfbc1f4edd7d431b9d1
-    x86_64: 1695ef94a692a985f64a006f55119bdee4f3e263f916d79366e6e5e70cd46590
+    aarch64: c5ebae5a51a273aa40141b08157a18950525c1204888a01fa34dac0f45eb17e8
+    x86_64: db22bdfb32820540fa7ffedf5e0f3157e238c53be485103b71f083f5580f45a5
   docker_rootless_release:
-    aarch64: 60468d793dbf0cf1edef983cfac329be976f80f367d9652235803af940b4e167
-    x86_64: cb1475b0dfaabdaeb469c7423827a42b1efb92c4c749c5b0478fa85b266e7d34
+    aarch64: e2129ff06240277b2cb581d67c83b0a141b6cba2ac1ca41b9f6113f36c927fde
+    x86_64: 57fdc21cc3404ee76fabfd34c339edbf8f97a83bb5c082e7ed474cc6c76ac419
   docker_compose_release:
     aarch64: d26373b19e89160546d15407516cc59f453030d9bc5b43ba7faf16f7b4980137
     x86_64: dba9d98e1ba5bfe11d88c99b9bd32fc4a0624a30fafe68eea34d61a3e42fd372
