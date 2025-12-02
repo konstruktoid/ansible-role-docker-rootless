@@ -21,11 +21,19 @@
     - apparmor_service.status.UnitFileState == "enabled"
     - install_dependencies
   block:
+    - name: Create local apparmor.d directory
+      ansible.builtin.file:
+        path: /etc/apparmor.d/local
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Set rootlesskit path as fact
       ansible.builtin.set_fact:
         rootlesskit_path: "{{ docker_user_info.home }}/bin/rootlesskit"
 
-    - name: Add AppArmor profile for Docker
+    - name: Add rootlesskit AppArmor profile
       ansible.builtin.template:
         src: apparmor_rootlesskit.j2
         dest: /etc/apparmor.d/{{ rootlesskit_path[1:] | regex_replace('/', '.') }}
@@ -34,12 +42,20 @@
         mode: "0644"
       register: apparmor_rootlesskit
 
+    - name: Create minimal AppArmor local override for unprivileged_userns
+      ansible.builtin.template:
+        src: apparmor_unprivileged_userns.j2
+        dest: /etc/apparmor.d/local/unprivileged_userns
+        mode: "0644"
+      register: apparmor_unprivileged_userns
+
     - name: Reload AppArmor profiles
       ansible.builtin.systemd:
         name: apparmor.service
         state: reloaded
       when:
         - apparmor_rootlesskit.changed # noqa: no-handler
+        - apparmor_unprivileged_userns.changed # noqa: no-handler
         - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
 - name: Configure and enable the Docker service
