@@ -1,0 +1,9 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# Managed by Ansible role {{ ansible_role_name }}
+
+capability setuid,
+capability setgid,
+
+owner @{PROC}/@{pid}/uid_map w,
+owner @{PROC}/@{pid}/gid_map w,
+owner @{PROC}/@{pid}/setgroups w,
