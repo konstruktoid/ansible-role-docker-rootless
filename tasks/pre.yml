@@ -146,10 +146,14 @@
       when:
         - docker_allow_ping
 
-    - name: Sysctl user.max_user_namespaces=28633
+    - name: Read kernel threads-max value
+      ansible.builtin.set_fact:
+        threads_max: "{{ lookup('ansible.builtin.file', '/proc/sys/kernel/threads-max') }}"
+
+    - name: Setting max user namespaces to {{ (threads_max | int) // 2 }}
       ansible.posix.sysctl:
         name: user.max_user_namespaces
-        value: "28633"
+        value: "{{ (threads_max | int) // 2 }}"
         sysctl_set: true
         state: present
         reload: true

@@ -67,6 +67,23 @@
       when:
         - not docker_rootful
 
+    - name: Read kernel threads-max value
+      ansible.builtin.set_fact:
+        threads_max: "{{ lookup('ansible.builtin.file', '/proc/sys/kernel/threads-max') }}"
+
+    - name: Assert user.max_user_namespaces
+      ansible.builtin.shell:
+        cmd: sysctl -n user.max_user_namespaces
+      args:
+        executable: /bin/bash
+      register: max_user_namespaces
+      changed_when: false
+      failed_when: max_user_namespaces.stdout | int != (threads_max | int) // 2
+      when:
+        - not docker_rootful
+        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
+        - ansible_facts.distribution_release not in ["trixie"]
+
     - name: User verification block
       block:
         - name: Verify docker_user creation
