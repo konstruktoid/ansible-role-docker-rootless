@@ -22,7 +22,7 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 ---
 roles:
   - name: konstruktoid.docker_rootless
-    version: v1.8.0
+    version: v1.9.0
     src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
     scm: git
 ```
@@ -52,12 +52,12 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v2.40.3
+docker_compose_release: v5.0.0
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 29.0.4
+docker_release: 29.1.2
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -72,14 +72,14 @@ docker_user_bashrc: false
 docker_user: dockeruser
 shasums:
   docker_release:
-    aarch64: 64545cb7a265e7aa29a7b488cb5c2a37abcc03fe0647f4ad378278d0978c5cc6
-    x86_64: b7790cf19d58e738ff2d68760a7f9da84dc2d889af1f9d5cdf14727b9e456055
+    aarch64: 916d1a8f6257a26142fe139ed6e4bf18f52d67259e72577b54368202033ee90a
+    x86_64: 4422c550a6583fedfa790e00e7d51c1ee494e5c3f2dffc0a74145417fb9a7a6f
   docker_rootless_release:
-    aarch64: e7b6a26da240ed69ab0ebdc8c5b2d2d5f85ef250b2c2025b64f9e3322ac91eba
-    x86_64: 8cb682deb02bb8e1caf27ec8d3a4af35200d039b3af13bd11bc84d35671214f8
+    aarch64: c97ef20775ef88162c9d9b920d9c479cb944af499813383c3cfa6854202e9210
+    x86_64: 53f707de0117126714672f1cafd2348ef459bc1897bd9e8900141e7d42617025
   docker_compose_release:
-    aarch64: d26373b19e89160546d15407516cc59f453030d9bc5b43ba7faf16f7b4980137
-    x86_64: dba9d98e1ba5bfe11d88c99b9bd32fc4a0624a30fafe68eea34d61a3e42fd372
+    aarch64: d68ba7053066a44a51ee33b7dcdc106d8c8745eb0eaf46dc59fbbeb22ec46392
+    x86_64: 5091bac5729ce968c602d157c2f0b959b7b367d4efb70aa864eb9ae78eebe13e
 ```
 
 Before using this role you first have to decide if you want to install Docker
