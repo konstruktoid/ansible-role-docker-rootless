@@ -68,21 +68,42 @@
         - not docker_rootful
 
     - name: Read kernel threads-max value
-      ansible.builtin.set_fact:
-        threads_max: "{{ lookup('ansible.builtin.file', '/proc/sys/kernel/threads-max') }}"
-
-    - name: Assert user.max_user_namespaces
-      ansible.builtin.shell:
-        cmd: sysctl -n user.max_user_namespaces
-      args:
-        executable: /bin/bash
-      register: max_user_namespaces
+      ansible.builtin.command:
+        cmd: cat /proc/sys/kernel/threads-max
       changed_when: false
-      failed_when: max_user_namespaces.stdout | int != (threads_max | int) // 2
+      register: threads_max
+
+    - name: Calculate max user namespaces
+      ansible.builtin.set_fact:
+        max_user_namespaces: "{{ (threads_max.stdout | trim | int) // 2 }}"
+
+    - name: Setting max user namespaces
+      ansible.posix.sysctl:
+        name: user.max_user_namespaces
+        value: "{{ max_user_namespaces }}"
+        sysctl_set: true
+        state: present
+        reload: true
       when:
         - not docker_rootful
         - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
         - ansible_facts.distribution_release not in ["trixie"]
+
+    - name: Get user.max_user_namespaces
+      ansible.builtin.command:
+        cmd: cat /proc/sys/user/max_user_namespaces
+      changed_when: false
+      register: user_max_user_namespaces
+
+    - name: Assert user.max_user_namespaces value
+      ansible.builtin.assert:
+        that:
+          - user_max_user_namespaces.stdout | trim | int == max_user_namespaces
+        success_msg: "user.max_user_namespaces is set to {{ max_user_namespaces }}"
+        fail_msg: "user.max_user_namespaces is not set to {{ max_user_namespaces }}: {{ user_max_user_namespaces.stdout | trim | int }}"
+      when:
+        - not docker_rootful
+        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
 
     - name: User verification block
       block:
