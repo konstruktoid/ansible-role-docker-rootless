@@ -89,6 +89,22 @@
         - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
         - ansible_facts.distribution_release not in ["trixie"]
 
+    - name: Get user.max_user_namespaces
+      ansible.builtin.command:
+        cmd: cat /proc/sys/user/max_user_namespaces
+      changed_when: false
+      register: user_max_user_namespaces
+
+    - name: Assert user.max_user_namespaces value
+      ansible.builtin.assert:
+        that:
+          - user_max_user_namespaces.stdout | trim | int == max_user_namespaces
+        success_msg: "user.max_user_namespaces is set to {{ max_user_namespaces }}"
+        fail_msg: "user.max_user_namespaces is not set to {{ max_user_namespaces }}: {{ user_max_user_namespaces.stdout | trim | int }}"
+      when:
+        - not docker_rootful
+        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
+
     - name: User verification block
       block:
         - name: Verify docker_user creation
