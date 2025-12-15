@@ -147,13 +147,19 @@
         - docker_allow_ping
 
     - name: Read kernel threads-max value
-      ansible.builtin.set_fact:
-        threads_max: "{{ lookup('ansible.builtin.file', '/proc/sys/kernel/threads-max') }}"
+      ansible.builtin.command:
+        cmd: cat /proc/sys/kernel/threads-max
+      changed_when: false
+      register: threads_max
 
-    - name: Setting max user namespaces to {{ (threads_max | int) // 2 }}
+    - name: Calculate max user namespaces
+      ansible.builtin.set_fact:
+        max_user_namespaces: "{{ (threads_max.stdout | trim | int) // 2 }}"
+
+    - name: Setting max user namespaces
       ansible.posix.sysctl:
         name: user.max_user_namespaces
-        value: "{{ (threads_max | int) // 2 }}"
+        value: "{{ max_user_namespaces }}"
         sysctl_set: true
         state: present
         reload: true
