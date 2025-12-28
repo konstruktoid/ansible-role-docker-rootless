@@ -47,7 +47,7 @@
         mode: "0644"
       when:
         - docker_unattended_upgrades | bool
-        - "'unattended-upgrades' in ansible_facts.facts.packages"
+        - "'unattended-upgrades' in ansible_facts.packages"
 
     - name: Run apt update
       ansible.builtin.apt:
