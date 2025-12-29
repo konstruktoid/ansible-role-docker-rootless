@@ -1,5 +1,6 @@
 ---
 on:
+  pull_request:
   push:
   schedule:
     - cron: "0 1 * * */3"
