@@ -70,6 +70,8 @@ docker_unattended_upgrades: false
 docker_url: "https://download.docker.com/linux/static/stable/{{ docker_arch }}"
 docker_user_bashrc: false
 docker_user: dockeruser
+# docker_user_uid:
+# docker_user_gid:
 shasums:
   docker_release:
     aarch64: 2219f3ac48727d8c5546b13d5d271a58856188ecb8ff1f71f9e2f9aefde3ea76
@@ -116,7 +118,8 @@ should use when doing a manual installation.
 You define the name of the Docker user that will be created with the
 `docker_user` variable. This user will download and install the binaries if
 `docker_rootful: false` or else the user will be the one running the
-rootless installation script and starting a isolated daemon.
+rootless installation script and starting an isolated daemon. UID and GID
+can be set using the `docker_user_uid` and `docker_user_gid` variables.
 
 > Note that the sole purpose of the `docker_user` is to run the Docker
 daemon and related containers, and not for system administration or used as a
