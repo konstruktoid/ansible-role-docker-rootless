@@ -29,6 +29,8 @@ docker_unattended_upgrades: false
 docker_url: "https://download.docker.com/linux/static/stable/{{ docker_arch }}"
 docker_user_bashrc: false
 docker_user: dockeruser
+docker_user_uid: false
+docker_user_gid: false
 shasums:
   docker_release:
     aarch64: 2219f3ac48727d8c5546b13d5d271a58856188ecb8ff1f71f9e2f9aefde3ea76
