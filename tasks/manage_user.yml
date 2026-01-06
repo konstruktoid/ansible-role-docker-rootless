@@ -9,11 +9,13 @@
     - name: Create Docker user group
       ansible.builtin.group:
         name: "{{ docker_user }}"
+        gid: "{{ docker_user_gid | default(omit, true) }}"
         state: present
 
     - name: Add Docker user
       ansible.builtin.user:
         name: "{{ docker_user }}"
+        uid: "{{ docker_user_uid | default(omit, true) }}"
         group: "{{ docker_user }}"
         create_home: true
         state: present
