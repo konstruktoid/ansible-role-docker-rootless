@@ -23,6 +23,8 @@ provisioner:
         docker_rootful: false
         docker_rootful_enabled: false
         docker_user: dockeruser
+        docker_user_uid: 2025
+        docker_user_gid: 2125
       noble:
         docker_add_alias: true
         docker_allow_ping: false

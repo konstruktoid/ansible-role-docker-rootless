@@ -20,11 +20,37 @@
       check_mode: true
       register: docker_user_info
 
+    - name: Register Docker user group
+      ansible.builtin.group:
+        name: "{{ docker_user }}"
+      check_mode: true
+      register: docker_user_group_info
+
     - name: Stat Docker home directory
       become: true
       ansible.builtin.stat:
         path: "{{ docker_user_info.home }}"
       register: docker_user_home_stat
+
+    - name: Assert Docker uid
+      ansible.builtin.assert:
+        that:
+          - docker_user_info.uid == docker_user_uid
+        success_msg: "{{ docker_user }} uid={{ docker_user_info.uid }}"
+        fail_msg: "{{ docker_user }} uid={{ docker_user_info.uid }}"
+      when:
+        - docker_user_uid is defined
+        - docker_user_uid > 0
+
+    - name: Assert Docker primary group
+      ansible.builtin.assert:
+        that:
+          - docker_user_group_info.gid == docker_user_gid
+        success_msg: "{{ docker_user_group_info.name }} gid={{ docker_user_group_info.gid }}"
+        fail_msg: "{{ docker_user_group_info.name }} gid={{ docker_user_group_info.gid }} expected={{ docker_user_gid }}"
+      when:
+        - docker_user_gid is defined
+        - docker_user_gid > 0
 
     - name: Assert Docker home directory permissions
       ansible.builtin.assert:
@@ -327,6 +353,8 @@
             that:
               - not compose_output.failed
               - compose_output.services['web'].state == 'running'
+            fail_msg: "Docker Compose web service is not running"
+            success_msg: "Docker Compose web service is running"
 
     - name: Container build verification block
       become: true
@@ -419,6 +447,8 @@
             that:
               - docker_user_info.uid|string in nginxroot_container_running.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginxroot_container_running.container.HostnamePath
+            fail_msg: "Rootful container is not running with correct settings"
+            success_msg: "Rootful container is running with correct settings"
           when:
             - docker_rootful | bool
             - docker_rootful_enabled | bool
@@ -455,6 +485,8 @@
             that:
               - docker_user_info.uid|string in nginx_container_running.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_running.container.HostnamePath
+            fail_msg: "Rootless container is not running with correct settings"
+            success_msg: "Rootless container is running with correct settings"
 
         - name: Restart rootless nginx container
           become: true
@@ -491,6 +523,8 @@
             that:
               - docker_user_info.uid|string in nginx_container_restarted.container.NetworkSettings.SandboxKey
               - docker_user_info.home in nginx_container_restarted.container.HostnamePath
+            fail_msg: "Restarted rootless container is not running with correct settings"
+            success_msg: "Restarted rootless container is running with correct settings"
 
         - name: Verify rootless port 80 nginx container
           become: true
