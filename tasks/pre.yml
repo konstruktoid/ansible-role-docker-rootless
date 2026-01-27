@@ -112,6 +112,7 @@
         name: net.ipv4.ip_forward
         value: "1"
         sysctl_set: true
+        sysctl_file: "{{ docker_sysctl_file }}"
         state: present
         reload: true
 
@@ -120,6 +121,7 @@
         name: kernel.unprivileged_userns_clone
         value: "1"
         sysctl_set: true
+        sysctl_file: "{{ docker_sysctl_file }}"
         state: present
         reload: true
       when:
@@ -131,6 +133,7 @@
         name: net.ipv4.ip_unprivileged_port_start
         value: "0"
         sysctl_set: true
+        sysctl_file: "{{ docker_sysctl_file }}"
         state: present
         reload: true
       when:
@@ -141,6 +144,7 @@
         name: net.ipv4.ping_group_range
         value: 0 2147483647
         sysctl_set: true
+        sysctl_file: "{{ docker_sysctl_file }}"
         state: present
         reload: true
       when:
@@ -161,6 +165,7 @@
         name: user.max_user_namespaces
         value: "{{ max_user_namespaces }}"
         sysctl_set: true
+        sysctl_file: "{{ docker_sysctl_file }}"
         state: present
         reload: true
       when:
