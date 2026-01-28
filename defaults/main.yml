@@ -12,12 +12,12 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v5.0.1
+docker_compose_release: v5.0.2
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 29.1.5
+docker_release: 29.2.0
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -34,11 +34,11 @@ docker_user_uid: false
 docker_user_gid: false
 shasums:
   docker_release:
-    aarch64: c07ed6ce22375c4ba24cca554dc99cbc31ab2da24d893a5f2d4bd1854e8eaadd
-    x86_64: 882bb03f3fd36ad565b1362f5bbb5d5af5f2410a5c10cae3f9d3d54e2540adc2
+    aarch64: e1590e656abaf2dfe8a1d724d99b82644446fe24844f438ea000e08006774717
+    x86_64: 1beacd5cebec16bf857d557d3ce3e7e20fc692639cd36e0cfb3877def06b1e7c
   docker_rootless_release:
-    aarch64: 6dbb9c6146bdb34781250f31ad4cbb13b4dfeb3f3f557917d0e90418f58e0700
-    x86_64: e1914640fb749558f88019cac57ecb83e68e3dcba4fedfd99e5904f1fa27fba6
+    aarch64: ca6034fbc0659e11edba6f4e18aa9524f157e7abdfb730f34f4a1fd6d818f555
+    x86_64: 0bc933b7a4201f5cf1918a61b24410c6f769bed8077200bbd3e578fe18c40827
   docker_compose_release:
-    aarch64: e3b36491a75f92c35ebfbbe6e4741bd2429664edf3971427983d67c0b21e7d1d
-    x86_64: cdc1df64412ed009312afbc044b3625144d06c07736e2f7a77fb0460531b9327
+    aarch64: ac7810e0cd56a5b58576688196fafa843e07e8241fb91018a736d549ea20a3f3
+    x86_64: 2d880f723d3da7c779c54fdaea91a842fca8af55d1397f1ed8d7cbab3dd7af67
