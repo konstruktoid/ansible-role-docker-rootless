@@ -103,18 +103,6 @@
       ansible.builtin.set_fact:
         max_user_namespaces: "{{ (threads_max.stdout | trim | int) // 2 }}"
 
-    - name: Setting max user namespaces
-      ansible.posix.sysctl:
-        name: user.max_user_namespaces
-        value: "{{ max_user_namespaces }}"
-        sysctl_set: true
-        state: present
-        reload: true
-      when:
-        - not docker_rootful
-        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
-        - ansible_facts.distribution_release not in ["trixie"]
-
     - name: Get user.max_user_namespaces
       ansible.builtin.command:
         cmd: cat /proc/sys/user/max_user_namespaces
