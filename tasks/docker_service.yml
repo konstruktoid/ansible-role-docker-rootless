@@ -5,7 +5,7 @@
   register: apparmor_abi
 
 - name: Get apparmor service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: apparmor
   register: apparmor_service
 
@@ -50,7 +50,7 @@
       register: apparmor_unprivileged_userns
 
     - name: Reload AppArmor profiles
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: apparmor.service
         state: reloaded
       when:
@@ -85,7 +85,7 @@
         - Restart rootless docker
 
     - name: Enable and start Docker
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: docker.service
         enabled: true
         state: started
