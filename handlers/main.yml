@@ -2,7 +2,7 @@
 - name: Restart rootless docker
   become: true
   become_user: "{{ docker_user }}"
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: docker.service
     state: restarted
     scope: user

@@ -15,7 +15,7 @@
         group: root
 
     - name: Disable rootful Docker daemon
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ item }}"
         state: stopped
         enabled: false
@@ -28,7 +28,7 @@
         - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
 
     - name: Enable rootful Docker daemon
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ item }}"
         state: started
         enabled: true
