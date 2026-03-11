@@ -81,6 +81,8 @@
           value: "{{ docker_driver_port }}"
         - key: DOCKERD_ROOTLESS_ROOTLESSKIT_NET
           value: "{{ docker_driver_network }}"
+      notify:
+        - Restart rootless docker
 
     - name: Enable and start Docker
       ansible.builtin.systemd:

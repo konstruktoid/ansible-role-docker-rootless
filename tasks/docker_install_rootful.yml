@@ -116,3 +116,5 @@
     dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
     backup: true
     mode: "0644"
+  notify:
+    - Restart rootless docker
