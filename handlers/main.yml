@@ -6,5 +6,7 @@
     name: docker.service
     state: restarted
     scope: user
+    daemon_reload: true
   when:
     - docker_service_restart
+    - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
