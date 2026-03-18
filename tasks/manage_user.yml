@@ -27,7 +27,7 @@
         groups: systemd-journal
         append: true
       when:
-        - ansible_facts.distribution == "Debian"
+        - ansible_facts.distribution in ["Debian", "Ubuntu"]
 
     - name: Enable lingering for the Docker user
       ansible.builtin.command:
