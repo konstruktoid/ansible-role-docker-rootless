@@ -25,7 +25,7 @@ provisioner:
         docker_user: dockeruser
         docker_user_uid: 2025
         docker_user_gid: 2125
-      noble:
+      resolute:
         docker_add_alias: true
         docker_allow_ping: false
         docker_allow_privileged_ports: true
@@ -34,7 +34,7 @@ provisioner:
         docker_user: dockeruser
         docker_user_bashrc: false
         docker_compose: false
-      nobleroot:
+      resoluteroot:
         docker_add_alias: false
         docker_allow_ping: true
         docker_allow_privileged_ports: false
@@ -61,8 +61,8 @@ platforms:
     instance_raw_config_args:
       - vbguest.auto_update = false
     memory: 1024
-  - name: noble
-    box: bento/ubuntu-24.04
+  - name: resolute
+    box: bento/ubuntu-26.04
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
@@ -75,8 +75,8 @@ platforms:
       - "vbguest.installer_options = { allow_kernel_upgrade: false }"
       - vbguest.auto_update = false
     memory: 2048
-  - name: nobleroot
-    box: bento/ubuntu-24.04
+  - name: resoluteroot
+    box: bento/ubuntu-26.04
     config_options:
       vm.boot_timeout: 600
       synced_folder: false

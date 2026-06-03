@@ -8,18 +8,16 @@ galaxy_info:
   platforms:
     - name: Debian
       versions:
-        - buster
-        - bullseye
         - bookworm
+        - trixie
     - name: EL
       versions:
-        - "8"
         - "9"
+        - "10"
     - name: Ubuntu
       versions:
-        - focal
-        - jammy
         - noble
+        - resolute
   galaxy_tags:
     - almalinux
     - centos
