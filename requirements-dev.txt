@@ -1,4 +1,4 @@
-ansible
+ansible<14
 ansible-lint
 jmespath
 molecule
