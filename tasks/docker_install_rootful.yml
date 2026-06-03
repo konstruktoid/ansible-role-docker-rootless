@@ -26,7 +26,7 @@
         name: Docker
         types: deb
         uris: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}
-        architectures: "{{ 'amd64' if ansible_facts.architecture == 'x86_64' else ansible_facts.architecture }}"
+        architectures: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}.get(ansible_facts.architecture, ansible_facts.architecture) }}"
         suites: "{{ ansible_facts.distribution_release }}"
         components:
           - stable
@@ -116,3 +116,5 @@
     dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
     backup: true
     mode: "0644"
+  notify:
+    - Restart rootless docker
