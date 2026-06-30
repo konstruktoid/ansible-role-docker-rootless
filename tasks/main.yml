@@ -83,7 +83,7 @@
     - name: Check if .bash_aliases is used
       ansible.builtin.command: grep -q '.bash_aliases' "{{ ansible_facts.env.HOME }}/.bashrc"
       register: check_aliases
-      changed_when: check_aliases.rc >= 2
+      changed_when: false
       failed_when: check_aliases.rc >= 2
       when:
         - user_bashrc.stat.exists
