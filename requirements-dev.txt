@@ -1,9 +1,8 @@
-ansible
+ansible<14
 ansible-lint
 jmespath
 molecule
-molecule-plugins[docker]
-molecule-plugins[vagrant]
 passlib
+requests
 python-debian
 tox

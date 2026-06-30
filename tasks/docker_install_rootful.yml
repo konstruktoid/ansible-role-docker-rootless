@@ -49,10 +49,6 @@
         - docker_unattended_upgrades | bool
         - "'unattended-upgrades' in ansible_facts.packages"
 
-    - name: Run apt update
-      ansible.builtin.apt:
-        update_cache: true
-
 - name: Install Docker for RedHat family
   become: true
   tags:
@@ -88,6 +84,7 @@
           - docker-ce
           - docker-ce-rootless-extras
         state: present
+        update_cache: true
 
     - name: Add rootful Docker configuration file
       become: true

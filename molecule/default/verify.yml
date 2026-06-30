@@ -3,16 +3,6 @@
   hosts: all
   any_errors_fatal: true
   tasks:
-    - name: Include default vars
-      ansible.builtin.include_vars:
-        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions:
-          - yml
-
-    - name: Include host vars
-      ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/inventory/host_vars/{{ ansible_facts.hostname }}"
-
     - name: Register docker_user info
       become: true
       ansible.builtin.user:
@@ -245,9 +235,7 @@
             msg: Rebooting host
 
         - name: Wait for the host and reconnect
-          ansible.builtin.wait_for:
-            port: 22
-            host: "{{ (ansible_facts.ssh_host | default(ansible_facts.host)) | default(inventory_hostname) }}"
+          ansible.builtin.wait_for_connection:
             delay: 10
             timeout: 120
 

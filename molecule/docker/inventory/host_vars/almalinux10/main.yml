@@ -1,0 +1,5 @@
+---
+docker_allow_ping: false
+docker_allow_privileged_ports: true
+docker_user_uid: 2025
+docker_user_gid: 2125

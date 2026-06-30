@@ -17,7 +17,7 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
-docker_release: 29.5.2
+docker_release: 29.6.0
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -34,11 +34,11 @@ docker_user_uid: false
 docker_user_gid: false
 shasums:
   docker_release:
-    aarch64: d1d9cb857c32c596ea96a9ca6b25d13621a97c83511e667868a33a320b2a707f
-    x86_64: 6d81a5be56232d9cc047e60b7110a087793536ae5a8b465719cd303f05fc56ec
+    aarch64: 17aede86d504841427b92e52d8ebb50d3fa67e5fd6d6a90a4224dfc81cd79ebc
+    x86_64: 4d2f6782406b56eb43a519ad5078a6a79abe4d663328acb69136aceff5e05224
   docker_rootless_release:
-    aarch64: cde022863b094b90f73d3ff722b9f5608a71a98634c31da97cc3cced1735fbd3
-    x86_64: a74f5df15ca3c9f8f2ae33ca23a0d674513f4ec8af0c0c12354a2185eb085072
+    aarch64: 5955f7a782fa4fba6e05cc07249cb7d8278f2f0383e845b1948b82a1110f08e6
+    x86_64: 449460e9419253a438bc16d28c86736380f20171dfbf52c0e0af5ab597d3e06b
   docker_compose_release:
     aarch64: d4fb48b72857810314d3ee77123c89954101844efa4788031221f4c370495946
     x86_64: 33b208d7e76639db742fae84b966cc01dacae58ca3fc4dabbc907045aefdf0c4

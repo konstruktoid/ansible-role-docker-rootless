@@ -1,11 +1,16 @@
 ---
+ansible:
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
 dependency:
   name: galaxy
-  enabled: true
+  options:
+    requirements-file: requirements.yml
 driver:
-  name: vagrant
-  provider:
-    name: virtualbox
+  name: default
 provisioner:
   name: ansible
   config_options:
@@ -15,42 +20,7 @@ provisioner:
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
   log: true
   inventory:
-    host_vars:
-      almalinux10:
-        docker_add_alias: true
-        docker_allow_ping: false
-        docker_allow_privileged_ports: true
-        docker_rootful: false
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_uid: 2025
-        docker_user_gid: 2125
-      noble:
-        docker_add_alias: true
-        docker_allow_ping: false
-        docker_allow_privileged_ports: true
-        docker_rootful: false
-        docker_rootful_enabled: false
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: false
-      nobleroot:
-        docker_add_alias: false
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: true
-        docker_rootful_enabled: true
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: false
-      trixie:
-        docker_add_alias: true
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: false
-        docker_user: trixieuser
-        docker_user_bashrc: false
-        docker_compose: true
+    directory: ./inventory
 platforms:
   - name: almalinux10
     box: almalinux/10-kitten-x86_64_v2
@@ -61,8 +31,8 @@ platforms:
     instance_raw_config_args:
       - vbguest.auto_update = false
     memory: 1024
-  - name: noble
-    box: bento/ubuntu-24.04
+  - name: resolute
+    box: bento/ubuntu-26.04
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
@@ -75,8 +45,8 @@ platforms:
       - "vbguest.installer_options = { allow_kernel_upgrade: false }"
       - vbguest.auto_update = false
     memory: 2048
-  - name: nobleroot
-    box: bento/ubuntu-24.04
+  - name: resoluteroot
+    box: bento/ubuntu-26.04
     config_options:
       vm.boot_timeout: 600
       synced_folder: false
