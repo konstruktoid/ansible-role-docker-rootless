@@ -1,0 +1,4 @@
+---
+docker_allow_ping: true
+docker_user: trixieuser
+docker_compose: true

@@ -258,8 +258,12 @@ configuration.
 ## Testing with molecule
 
 If [Ansible Molecule](https://molecule.readthedocs.io/en/latest/)
-with the [vagrant plugin](https://github.com/ansible-community/molecule-plugins)
 and related software is installed, running `molecule test` is supported.
+
+Both scenarios use the built-in `default` (driverless) Molecule driver: the
+`default` scenario provisions VirtualBox virtual machines through the Vagrant
+CLI, while the `docker` scenario provisions containers through the
+`community.docker` collection.
 
 `tox -l` will list all available `tox` test environments.
 

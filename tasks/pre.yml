@@ -7,12 +7,6 @@
     - ansible_facts.os_family == "Debian"
     - install_dependencies
   block:
-    - name: Run apt update
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 1800
-      changed_when: false
-
     - name: Install Debian family packages
       ansible.builtin.apt:
         name:
@@ -23,8 +17,11 @@
           - dbus-user-session
           - gnupg
           - iptables
+          - kmod
           - libpam-systemd
           - lsb-release
+          - procps
+          - python3-debian
           - python3-docker
           - python3-pexpect
           - python3-pip
@@ -33,6 +30,7 @@
           - uidmap
         state: present
         install_recommends: false
+        update_cache: true
 
     - name: Install fuse-overlayfs
       ansible.builtin.apt:
@@ -58,6 +56,7 @@
           - acl
           - curl
           - iptables
+          - procps-ng
           - python3-pip
         state: present
 
@@ -107,6 +106,14 @@
   when:
     - configure_sysctl
   block:
+    - name: Ensure /etc/sysctl.d directory exists
+      ansible.builtin.file:
+        path: /etc/sysctl.d
+        state: directory
+        mode: "0755"
+        owner: root
+        group: root
+
     - name: Sysctl net.ipv4.ip_forward
       ansible.posix.sysctl:
         name: net.ipv4.ip_forward

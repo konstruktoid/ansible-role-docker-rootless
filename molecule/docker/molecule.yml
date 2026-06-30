@@ -1,34 +1,44 @@
 ---
+ansible:
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
 dependency:
   name: galaxy
-  enabled: true
+  options:
+    requirements-file: requirements.yml
 driver:
-  name: docker
+  name: default
 provisioner:
   name: ansible
+  playbooks:
+    converge: "../default/converge.yml"
+    prepare: "../default/prepare.yml"
+    verify: "../default/verify.yml"
   config_options:
     defaults:
       callback_whitelist: profile_tasks
+      interpreter_python: auto_silent
   env:
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
-  playbooks:
-    converge: ../default/converge.yml
-    verify: ../default/verify.yml
   log: true
   inventory:
-    host_vars:
-      nobleroot:
-        docker_add_alias: false
-        docker_allow_ping: true
-        docker_allow_privileged_ports: false
-        docker_rootful: true
-        docker_rootful_enabled: true
-        docker_user: dockeruser
-        docker_user_bashrc: false
-        docker_compose: false
+    directory: ./inventory
 platforms:
-  - name: nobleroot
-    image: docker.io/ubuntu:noble
+  - name: almalinux10
+    image: docker.io/almalinux:10
+    privileged: true
+    volume_mounts:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  - name: resoluteroot
+    image: docker.io/ubuntu:resolute
+    privileged: true
+    volume_mounts:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  - name: trixie
+    image: docker.io/debian:trixie
     privileged: true
     volume_mounts:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
@@ -40,24 +50,6 @@ scenario:
     - dependency
     - create
     - prepare
-  check_sequence:
-    - dependency
-    - cleanup
-    - destroy
-    - create
-    - prepare
-    - converge
-    - check
-    - destroy
-  converge_sequence:
-    - dependency
-    - create
-    - prepare
-    - converge
-  destroy_sequence:
-    - dependency
-    - cleanup
-    - destroy
   test_sequence:
     - dependency
     - cleanup
@@ -66,6 +58,8 @@ scenario:
     - create
     - prepare
     - converge
+    - idempotence
+    - side_effect
     - verify
     - cleanup
     - destroy

@@ -8,6 +8,9 @@
   ansible.builtin.systemd_service:
     name: apparmor
   register: apparmor_service
+  when:
+    - ansible_facts.virtualization_type not in ["container", "docker", "podman"]
+    - apparmor_abi.stat.exists
 
 - name: Add rootlesskit AppArmor profile
   become: true

@@ -1,0 +1,5 @@
+---
+docker_add_alias: false
+docker_allow_ping: true
+docker_rootful: true
+docker_rootful_enabled: true
