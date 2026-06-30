@@ -1,10 +1,5 @@
 ---
-docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: true
-docker_rootful: false
-docker_rootful_enabled: false
-docker_user: dockeruser
-docker_user_bashrc: false
 docker_user_uid: 2025
 docker_user_gid: 2125

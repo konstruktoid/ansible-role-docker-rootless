@@ -6,7 +6,6 @@
     molecule_inventory:
       all:
         hosts: {}
-        molecule: {}
   tasks:
     - name: Create containers
       community.docker.docker_container:

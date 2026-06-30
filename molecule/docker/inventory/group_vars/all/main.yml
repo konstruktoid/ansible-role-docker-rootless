@@ -1,0 +1,8 @@
+---
+docker_add_alias: true
+docker_allow_ping: true
+docker_allow_privileged_ports: false
+docker_rootful: false
+docker_rootful_enabled: false
+docker_user: dockeruser
+docker_user_bashrc: false
