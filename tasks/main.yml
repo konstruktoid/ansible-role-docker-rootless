@@ -17,7 +17,7 @@
     - docker_rootful
   environment:
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+    PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
     DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
   when:
     - docker_rootful
@@ -66,7 +66,7 @@
     sudo_alias: >
       alias docker='sudo XDG_RUNTIME_DIR="/run/user/{{ docker_user_info.uid }}"
       DOCKER_HOST="unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
-      {{ docker_user_info.home }}/bin/docker'
+      {{ docker_user_info.home }}/.local/bin/docker'
   when:
     - docker_add_alias | bool
     - not docker_rootful

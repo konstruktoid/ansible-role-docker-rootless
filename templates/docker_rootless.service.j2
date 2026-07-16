@@ -7,13 +7,13 @@ Documentation=https://docs.docker.com/engine/security/rootless/
 
 [Service]
 Environment="DOCKER_HOST=unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
-Environment="PATH={{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PATH={{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="XDG_RUNTIME_DIR=/run/user/{{ docker_user_info.uid }}"
 {% if not docker_rootful %}
 {% if ansible_facts.distribution == "Debian" and ansible_facts.kernel >= "4.18" and ansible_facts.kernel <= "5.11" %}
-ExecStart={{ docker_user_info.home }}/bin/dockerd-rootless.sh -s fuse-overlayfs
+ExecStart={{ docker_user_info.home }}/.local/bin/dockerd-rootless.sh -s fuse-overlayfs
 {% else %}
-ExecStart={{ docker_user_info.home }}/bin/dockerd-rootless.sh {{ '--iptables=false' if ansible_facts.distribution == 'AlmaLinux' else '--iptables=true' }}
+ExecStart={{ docker_user_info.home }}/.local/bin/dockerd-rootless.sh {{ '--iptables=false' if ansible_facts.distribution == 'AlmaLinux' else '--iptables=true' }}
 {% endif %}
 {% endif %}
 {% if docker_rootful %}

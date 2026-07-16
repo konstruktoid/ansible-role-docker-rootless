@@ -34,7 +34,7 @@
 
     - name: Set rootlesskit path as fact
       ansible.builtin.set_fact:
-        rootlesskit_path: "{{ docker_user_info.home }}/bin/rootlesskit"
+        rootlesskit_path: "{{ docker_user_info.home }}/.local/bin/rootlesskit"
 
     - name: Add rootlesskit AppArmor profile
       ansible.builtin.template:

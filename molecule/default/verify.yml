@@ -271,7 +271,7 @@
       become_user: "{{ docker_user }}"
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Verify Docker compose
@@ -286,7 +286,7 @@
         - name: Run Docker Compose
           environment:
             XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-            PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+            PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
             DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
           ansible.builtin.command:
             cmd: docker compose -f "/var/tmp/{{ docker_user }}-docker-compose.yml" up -d
@@ -308,7 +308,7 @@
       become_user: "{{ docker_user }}"
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Install pip dependencies
@@ -340,7 +340,7 @@
         - docker_rootful
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       block:
         - name: Write Dockerfile
@@ -367,7 +367,7 @@
     - name: Container usage verification block
       environment:
         XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
         DOCKER_HOST: unix:///run/user/{{ docker_user_info.uid }}/docker.sock
       when:
         - ansible_facts.virtualization_type not in ["container", "docker", "podman"]

@@ -33,12 +33,12 @@
         block: |
           export XDG_RUNTIME_DIR="/run/user/$(id -u)"
           export DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/docker.sock"
-          export PATH="${HOME}/bin:${HOME}/.local/bin:$PATH"
+          export PATH="${HOME}/.local/bin:${HOME}/bin:$PATH"
         marker: "# {mark} ANSIBLE MANAGED BLOCK - docker"
 
     - name: Install Docker bash completion
       environment:
-        PATH: "{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
+        PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_facts.env.PATH }}"
       ansible.builtin.shell: |
         set -o pipefail
         docker completion bash | tee "{{ docker_user_info.home }}/.bash_completion.d/docker"
