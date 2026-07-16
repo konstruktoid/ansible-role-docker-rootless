@@ -17,6 +17,7 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
+docker_migrate_legacy_bin: true
 docker_release: 29.6.1
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false

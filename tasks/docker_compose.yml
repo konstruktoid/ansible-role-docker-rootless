@@ -16,9 +16,33 @@
   become: true
   become_user: "{{ docker_user }}"
   block:
-    - name: Stat Compose in /bin dir
+    - name: Stat legacy Compose in ~/bin dir
       ansible.builtin.stat:
         path: "{{ docker_user_info.home }}/bin/docker-compose"
+      register: docker_compose_legacy_bin
+      when: docker_migrate_legacy_bin
+
+    - name: Migrate legacy Compose into ~/.local/bin
+      ansible.builtin.copy:
+        src: "{{ docker_user_info.home }}/bin/docker-compose"
+        dest: "{{ docker_user_info.home }}/.local/bin/docker-compose"
+        remote_src: true
+        mode: preserve
+      when:
+        - docker_migrate_legacy_bin
+        - docker_compose_legacy_bin.stat.exists | default(false)
+
+    - name: Remove migrated legacy Compose from ~/bin
+      ansible.builtin.file:
+        path: "{{ docker_user_info.home }}/bin/docker-compose"
+        state: absent
+      when:
+        - docker_migrate_legacy_bin
+        - docker_compose_legacy_bin.stat.exists | default(false)
+
+    - name: Stat Compose in .local/bin dir
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}/.local/bin/docker-compose"
       register: docker_compose_bin
 
     - name: Create cli-plugins directory
@@ -35,9 +59,9 @@
         owner: "{{ docker_user }}"
         mode: "0755"
 
-    - name: Remove Compose in /bin dir
+    - name: Remove Compose in .local/bin dir
       ansible.builtin.file:
-        path: "{{ docker_user_info.home }}/bin/docker-compose"
+        path: "{{ docker_user_info.home }}/.local/bin/docker-compose"
         state: absent
       when:
         - docker_compose_bin.stat.exists
@@ -46,5 +70,5 @@
     - name: Create Compose link
       ansible.builtin.file:
         src: "{{ docker_user_info.home }}/.docker/cli-plugins/docker-compose"
-        dest: "{{ docker_user_info.home }}/bin/docker-compose"
+        dest: "{{ docker_user_info.home }}/.local/bin/docker-compose"
         state: link

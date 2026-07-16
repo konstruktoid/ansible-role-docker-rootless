@@ -1,20 +1,56 @@
 ---
+- name: Create Docker user .local/bin directory
+  become: true
+  become_user: "{{ docker_user }}"
+  ansible.builtin.file:
+    path: "{{ docker_user_info.home }}/.local/bin"
+    state: directory
+    mode: "0700"
+
+- name: Migrate legacy ~/bin binaries into ~/.local/bin
+  become: true
+  become_user: "{{ docker_user }}"
+  when: docker_migrate_legacy_bin
+  block:
+    - name: Stat legacy Docker user bin directory
+      ansible.builtin.stat:
+        path: "{{ docker_user_info.home }}/bin"
+      register: docker_legacy_bin_dir
+
+    - name: Find binaries in legacy Docker user bin directory
+      ansible.builtin.find:
+        paths: "{{ docker_user_info.home }}/bin"
+        file_type: any
+        hidden: true
+      register: docker_legacy_bin_files
+      when: docker_legacy_bin_dir.stat.isdir | default(false)
+
+    - name: Copy legacy binaries into ~/.local/bin
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ docker_user_info.home }}/.local/bin/{{ item.path | basename }}"
+        remote_src: true
+        mode: preserve
+      loop: "{{ docker_legacy_bin_files.files | default([]) }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: Remove migrated legacy binaries from ~/bin
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ docker_legacy_bin_files.files | default([]) }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
 - name: Get Docker version
   become: true
   become_user: "{{ docker_user }}"
   ansible.builtin.command:
-    cmd: "{{ docker_user_info.home }}/bin/docker version"
+    cmd: "{{ docker_user_info.home }}/.local/bin/docker version"
   register: rootless_docker_version
   changed_when: false
   failed_when: false
-
-- name: Create Docker user bin directory
-  become: true
-  become_user: "{{ docker_user }}"
-  ansible.builtin.file:
-    path: "{{ docker_user_info.home }}/bin"
-    state: directory
-    mode: "0700"
 
 - name: Create user systemd .config directory
   become: true
@@ -55,24 +91,24 @@
         owner: "{{ docker_user }}"
         mode: "0644"
 
-    - name: Extract Docker archive into Docker user bin directory
+    - name: Extract Docker archive into Docker user .local/bin directory
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.unarchive:
         src: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
-        dest: "{{ docker_user_info.home }}/bin"
+        dest: "{{ docker_user_info.home }}/.local/bin"
         extra_opts:
           - --strip-components=1
         remote_src: true
       notify:
         - Restart rootless docker
 
-    - name: Extract docker-rootless-extras into Docker user bin directory
+    - name: Extract docker-rootless-extras into Docker user .local/bin directory
       become: true
       become_user: "{{ docker_user }}"
       ansible.builtin.unarchive:
         src: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
-        dest: "{{ docker_user_info.home }}/bin"
+        dest: "{{ docker_user_info.home }}/.local/bin"
         extra_opts:
           - --strip-components=1
         remote_src: true

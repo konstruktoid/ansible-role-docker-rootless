@@ -58,6 +58,7 @@ docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
+docker_migrate_legacy_bin: true
 docker_release: 29.6.1
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
@@ -115,6 +116,18 @@ dependencies.
 The `docker_url`, `docker_release`, `docker_compose_url` and `docker_compose_release`
 variables define where you find the relevant binaries and which version you
 should use when doing a manual installation.
+
+The `docker` and `docker-compose` binaries, along with the rootless install
+scripts, are installed into `~/.local/bin` of the `docker_user`. The legacy
+`~/bin` directory is still kept in every `PATH` the role configures, after
+`~/.local/bin`, so any binaries or scripts you place there manually continue
+to take effect.
+
+If `docker_migrate_legacy_bin: true` (the default), any binaries the role
+previously installed into `~/bin` are moved into `~/.local/bin` the first
+time the updated role runs against a host, so the Docker binaries end up in
+a single location and `~/bin` is left free for your own use. Set it to
+`false` to leave the contents of `~/bin` untouched.
 
 You define the name of the Docker user that will be created with the
 `docker_user` variable. This user will download and install the binaries if
@@ -202,7 +215,7 @@ configuration.
 - name: Example container block
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ docker_user_info.uid }}"
-    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+    PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
     - name: Nginx container
@@ -239,7 +252,7 @@ configuration.
   become_user: "{{ docker_user }}"
   environment:
     XDG_RUNTIME_DIR: /run/user/{{ docker_user_info.uid }}
-    PATH: "{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
+    PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
     - name: Install pip dependencies
