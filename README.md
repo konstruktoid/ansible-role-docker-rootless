@@ -273,10 +273,30 @@ configuration.
 If [Ansible Molecule](https://molecule.readthedocs.io/en/latest/)
 and related software is installed, running `molecule test` is supported.
 
-Both scenarios use the built-in `default` (driverless) Molecule driver: the
-`default` scenario provisions VirtualBox virtual machines through the Vagrant
-CLI, while the `docker` scenario provisions containers through the
-`community.docker` collection.
+Both scenarios use the built-in `default` (driverless) Molecule driver:
+
+- the `default` scenario boots QEMU/UEFI cloud images
+  (`almalinux10`, `resolute`, `resoluteroot` and `trixie`) using
+  Molecule's ansible-native driver (`driver: name: default`, no
+  Docker/Vagrant plugin required), and
+- the `docker` scenario provisions containers through the
+  `community.docker` collection.
+
+Both converge by running the role, and `verify.yml` checks rootless and
+rootful Docker installation, service state, container execution, and
+`docker compose`.
+
+```shell
+uv pip install ansible-core ansible-lint molecule
+ansible-galaxy install --force -r requirements.yml
+molecule test
+molecule test -s docker
+```
+
+The `default` scenario requires `qemu-system-x86_64`, `qemu-img`,
+`genisoimage`, and OVMF firmware (`/usr/share/OVMF/OVMF_{CODE,VARS}_4M.fd`)
+on the host running the tests; base cloud images are downloaded once and
+cached under `~/.cache/molecule-qemu/images`.
 
 `tox -l` will list all available `tox` test environments.
 

@@ -16,6 +16,7 @@ provisioner:
   config_options:
     defaults:
       callback_whitelist: profile_tasks
+      interpreter_python: auto_silent
   env:
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
   log: true
@@ -23,51 +24,37 @@ provisioner:
     directory: ./inventory
 platforms:
   - name: almalinux10
-    box: almalinux/10-kitten-x86_64_v2
-    config_options:
-      vm.boot_timeout: 600
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-    instance_raw_config_args:
-      - vbguest.auto_update = false
+    image_url: "https://repo.almalinux.org/almalinux/10/cloud/x86_64/images/AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
+    image_name: almalinux10
+    ssh_user: almalinux
+    ssh_user_group: wheel
+    ssh_port: 22401
     memory: 1024
+    cpus: 1
   - name: resolute
-    box: bento/ubuntu-26.04
-    config_options:
-      vm.boot_timeout: 600
-      synced_folder: false
-      ssh.key_type: ed25519
-    provider_raw_config_args:
-      - customize ["modifyvm", :id, "--cableconnected1", "on"]
-      - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
-      - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
-    instance_raw_config_args:
-      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
-      - vbguest.auto_update = false
+    image_url: "https://cloud-images.ubuntu.com/resolute/current/resolute-server-cloudimg-amd64.img"
+    image_name: resolute
+    ssh_user: ubuntu
+    ssh_user_group: sudo
+    ssh_port: 22402
     memory: 2048
+    cpus: 2
   - name: resoluteroot
-    box: bento/ubuntu-26.04
-    config_options:
-      vm.boot_timeout: 600
-      synced_folder: false
-      ssh.key_type: ed25519
-    provider_raw_config_args:
-      - customize ["modifyvm", :id, "--cableconnected1", "on"]
-      - customize ['modifyvm', :id, '--uart1', '0x3F8', '4']
-      - customize ['modifyvm', :id, '--uartmode1', 'file', File::NULL]
-    instance_raw_config_args:
-      - "vbguest.installer_options = { allow_kernel_upgrade: false }"
-      - vbguest.auto_update = false
+    image_url: "https://cloud-images.ubuntu.com/resolute/current/resolute-server-cloudimg-amd64.img"
+    image_name: resolute
+    ssh_user: ubuntu
+    ssh_user_group: sudo
+    ssh_port: 22403
     memory: 2048
+    cpus: 2
   - name: trixie
-    box: bento/debian-13
-    config_options:
-      vm.boot_timeout: 600
-    provider_raw_config_args:
-      - customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-    instance_raw_config_args:
-      - vbguest.auto_update = false
+    image_url: "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
+    image_name: trixie
+    ssh_user: debian
+    ssh_user_group: sudo
+    ssh_port: 22404
     memory: 1024
+    cpus: 1
 verifier:
   name: ansible
 scenario:
