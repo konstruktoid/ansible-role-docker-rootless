@@ -1,13 +1,18 @@
-.ansible
+.ansible/
+ansible.cfg
+ansible_collections
 .cache
+.claude/settings.local.json
 *.deb
 .docker
 drafts/*
+.env
 .env.yml
 hosts
 *.html
 *.log
 molecule/default/inventory/host_vars/*/connection.yml
+.nox
 *.retry
 *.rpm
 .scannerwork
@@ -15,4 +20,5 @@ molecule/default/inventory/host_vars/*/connection.yml
 *suid.list
 .tox
 .vagrant
+.venv
 .yamllint

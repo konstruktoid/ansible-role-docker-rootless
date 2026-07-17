@@ -3,6 +3,7 @@
   hosts: molecule
   gather_facts: false
   any_errors_fatal: true
+  become: "{{ ansible_user is defined and ansible_user != 'root' }}"
   tasks:
     - name: Install Python 3
       ansible.builtin.raw: >
