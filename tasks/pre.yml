@@ -64,19 +64,6 @@
       ansible.builtin.dnf:
         name: slirp4netns
         state: present
-      when:
-        - ansible_facts.distribution != "Amazon"
-
-    - name: Install slirp4netns binary
-      ansible.builtin.get_url:
-        url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.3.1/slirp4netns-x86_64
-        dest: /usr/bin/slirp4netns
-        checksum: sha256:4bc5d6c311f9fa7ae00ce54aefe10c2afaf0800fe9e99f32616a964ed804a9e1
-        owner: root
-        group: root
-        mode: "0755"
-      when:
-        - ansible_facts.distribution == "Amazon"
 
     - name: Python3-rpm installation
       ansible.builtin.dnf:

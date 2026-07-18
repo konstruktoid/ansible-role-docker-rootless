@@ -112,6 +112,8 @@
     src: "{{ docker_daemon_json_template }}"
     dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
     backup: true
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
     mode: "0644"
   notify:
     - Restart rootless docker
