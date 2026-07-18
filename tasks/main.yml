@@ -95,6 +95,8 @@
         regexp: ^alias docker=
         state: present
         create: true
+        owner: "{{ ansible_facts.env.USER }}"
+        group: "{{ ansible_facts.env.USER }}"
         mode: "0640"
       when:
         - check_aliases.rc == 0

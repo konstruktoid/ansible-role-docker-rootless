@@ -29,14 +29,28 @@ clearly.
    octal `mode` with explicit `owner`/`group`, `docker_`-prefixed variable names, checksum
    verification on downloaded binaries, treat the `docker_user` account, subuid/subgid, sysctl,
    systemd units, AppArmor profiles, and rootful/privileged-port/ping toggles as high-sensitivity).
-3. Follow the existing conventions and patterns in the codebase: naming, file structure, and style.
-4. If OS-conditional logic changes (`ansible_facts.os_family` / `ansible_facts.distribution`
+3. Read the [YAML 1.2.2 specification](https://yaml.org/spec/1.2.2/) before writing or reviewing
+   YAML content — it's the authoritative reference for scalar resolution, quoting, and syntax that
+   `ansible-lint`/`yamllint` don't fully enforce. In particular, watch for:
+   - Ambiguous plain scalars that the core schema would resolve as boolean/null instead of a string
+     (`y`/`n`/`yes`/`no`/`on`/`off`/`null`/`~`) — quote them if a string is intended.
+   - Numeric-looking plain scalars that could be misread as int/float/octal/sexagesimal (this repo
+     already quotes octal `mode` values, e.g. `mode: "0755"`; keep doing that for any new scalar
+     that looks numeric but must stay a string).
+   - Tabs used for indentation (YAML block structure requires spaces).
+   - Anchors/aliases (`&`/`*`) or explicit tags (`!!`) — this repo currently uses neither; avoid
+     introducing them unless there's a clear win, since they reduce readability of task files.
+   Do not change quoting/formatting purely for spec-purity if it would fight `ansible-lint`'s
+   `production` profile or the repo's `.yamllint`/`.ansible-lint` rules — those take precedence on
+   any conflict.
+4. Follow the existing conventions and patterns in the codebase: naming, file structure, and style.
+5. If OS-conditional logic changes (`ansible_facts.os_family` / `ansible_facts.distribution`
    branches), keep `meta/main.yml` `galaxy_info.platforms` in sync with it.
-5. If a `defaults/main.yml` variable is added, renamed, or removed, update the "Role Variables with
+6. If a `defaults/main.yml` variable is added, renamed, or removed, update the "Role Variables with
    defaults" block in `README.md` to match.
-6. If a Docker or Compose release version changes, update the matching `shasums` entry in
+7. If a Docker or Compose release version changes, update the matching `shasums` entry in
    `defaults/main.yml` alongside the version/URL variables.
-7. Add or update test coverage for the change:
+8. Add or update test coverage for the change:
    - `molecule/default/converge.yml` and `molecule/docker/molecule.yml` (which reuses
      `../default/converge.yml` and `../default/verify.yml`) both exercise this single role — there is
      no per-scenario role split.
@@ -46,12 +60,12 @@ clearly.
    - If new scenario-specific variables are needed, add them under the relevant host in
      `molecule/default/inventory/host_vars/*/main.yml` (and `molecule/docker/inventory/...` if the
      `docker` scenario needs different values).
-8. Verify the change (see checklist below). If any issues are found, fix them and re-verify. Repeat
+9. Verify the change (see checklist below). If any issues are found, fix them and re-verify. Repeat
    until all issues are resolved or verification has been attempted 3 times, whichever comes first.
    If issues remain unresolved after 3 attempts, stop and report to the user instead of proceeding
    or silently giving up.
-9. Report any issues found during verification, with detailed reproduction steps and relevant
-   logs/output.
+10. Report any issues found during verification, with detailed reproduction steps and relevant
+    logs/output.
 
 ## Verify
 - Run `ansible-lint` and confirm a clean exit / expected output (`profile: production`, see
@@ -92,3 +106,6 @@ Never declare this done based on the edit alone. Confirm each of the following:
 - [ ] `shasums` in `defaults/main.yml` updated if a binary release version changed
 - [ ] `meta/main.yml` `galaxy_info.platforms` still matches any OS-conditional logic
 - [ ] No unrelated files changed
+- [ ] New/changed YAML scalars are unambiguous per the
+      [YAML 1.2.2 spec](https://yaml.org/spec/1.2.2/) (no unquoted `y`/`n`/`on`/`off`/`null`-like
+      strings, no unquoted numeric-looking strings that must stay strings, no tabs)

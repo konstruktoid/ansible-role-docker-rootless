@@ -57,6 +57,7 @@
         dest: "{{ docker_user_info.home }}/.docker/cli-plugins/docker-compose"
         checksum: "sha256:{{ shasums['docker_compose_release'][docker_arch] }}"
         owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
         mode: "0755"
 
     - name: Remove Compose in .local/bin dir

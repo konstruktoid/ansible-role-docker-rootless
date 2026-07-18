@@ -49,6 +49,8 @@
       ansible.builtin.template:
         src: apparmor_unprivileged_userns.j2
         dest: /etc/apparmor.d/local/unprivileged_userns
+        owner: root
+        group: root
         mode: "0644"
       register: apparmor_unprivileged_userns
 
@@ -70,6 +72,8 @@
         dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service.d/override.conf"
         line: "[Service]"
         create: true
+        owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
         mode: "0644"
 
     - name: Configure Docker network/port drivers

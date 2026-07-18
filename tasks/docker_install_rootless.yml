@@ -79,6 +79,7 @@
         dest: "{{ docker_user_info.home }}/docker-{{ docker_release }}.tgz"
         checksum: "sha256:{{ shasums['docker_release'][docker_arch] }}"
         owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
         mode: "0644"
 
     - name: Download docker-rootless-extras archive {{ docker_release }}
@@ -89,6 +90,7 @@
         dest: "{{ docker_user_info.home }}/docker-rootless-extras-{{ docker_release }}.tgz"
         checksum: "sha256:{{ shasums['docker_rootless_release'][docker_arch] }}"
         owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
         mode: "0644"
 
     - name: Extract Docker archive into Docker user .local/bin directory
@@ -120,6 +122,8 @@
     src: "{{ docker_rootless_service_template }}"
     dest: "{{ docker_user_info.home }}/.config/systemd/user/docker.service"
     backup: true
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
     mode: "0600"
   notify:
     - Restart rootless docker
@@ -131,6 +135,8 @@
     src: "{{ docker_daemon_json_template }}"
     dest: "{{ docker_user_info.home }}/.config/docker/daemon.json"
     backup: true
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
     mode: "0644"
   notify:
     - Restart rootless docker
