@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu -o pipefail
+
 docker_release="$(curl -fsSL https://api.github.com/repos/moby/moby/releases/latest | jq -r '.name' | sed 's/^v//')"
 compose_release="$(curl -fsSL https://api.github.com/repos/docker/compose/releases/latest | jq -r '.name')"
 

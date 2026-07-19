@@ -53,13 +53,13 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v5.2.0
+docker_compose_release: v5.3.1
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
 docker_migrate_legacy_bin: true
-docker_release: 29.6.1
+docker_release: 29.6.2
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -76,14 +76,14 @@ docker_user_uid: false
 docker_user_gid: false
 shasums:
   docker_release:
-    aarch64: 917a4bb83565bcacb38c430f08daae8b59db3256331ac23f22394f0542509881
-    x86_64: b0df4a43a98d7ecb708acbdb5a34a3416e13b6e39bcbbdf296f51f0f3442b29f
+    aarch64: 8d16d8b3b158c132a9fb9963d4b4345746f925e287e154c9ed880ac257baf292
+    x86_64: d6204aea92238e2453d5445c885b9d2e5eb8f82915568ec50edf9dbe12a3ac74
   docker_rootless_release:
-    aarch64: 084dcf0aec0dfdebb9b2e004eb5f5b15e19124e40a51ce38e1b8419a4fc0503a
-    x86_64: 43e2450df3797e78a8a4e57fef0540f95109a4937c8f1af4294721bda2e3fb67
+    aarch64: 5f5f379166ac52e54941b3fe31e73b0796e20f2628e6a4e82b4863ed52e6751b
+    x86_64: 72c863f215d873c251e95f3818f96493d2b733dc66d2c7f154f983091a3a5cd9
   docker_compose_release:
-    aarch64: 739de570a0adf5eab12830db980f549fb5f44ad6b266e1e43e20f6f9df7cbcca
-    x86_64: 018f9612ecabc5f2d7aaa53d6f5f44453a87611e2d72c8ef84d7b1eca070e719
+    aarch64: aa611e811d0ea25897839c404bfb5bf93ce706dc51c500a4457890f5d0606a86
+    x86_64: f9ebc6ebdb19d769b793c245a736caaeb198c62587f13b25c660c13b4987f959
 ```
 
 Before using this role you first have to decide if you want to install Docker
