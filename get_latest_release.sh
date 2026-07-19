@@ -1,17 +1,27 @@
 #!/bin/bash
 
+set -eu -o pipefail
+
+temp_dirs=()
+cleanup() {
+    if [ "${#temp_dirs[@]}" -gt 0 ]; then
+        rm -rf "${temp_dirs[@]}"
+    fi
+}
+trap cleanup EXIT
+
 docker_release="$(curl -fsSL https://api.github.com/repos/moby/moby/releases/latest | jq -r '.name' | sed 's/^v//')"
 compose_release="$(curl -fsSL https://api.github.com/repos/docker/compose/releases/latest | jq -r '.name')"
 
 archs=("aarch64" "x86_64")
 for arch in "${archs[@]}"; do
     temp_dir="$(mktemp -d --suffix=-"${arch}")"
+    temp_dirs+=("${temp_dir}")
     curl -fsSL "https://download.docker.com/linux/static/stable/${arch}/docker-${docker_release}.tgz" -o "${temp_dir}/docker-${docker_release}.tgz"
     curl -fsSL "https://download.docker.com/linux/static/stable/${arch}/docker-rootless-extras-${docker_release}.tgz" -o "${temp_dir}/docker-rootless-extras-${docker_release}.tgz"
 
     docker_shasum="$(sha256sum "${temp_dir}/docker-${docker_release}.tgz" | awk '{print $1}')"
     rootless_shasum="$(sha256sum "${temp_dir}/docker-rootless-extras-${docker_release}.tgz" | awk '{print $1}')"
-    rm -rf "${temp_dir}"
 
     if [ "${arch}" == "aarch64" ]; then
         aarch64_docker_shasum="${docker_shasum}"
