@@ -60,12 +60,24 @@ clearly.
    - If new scenario-specific variables are needed, add them under the relevant host in
      `molecule/default/inventory/host_vars/*/main.yml` (and `molecule/docker/inventory/...` if the
      `docker` scenario needs different values).
-9. Verify the change (see checklist below). If any issues are found, fix them and re-verify. Repeat
-   until all issues are resolved or verification has been attempted 3 times, whichever comes first.
-   If issues remain unresolved after 3 attempts, stop and report to the user instead of proceeding
-   or silently giving up.
+9. Verify the change (see checklist below) in a bounded loop. One **attempt** is one full
+   fix-and-rerun cycle: apply fixes for the findings from the previous run, then rerun the
+   verification commands to completion. Reading output or re-reading a file without changing
+   anything is not an attempt.
+   - Baseline the loop at 3 attempts.
+   - Continue past 3 only while making measurable progress, meaning each cycle ends with strictly
+     fewer findings than the one before it.
+   - Stop early, before 3 attempts, if the loop is oscillating: the same findings recur, the count
+     stops dropping, or a fix for one finding reintroduces another.
+   - When stopping for either reason, report to the user rather than proceeding or silently giving
+     up. Name the failing check, include its output, and state what was tried.
 10. Report any issues found during verification, with detailed reproduction steps and relevant
-    logs/output.
+    logs/output. Ansible output is unusually rich in machine detail: play recaps and `--diff` output
+    name the target host, gathered facts carry hostnames, interfaces and internal addresses, and
+    failure messages quote absolute paths under the invoking user's home. Strip that before pasting
+    output anywhere it will be stored, and never commit it into the repository. The same applies to
+    anything checked in as a fixture: use `localhost`, `example.com`, or RFC 5737 addresses
+    (`192.0.2.0/24`) in inventories, host vars, and templates rather than a real host.
 
 ## Verify
 - Run `ansible-lint` and confirm a clean exit / expected output (`profile: production`, see
@@ -105,7 +117,16 @@ Never declare this done based on the edit alone. Confirm each of the following:
 - [ ] `README.md` "Role Variables with defaults" block matches `defaults/main.yml`
 - [ ] `shasums` in `defaults/main.yml` updated if a binary release version changed
 - [ ] `meta/main.yml` `galaxy_info.platforms` still matches any OS-conditional logic
+- [ ] No user or system information committed: inventories, host vars, templates, and any captured
+      lint or molecule output use placeholder hosts and addresses, with no real hostname, home
+      directory path, username, or internal IP
 - [ ] No unrelated files changed
 - [ ] New/changed YAML scalars are unambiguous per the
       [YAML 1.2.2 spec](https://yaml.org/spec/1.2.2/) (no unquoted `y`/`n`/`on`/`off`/`null`-like
       strings, no unquoted numeric-looking strings that must stay strings, no tabs)
+
+## References
+
+- [references/yaml-quoting.md](references/yaml-quoting.md): YAML 1.2.2 scalar resolution and
+  quoting, including the "Norway problem". Read it when a change touches quoting in a YAML file,
+  or when justifying why a value must stay quoted.
