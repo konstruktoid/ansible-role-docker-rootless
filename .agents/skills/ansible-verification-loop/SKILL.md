@@ -71,6 +71,11 @@ clearly.
      stops dropping, or a fix for one finding reintroduces another.
    - When stopping for either reason, report to the user rather than proceeding or silently giving
      up. Name the failing check, include its output, and state what was tried.
+
+   Stop at 6 attempts regardless. "Strictly fewer findings" permits an unbounded run when each
+   cycle clears one finding out of many, and every cycle here costs a full container converge.
+   Count findings per check rather than as one total, since `ansible-lint` and `molecule` report
+   unrelated things: progress means the check that failed improved and no other check regressed.
 10. Report any issues found during verification, with detailed reproduction steps and relevant
     logs/output. Ansible output is unusually rich in machine detail: play recaps and `--diff` output
     name the target host, gathered facts carry hostnames, interfaces and internal addresses, and
@@ -78,6 +83,14 @@ clearly.
     output anywhere it will be stored, and never commit it into the repository. The same applies to
     anything checked in as a fixture: use `localhost`, `example.com`, or RFC 5737 addresses
     (`192.0.2.0/24`) in inventories, host vars, and templates rather than a real host.
+
+    Machine identifiers are not the only exposure. Ansible output can also carry passwords, API
+    tokens, private keys, vaulted or `no_log`-worthy variable values, and credential-bearing URLs:
+    `--diff` on a templated secret prints both versions, a failed `uri` or `get_url` task echoes
+    its headers, and a verbose module failure dumps the arguments it was called with. Redact those
+    before the output is pasted, stored, uploaded as a CI artifact, or attached to an issue, not
+    only before it is committed. When a task handles a secret, `no_log: true` is the fix, so that
+    there is nothing to redact in the first place.
 
 ## Verify
 - Run `ansible-lint` and confirm a clean exit / expected output (`profile: production`, see
@@ -120,6 +133,9 @@ Never declare this done based on the edit alone. Confirm each of the following:
 - [ ] No user or system information committed: inventories, host vars, templates, and any captured
       lint or molecule output use placeholder hosts and addresses, with no real hostname, home
       directory path, username, or internal IP
+- [ ] No secrets in anything reported, stored, or uploaded: no passwords, API tokens, private
+      keys, vault contents, or credential-bearing URLs in pasted output, CI artifacts, or issue
+      attachments, and `no_log: true` set on any task that handles one
 - [ ] No unrelated files changed
 - [ ] New/changed YAML scalars are unambiguous per the
       [YAML 1.2.2 spec](https://yaml.org/spec/1.2.2/) (no unquoted `y`/`n`/`on`/`off`/`null`-like
