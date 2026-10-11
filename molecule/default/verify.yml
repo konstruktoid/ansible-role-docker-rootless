@@ -83,28 +83,32 @@
       when:
         - not docker_rootful
 
-    - name: Read kernel threads-max value
+    - name: Get configured user.max_user_namespaces
       ansible.builtin.command:
-        cmd: cat /proc/sys/kernel/threads-max
+        cmd: "grep -oP '(?<=^user.max_user_namespaces=)\\d+' {{ docker_sysctl_file }}"
       changed_when: false
-      register: threads_max
-
-    - name: Calculate max user namespaces
-      ansible.builtin.set_fact:
-        max_user_namespaces: "{{ (threads_max.stdout | trim | int) // 2 }}"
+      register: configured_max_user_namespaces
+      when:
+        - not docker_rootful
+        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
 
     - name: Get user.max_user_namespaces
       ansible.builtin.command:
         cmd: cat /proc/sys/user/max_user_namespaces
       changed_when: false
       register: user_max_user_namespaces
+      when:
+        - not docker_rootful
+        - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
 
     - name: Assert user.max_user_namespaces value
+      # kernel.threads-max can drift at runtime, so compare against the
+      # value the role persisted rather than recomputing it from a fresh read.
       ansible.builtin.assert:
         that:
-          - user_max_user_namespaces.stdout | trim | int == max_user_namespaces
-        success_msg: "user.max_user_namespaces is set to {{ max_user_namespaces }}"
-        fail_msg: "user.max_user_namespaces is not set to {{ max_user_namespaces }}: {{ user_max_user_namespaces.stdout | trim | int }}"
+          - user_max_user_namespaces.stdout | trim | int == configured_max_user_namespaces.stdout | trim | int
+        success_msg: "user.max_user_namespaces is set to {{ user_max_user_namespaces.stdout | trim }}"
+        fail_msg: "user.max_user_namespaces is not set to {{ configured_max_user_namespaces.stdout | trim }}: {{ user_max_user_namespaces.stdout | trim }}"
       when:
         - not docker_rootful
         - not ansible_facts.virtualization_type in ["container", "docker", "podman"]
@@ -387,12 +391,14 @@
 
         - name: Start rootful nginx container
           become: true
+          environment:
+            DOCKER_HOST: unix:///var/run/docker.sock
           community.docker.docker_container:
             name: nginxroot
             image: konstruktoid/nginx
             state: started
             ports:
-              - 8080:80
+              - 8080:8080
             cap_drop: all
             capabilities:
               - chown
@@ -409,6 +415,8 @@
 
         - name: Verify running rootful container
           become: true
+          environment:
+            DOCKER_HOST: unix:///var/run/docker.sock
           community.docker.docker_container_info:
             name: nginxroot
           register: nginxroot_container_running
@@ -421,8 +429,8 @@
         - name: Assert rootful container settings
           ansible.builtin.assert:
             that:
-              - docker_user_info.uid|string in nginxroot_container_running.container.NetworkSettings.SandboxKey
-              - docker_user_info.home in nginxroot_container_running.container.HostnamePath
+              - "'/var/run/docker/netns/' in nginxroot_container_running.container.NetworkSettings.SandboxKey"
+              - "'/var/lib/docker/containers/' in nginxroot_container_running.container.HostnamePath"
             fail_msg: "Rootful container is not running with correct settings"
             success_msg: "Rootful container is running with correct settings"
           when:
@@ -473,7 +481,7 @@
             state: started
             restart: true
             ports:
-              - 8081:80
+              - 8081:8080
             cap_drop: all
             capabilities:
               - chown
@@ -511,7 +519,7 @@
             state: started
             restart: true
             ports:
-              - 80:80
+              - 80:8080
             cap_drop: all
             capabilities:
               - chown

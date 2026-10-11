@@ -4,5 +4,6 @@ docker_allow_ping: true
 docker_allow_privileged_ports: false
 docker_rootful: false
 docker_rootful_enabled: false
+docker_sysctl_file: /etc/sysctl.d/90-docker-rootless.conf
 docker_user: dockeruser
 docker_user_bashrc: false

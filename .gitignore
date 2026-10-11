@@ -3,6 +3,7 @@ ansible.cfg
 ansible_collections
 .cache
 .claude/settings.local.json
+.claude/STATE.md
 *.deb
 .docker
 drafts/*
