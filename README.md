@@ -22,7 +22,7 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 ---
 roles:
   - name: konstruktoid.docker_rootless
-    version: v2.5.0
+    version: v2.6.0
     src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
     scm: git
 ```
