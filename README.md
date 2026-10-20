@@ -139,11 +139,11 @@ can be set using the `docker_user_uid` and `docker_user_gid` variables.
 daemon and related containers, and not for system administration or used as a
 regular user.
 
-`docker_release_shasum`, `docker_release_rootless_shasum` and
-`docker_compose_release_shasum` are used to verify the files when
-downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
-module. The `docker_release_shasum` is used for the Docker `.tgz` file and
-`docker_release_rootless_shasum` for the `docker-ce-rootless-extras` package.
+The `shasums` dictionary holds the SHA-256 checksums, per architecture, used to verify
+the files when downloaded using the [get_url](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
+module. `shasums.docker_release` is used for the Docker `.tgz` file,
+`shasums.docker_rootless_release` for the `docker-rootless-extras` package and
+`shasums.docker_compose_release` for the `docker-compose` binary.
 
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode, if unset the settings in
@@ -155,8 +155,8 @@ created in the Ansible user home directory. This works as a substitute to the
 `docker` command so that the Ansible user can execute the rootless Docker installation from the `docker_user`.
 
 If `docker_compose: true`, then the Docker `compose` plugin or `docker-compose`
-will be installed. `docker_compose_arch` are used to define the architecture of
-the `docker-compose` binary.
+will be installed. The `docker-compose` binary is downloaded for the
+architecture defined by `docker_arch`.
 
 If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
 `docker compose` command will be placed inside the `docker_user` home.
