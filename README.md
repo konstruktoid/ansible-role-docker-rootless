@@ -145,6 +145,10 @@ module. `shasums.docker_release` is used for the Docker `.tgz` file,
 `shasums.docker_rootless_release` for the `docker-rootless-extras` package and
 `shasums.docker_compose_release` for the `docker-compose` binary.
 
+Since Docker 29.10.0, a custom `docker_daemon_json_template` that sets
+`insecure-registries` no longer implicitly trusts loopback registries. Use
+trusted TLS, or list the local registries, such as `localhost:5000`, explicitly.
+
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode, if unset the settings in
 `docker_rootful_service_template` will be used.
