@@ -22,7 +22,7 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 ---
 roles:
   - name: konstruktoid.docker_rootless
-    version: v2.8.0
+    version: v2.9.0
     src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
     scm: git
 ```
@@ -53,13 +53,13 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v5.7.0
+docker_compose_release: v5.7.1
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
 docker_migrate_legacy_bin: true
-docker_release: 29.9.3
+docker_release: 29.10.0
 docker_repository_template: docker.repo.j2
 docker_rootful_enabled: false
 docker_rootful: false
@@ -76,14 +76,14 @@ docker_user_uid: false
 docker_user_gid: false
 shasums:
   docker_release:
-    aarch64: 1b27fd739378ef938401e81ce5afb73b7ad7432d4f598814a9ff5f826bb464d2
-    x86_64: 3fb5d1f13014c18cc54945bc177c58a9056a482dada031e17d12cf2e6922c973
+    aarch64: 6e5159e8b5615e0c0c2954a2a1a2a12bc65f5d9b603595dba24a10cb367408cd
+    x86_64: 7c1ebadc65c716cdc6d35fc78759ed0e4317debf43c21dd12f066f2006999def
   docker_rootless_release:
-    aarch64: 867bbb01a3df1566681ccf53da8255434d4ca2cc84a304111604b6ee6130c349
-    x86_64: c41b7194dca722fe929bc0225fc87f3166c97e67d50a521533b0b23f3c79a466
+    aarch64: 6d08caae6a61e58f86c21dc94bcbf87f2b7a82bb634ef051243004a7f92f9e07
+    x86_64: a4ad65be3921ac3e45f3fe69893f5edbd078cb3b4a6499fe13288053553dce25
   docker_compose_release:
-    aarch64: 15861535d14e26555736b49376c95e14bfd94285366c8446bfac7156a972e76f
-    x86_64: 7758048ad38e580f22559603312874fec8bb638d021a9e64182385fc17cc12a2
+    aarch64: f2f49f903240895fa764c0dca3a14548b754ad9426f6b609ccaf55ec5a3aa2a5
+    x86_64: af426722a8af5de812fcee30cc1c39f0639f5f723cbadefb25e5d4db054064cf
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -144,6 +144,10 @@ the files when downloaded using the [get_url](https://docs.ansible.com/ansible/l
 module. `shasums.docker_release` is used for the Docker `.tgz` file,
 `shasums.docker_rootless_release` for the `docker-rootless-extras` package and
 `shasums.docker_compose_release` for the `docker-compose` binary.
+
+Since Docker 29.10.0, a custom `docker_daemon_json_template` that sets
+`insecure-registries` no longer implicitly trusts loopback registries. Use
+trusted TLS, or list the local registries, such as `localhost:5000`, explicitly.
 
 `docker_rootful_opts` is the options to apply to the Docker daemon if
 running in rootful mode, if unset the settings in
