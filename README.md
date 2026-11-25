@@ -183,10 +183,11 @@ the architecture defined by `docker_arch` is downloaded and installed as a
 If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
 `docker compose` command will be placed inside the `docker_user` home.
 
-If `docker_unattended_upgrades: true`, `docker_rootful: true`, the host belongs
-to the Debian family and the `unattended-upgrades` package is installed, the
-Docker repository is added to the `unattended-upgrades` origins so that the
-Docker packages are updated automatically.
+If `docker_unattended_upgrades: true`, `docker_rootful: true`,
+`install_dependencies: true`, the host belongs to the Debian family and the
+`unattended-upgrades` package is installed, the Docker repository is added to the
+`unattended-upgrades` origins so that the Docker packages are updated
+automatically.
 
 The `docker_allow_privileged_ports` and `docker_allow_ping` variables only take
 effect if `configure_sysctl: true`. The sysctl settings are written to
