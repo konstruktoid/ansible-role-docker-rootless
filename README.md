@@ -140,7 +140,9 @@ scripts, are installed into `~/.local/bin` of the `docker_user`. The legacy
 If `docker_migrate_legacy_bin: true` (the default) and `docker_rootful: false`,
 everything in `~/bin` is moved into `~/.local/bin` on every run, including files
 you have placed there yourself. Files with the same name in `~/.local/bin` are
-overwritten. Set it to `false` to leave the contents of `~/bin` untouched.
+overwritten, while a directory ends up nested as `~/.local/bin/<dir>/<dir>`.
+A dangling symlink in `~/bin` makes the role fail. Set it to `false` to leave
+the contents of `~/bin` untouched.
 
 You define the name of the Docker user that will be created with the
 `docker_user` variable. This user will download and install the binaries if
