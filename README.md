@@ -18,11 +18,23 @@ runtime. ([docker](https://docs.docker.com/engine/security/rootless/))
 
 ## Requirements
 
+The role requires `ansible-core` 2.17 or later.
+
+It also uses the `ansible.posix` and `community.general` collections, which are
+not installed together with the role. Install them using the versions listed in
+[requirements.yml](requirements.yml):
+
+```shell
+ansible-galaxy collection install -r requirements.yml
+```
+
+Install the role with a `requirements.yml` entry such as:
+
 ```yaml
 ---
 roles:
   - name: konstruktoid.docker_rootless
-    version: v2.9.0
+    version: v2.10.0
     src: https://github.com/konstruktoid/ansible-role-docker-rootless.git
     scm: git
 ```
@@ -53,14 +65,13 @@ docker_add_alias: true
 docker_allow_ping: false
 docker_allow_privileged_ports: false
 docker_compose: false
-docker_compose_release: v5.7.1
+docker_compose_release: v5.8.0
 docker_compose_url: https://github.com/docker/compose/releases/download
 docker_daemon_json_template: daemon.json.j2
 docker_driver_network: slirp4netns
 docker_driver_port: builtin
 docker_migrate_legacy_bin: true
-docker_release: 29.10.0
-docker_repository_template: docker.repo.j2
+docker_release: 29.10.1
 docker_rootful_enabled: false
 docker_rootful: false
 docker_rootful_opts: false
@@ -76,14 +87,14 @@ docker_user_uid: false
 docker_user_gid: false
 shasums:
   docker_release:
-    aarch64: 6e5159e8b5615e0c0c2954a2a1a2a12bc65f5d9b603595dba24a10cb367408cd
-    x86_64: 7c1ebadc65c716cdc6d35fc78759ed0e4317debf43c21dd12f066f2006999def
+    aarch64: a38c8a9ef6d17bce07499bfd3a3688542274769dc3b4f75c06ea2705fe65053e
+    x86_64: 061642059fa7f2ed9b2f04a327a951cff4249585cf04b2661c2a6539197c9962
   docker_rootless_release:
-    aarch64: 6d08caae6a61e58f86c21dc94bcbf87f2b7a82bb634ef051243004a7f92f9e07
-    x86_64: a4ad65be3921ac3e45f3fe69893f5edbd078cb3b4a6499fe13288053553dce25
+    aarch64: 9b677eb3bb0ce21c4e6aae3e44678309250f1aa6fbc95f66a94de7b88b04e45b
+    x86_64: 11eb5fa9a88e5971e71713aa277dbd916b7d368c6625844cacffa1c42b8df60c
   docker_compose_release:
-    aarch64: f2f49f903240895fa764c0dca3a14548b754ad9426f6b609ccaf55ec5a3aa2a5
-    x86_64: af426722a8af5de812fcee30cc1c39f0639f5f723cbadefb25e5d4db054064cf
+    aarch64: 1a9c918b2fb49b9c87f0018c64b5abd0d30715155e98dc939779fbaee6c414d3
+    x86_64: b8840f5008c447f41fce0a57ae3adeab42c89b1eb6e6012524bcabbfb4ffbaf6
 ```
 
 Before using this role you first have to decide if you want to install Docker
@@ -98,13 +109,16 @@ need to set `configure_sysctl: false`, `create_docker_user: false` and
 required dependencies installed and the `docker` user created beforehand.
 
 If you set `docker_rootful: false` you will download the static binaries and do
-a manual install, not requiring any `root` permissions.
+a manual install into the home directory of the `docker_user`. `root`
+permissions are still needed for the user, dependency and sysctl tasks unless
+those are disabled as described above.
 
 If `docker_rootful: true`, then `docker_rootful_enabled` will decide if the
 daemon should be enabled as a service or not.
 
-`docker_service_restart` will restart the rootless service after the Docker
-binaries has been extracted. This may affect any running containers.
+`docker_service_restart` will restart the rootless service when the Docker
+binaries, the systemd service or override files, or the user `daemon.json`
+change. This may affect any running containers.
 
 Using `docker_rootful: true` and `docker_rootful_enabled: true`, will result in
 a standard Docker installation, with an additional Docker daemon, running as a
@@ -115,7 +129,7 @@ dependencies.
 
 The `docker_url`, `docker_release`, `docker_compose_url` and `docker_compose_release`
 variables define where you find the relevant binaries and which version you
-should use when doing a manual installation.
+should use when doing a manual installation, i.e. with `docker_rootful: false`.
 
 The `docker` and `docker-compose` binaries, along with the rootless install
 scripts, are installed into `~/.local/bin` of the `docker_user`. The legacy
@@ -153,20 +167,30 @@ trusted TLS, or list the local registries, such as `localhost:5000`, explicitly.
 running in rootful mode, if unset the settings in
 `docker_rootful_service_template` will be used.
 
-If `docker_add_alias: true`, then a `docker` alias will be added to either `.bashrc`
-or `.bash_aliases` of the Ansible user. If `false`, a shell script named `docker_rootless.sh` is
-created in the Ansible user home directory. This works as a substitute to the
-`docker` command so that the Ansible user can execute the rootless Docker installation from the `docker_user`.
+If `docker_add_alias: true` and `docker_rootful: false`, then a `docker` alias
+will be added to either `.bashrc` or `.bash_aliases` of the Ansible user.
+If `docker_add_alias: false` and `docker_rootful: true`, a shell script named
+`docker_rootless.sh` is created in the Ansible user home directory. This works
+as a substitute to the `docker` command so that the Ansible user can execute the
+rootless Docker installation from the `docker_user`.
 
-If `docker_compose: true`, then the Docker `compose` plugin or `docker-compose`
-will be installed. The `docker-compose` binary is downloaded for the
-architecture defined by `docker_arch`.
+If `docker_compose: true`, then Docker Compose will be installed. With
+`docker_rootful: true` the `docker-compose-plugin` package is installed, which
+requires `install_dependencies: true`. Otherwise the `docker-compose` binary for
+the architecture defined by `docker_arch` is downloaded and installed as a
+`docker` CLI plugin.
 
 If `docker_user_bashrc: true`, a .bashrc with completion for the `docker` and
 `docker compose` command will be placed inside the `docker_user` home.
 
-If `docker_unattended_upgrades: true` and the `unattended-upgrades` package is installed,
-the `docker` and `docker-compose` binaries will be updated automatically.
+If `docker_unattended_upgrades: true`, `docker_rootful: true`, the host belongs
+to the Debian family and the `unattended-upgrades` package is installed, the
+Docker repository is added to the `unattended-upgrades` origins so that the
+Docker packages are updated automatically.
+
+The `docker_allow_privileged_ports` and `docker_allow_ping` variables only take
+effect if `configure_sysctl: true`. The sysctl settings are written to
+`docker_sysctl_file`.
 
 The `docker_allow_privileged_ports` variable configures if exposing
 [privileged ports (< 1024)](https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports)
@@ -204,7 +228,7 @@ Running containers is not that much different from when a rootful Docker daemon
 is used, but you still need to become the unprivileged user and adapt any paths
 to the user working directores.
 
-If `docker_add_alias: true` is used, the `docker` command will be
+If `docker_add_alias: true` is used with `docker_rootful: false`, the `docker` command will be
 available as usual for the Ansible user, too. Type `alias` in the shell to see the keyword
 configuration.
 
@@ -243,6 +267,8 @@ configuration.
 
 ### Docker compose service
 
+This requires the role to be run with `docker_compose: true`.
+
 ```yaml
 - name: Register Docker user info
   become: true
@@ -259,14 +285,8 @@ configuration.
     PATH: "{{ docker_user_info.home }}/.local/bin:{{ docker_user_info.home }}/bin:{{ ansible_env.PATH }}"
     DOCKER_HOST: "unix:///run/user/{{ docker_user_info.uid }}/docker.sock"
   block:
-    - name: Install pip dependencies
-      ansible.builtin.pip:
-        name:
-          - docker<7 # https://github.com/docker/docker-py/issues/3194
-          - docker-compose
-
     - name: Create and start services
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: /var/tmp/
         files: "{{ docker_user }}-docker-compose.yml"
       register: compose_output
