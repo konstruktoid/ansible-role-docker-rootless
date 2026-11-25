@@ -114,7 +114,8 @@ permissions are still needed for the user, dependency and sysctl tasks unless
 those are disabled as described above.
 
 If `docker_rootful: true`, then `docker_rootful_enabled` will decide if the
-daemon should be enabled as a service or not.
+daemon should be enabled as a service or not. The Docker packages and the
+rootful service are only managed if `install_dependencies: true`.
 
 `docker_service_restart` will restart the rootless service when the Docker
 binaries, the systemd service or override files, or the user `daemon.json`
@@ -134,14 +135,12 @@ should use when doing a manual installation, i.e. with `docker_rootful: false`.
 The `docker` and `docker-compose` binaries, along with the rootless install
 scripts, are installed into `~/.local/bin` of the `docker_user`. The legacy
 `~/bin` directory is still kept in every `PATH` the role configures, after
-`~/.local/bin`, so any binaries or scripts you place there manually continue
-to take effect.
+`~/.local/bin`.
 
-If `docker_migrate_legacy_bin: true` (the default), any binaries the role
-previously installed into `~/bin` are moved into `~/.local/bin` the first
-time the updated role runs against a host, so the Docker binaries end up in
-a single location and `~/bin` is left free for your own use. Set it to
-`false` to leave the contents of `~/bin` untouched.
+If `docker_migrate_legacy_bin: true` (the default) and `docker_rootful: false`,
+everything in `~/bin` is moved into `~/.local/bin` on every run, including files
+you have placed there yourself. Files with the same name in `~/.local/bin` are
+overwritten. Set it to `false` to leave the contents of `~/bin` untouched.
 
 You define the name of the Docker user that will be created with the
 `docker_user` variable. This user will download and install the binaries if
